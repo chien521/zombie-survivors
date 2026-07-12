@@ -85,11 +85,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import BackgroundPolygons from './background-polygons.vue';
 import WhatsNewModal from './whats-new-modal.vue';
 import { loadStats, getPlayerName, setPlayerName, type GlobalStats } from '../game/leaderboard';
-import { fetchStats, fetchOnline } from '../game/api';
+import { fetchStats, enterOnline } from '../game/api';
 import { APP_VERSION as version } from '../version';
 import { CHANGELOG, LATEST_VERSION } from '../changelog';
 
@@ -132,12 +132,10 @@ function onStart() {
 /** 先顯示本機統計，抓到全球就覆蓋 */
 const stats = reactive<GlobalStats>(loadStats());
 
-/** 目前遊玩人數 + 同時在線最高（每 60 秒輪詢；失敗則維持上次值/隱藏） */
+/** 目前遊玩人數 + 同時在線最高（近 3 小時活躍；進場記錄一次，不再輪詢） */
 const online = ref<number | null>(null);
 const peak = ref(0);
-let onlineTimer: number | undefined;
-async function refreshOnline() {
-  const data = await fetchOnline();
+async function applyOnline(data: { online: number; peak: number } | null) {
   if (data !== null) {
     online.value = data.online;
     peak.value = data.peak;
@@ -147,13 +145,9 @@ async function refreshOnline() {
 onMounted(async () => {
   /** 沒看過這個版本的更新紀錄 → 自動跳一次 */
   if (localStorage.getItem(CHANGELOG_KEY) !== LATEST_VERSION) showWhatsNew.value = true;
-  void refreshOnline();
-  onlineTimer = window.setInterval(refreshOnline, 60000);
+  void enterOnline().then(applyOnline);   // 進場記錄 + 取人數（僅一次）
   const global = await fetchStats();
   if (global) Object.assign(stats, global);
-});
-onBeforeUnmount(() => {
-  if (onlineTimer !== undefined) clearInterval(onlineTimer);
 });
 
 const timeText = computed(() => {

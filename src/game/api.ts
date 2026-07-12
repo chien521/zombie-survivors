@@ -67,16 +67,19 @@ export async function fetchLeaderboard(
   }
 }
 
-/** 上報心跳（遊戲進行中定期呼叫，標記在線）；失敗忽略 */
-export async function sendHeartbeat(): Promise<void> {
+/** 進場記錄：標記此裝置在線並回傳目前人數/峰值（取代心跳輪詢，進場只呼叫一次）；失敗回 null */
+export async function enterOnline(): Promise<{ online: number; peak: number } | null> {
   try {
-    await fetch(`${BASE}/heartbeat`, {
+    const res = await fetch(`${BASE}/online`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ deviceId: deviceId() }),
     });
+    if (!res.ok) return null;
+    const data = (await res.json()) as { online: number; peak: number };
+    return { online: data.online ?? 0, peak: data.peak ?? 0 };
   } catch {
-    /* 離線忽略 */
+    return null;
   }
 }
 

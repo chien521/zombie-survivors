@@ -193,7 +193,6 @@ import {
   type UpgradeStatusView,
   type GameMode,
 } from '../game/game';
-import { sendHeartbeat } from '../game/api';
 import { QUALITIES, type QualityId } from '../game/quality';
 import type { RunState } from '../game/upgrades';
 import type { Difficulty } from '../game/difficulty';
@@ -291,15 +290,9 @@ onMounted(() => {
     onGameOver: (r) => emit('gameover', r),
   });
   game.setMuted(muted.value);
-
-  /** 在線心跳：遊戲進行期間每 60 秒上報一次（首頁據此顯示遊玩人數；online 視窗 90s） */
-  void sendHeartbeat();
-  heartbeatTimer = window.setInterval(() => void sendHeartbeat(), 60000);
 });
 
-let heartbeatTimer: number | undefined;
 onBeforeUnmount(() => {
-  if (heartbeatTimer !== undefined) clearInterval(heartbeatTimer);
   game?.dispose();
 });
 
