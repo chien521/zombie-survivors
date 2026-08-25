@@ -29,6 +29,31 @@
         </div>
       </div>
 
+      <!-- VIVERSE 連線狀態（附加功能，不影響原本匿名排行榜流程） -->
+      <button
+        v-if="viverse.state.status === 'unavailable'"
+        class="viverse-chip"
+        disabled
+        title="僅在 VIVERSE 平台上可用"
+      >
+        VIVERSE：僅平台內可用
+      </button>
+      <button
+        v-else-if="viverse.state.status === 'logged_in'"
+        class="viverse-chip viverse-chip--connected"
+        disabled
+      >
+        ✓ VIVERSE：{{ viverse.state.user?.displayName }}
+      </button>
+      <button
+        v-else
+        class="viverse-chip"
+        :disabled="viverse.state.status === 'logging_in'"
+        @click="viverse.connect"
+      >
+        {{ viverse.state.status === 'logging_in' ? '連線中…' : '🔗 連結 VIVERSE 帳號' }}
+      </button>
+
       <!-- 暱稱（必填才能開始） -->
       <div class="w-full max-w-xs">
         <input
@@ -92,6 +117,9 @@ import { loadStats, getPlayerName, setPlayerName, type GlobalStats } from '../ga
 import { fetchStats, enterOnline } from '../game/api';
 import { APP_VERSION as version } from '../version';
 import { CHANGELOG, LATEST_VERSION } from '../changelog';
+import { useViverse } from '../viverse/useViverse';
+
+const viverse = useViverse();
 
 /** 更新紀錄彈窗：首次（或版本更新後）自動跳一次，看過即記住 */
 const CHANGELOG_KEY = 'animal-survivors:changelogSeen';
@@ -226,5 +254,27 @@ const timeText = computed(() => {
 .portal-btn--disabled:hover {
   transform: none;
   background: linear-gradient(180deg, #7ec850, #4a9c2e);
+}
+.viverse-chip {
+  margin-top: 0.25rem;
+  padding: 0.4rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: white;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+}
+.viverse-chip:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+.viverse-chip--connected {
+  color: #c6ff7a;
+  border-color: rgba(198, 255, 122, 0.4);
+  opacity: 1;
 }
 </style>

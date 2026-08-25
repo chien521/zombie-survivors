@@ -17,6 +17,7 @@ download
 # 環境變數
 .env
 .env.*
+!.env.example
 
 # 日誌
 *.log

@@ -1,5 +1,7 @@
 # 殭屍大逃殺 Zombie Survivors 🧟
 
+> 🍴 本專案 fork 自 [craig7351/zombie-survivors](https://github.com/craig7351/zombie-survivors)（原作者尚未於上游標註 license，本 fork 目前僅供個人開發／學習用途，公開上架前會另行確認授權）。在原版基礎上新增 **VIVERSE 平台登入整合**（`src/viverse/`），原有玩法、Cloudflare D1 全球排行榜／留言板皆保持不變。詳見〈[VIVERSE 上架](#viverse-上架另一條發布路徑與-cloudflare-pages-並存)〉一節。
+
 3D 倖存者類（Vampire Survivors-like）roguelite。操控一名倖存者（或狗狗、海盜），在無盡殭屍潮中自動開火、撿經驗升級、三選一強化武器。兩種模式：**劇情模式**依序擊敗 7 隻殭屍王破關、**死鬥模式**無盡波數比誰撐最高。低面數美術、跨平台（桌機鍵鼠 + 手機觸控），含 **全球排行榜／即時在線人數＋歷史圖表／留言板**（Cloudflare D1 後端，離線自動回退本機）。
 
 > 線上試玩：**https://zombie-survivors-e4y.pages.dev**
@@ -173,6 +175,22 @@ npx wrangler pages deploy dist --project-name=zombie-survivors --branch=main
 npx wrangler d1 execute <db-name> --file=./schema.sql --remote
 ```
 SPA 轉址由 `public/_redirects` 處理（`/* /index.html 200`）；D1 綁定見 `wrangler.jsonc`。
+
+### VIVERSE 上架（另一條發布路徑，與 Cloudflare Pages 並存）
+本專案額外整合了 **VIVERSE 登入（Auth）**，做法與本機其他專案（graviflip / SURGE / puzzle_game）一致，詳見 `src/viverse/ViverseSession.ts`。這個階段**只加登入**，不含 VIVERSE 排行榜——原有的 Cloudflare D1 全球排行榜／留言板維持不變、兩者並存。
+
+```bash
+# 1. 在 VIVERSE Studio 建立 World App，複製 App ID，填入 .env
+cp .env.example .env   # 編輯 VITE_VIVERSE_CLIENT_ID=<App ID>
+
+# 2. 建置並驗證
+pnpm build
+pnpm verify:publish    # 檢查 dist/ 已內嵌正確 App ID、無佔位字串、路徑為相對路徑
+
+# 3. 上架（需先 npm install -g @viverse/cli 並 viverse-cli auth login）
+viverse-cli app publish ./dist --app-id <App ID>
+```
+本機開發（`pnpm dev`）沒有 HTTPS／註冊過的 redirect URI，VIVERSE 登入預期會逾時並自動回退成「僅平台內可用」狀態，不影響遊戲本身可玩——這是預期行為，不是 bug。
 
 ## 📁 專案結構
 ```
