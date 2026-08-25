@@ -1,5 +1,6 @@
 import { Scene, SceneLoader, TransformNode } from '@babylonjs/core';
 import '@babylonjs/loaders';
+import './draco-config';
 
 /** 血跡貼圖模型（殭屍死亡地面血痕） */
 const BLOOD_PATHS = [

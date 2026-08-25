@@ -7,6 +7,7 @@ export type QualityId = 'high' | 'medium' | 'low';
 export interface Quality {
   id: QualityId;
   name: string;
+  nameKey: string;
   /** 硬體縮放：值越大解析度越低（1=滿、1.5=約 44% 像素、2=25% 像素） */
   hardwareScaling: number;
   /** 抗鋸齒（於 Engine 建立時生效，切換後需重開遊戲才會變） */
@@ -18,9 +19,9 @@ export interface Quality {
 }
 
 export const QUALITIES: Quality[] = [
-  { id: 'high', name: '高', hardwareScaling: 1, antialias: true, glow: 0.8, fogEnd: 110 },
-  { id: 'medium', name: '中', hardwareScaling: 1.5, antialias: false, glow: 0.45, fogEnd: 90 },
-  { id: 'low', name: '低', hardwareScaling: 2, antialias: false, glow: 0, fogEnd: 70 },
+  { id: 'high', name: '高', nameKey: 'quality.high', hardwareScaling: 1, antialias: true, glow: 0.8, fogEnd: 110 },
+  { id: 'medium', name: '中', nameKey: 'quality.medium', hardwareScaling: 1.5, antialias: false, glow: 0.45, fogEnd: 90 },
+  { id: 'low', name: '低', nameKey: 'quality.low', hardwareScaling: 2, antialias: false, glow: 0, fogEnd: 70 },
 ];
 
 export function getQuality(id: string): Quality {

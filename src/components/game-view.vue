@@ -10,7 +10,7 @@
       class="pointer-events-none absolute left-1/2 top-20 z-10 -translate-x-1/2 text-center font-black text-amber-300 drop-shadow-[0_2px_0_rgba(0,0,0,0.5)]"
     >
       <span class="text-2xl sm:text-3xl">{{ stats.combo }}</span>
-      <span class="ml-1 text-sm">連殺</span>
+      <span class="ml-1 text-sm">{{ t('hud.combo') }}</span>
     </div>
 
     <!-- 死鬥：波數字卡（進新波時短暫顯示） -->
@@ -34,10 +34,10 @@
       <select
         v-model="quality"
         @change="onQuality"
-        title="畫質"
+        :title="t('gameview.quality')"
         class="h-9 rounded-full border-0 bg-black/40 px-2 text-xs text-white outline-none backdrop-blur-md transition hover:bg-black/60 sm:h-11 sm:px-3 sm:text-sm"
       >
-        <option v-for="q in qualities" :key="q.id" :value="q.id" class="bg-zinc-900 text-white">🎚 {{ q.name }}畫質</option>
+        <option v-for="q in qualities" :key="q.id" :value="q.id" class="bg-zinc-900 text-white">🎚 {{ t(q.nameKey) }} {{ t('gameview.qualitySuffix') }}</option>
       </select>
       <button
         class="flex h-9 w-9 items-center justify-center rounded-full sm:h-11 sm:w-11 bg-black/40 text-base text-white backdrop-blur-md sm:text-xl transition hover:bg-black/60 active:scale-95"
@@ -67,20 +67,20 @@
       class="absolute right-4 top-20 z-20 max-h-[78vh] w-60 overflow-y-auto rounded-2xl bg-black/75 p-3 text-xs text-white shadow-2xl ring-1 ring-white/10 backdrop-blur-md"
     >
       <div v-if="activeSynergies.length" class="mb-3 rounded-lg bg-white/5 p-2">
-        <div class="mb-1 text-sm font-black text-amber-300">羈絆</div>
+        <div class="mb-1 text-sm font-black text-amber-300">{{ t('gameview.synergy') }}</div>
         <div v-for="(syn, i) in activeSynergies" :key="i" class="mb-1 text-white/90">
-          <span>{{ syn.emoji }} {{ syn.name }}</span>
-          <span class="ml-1 text-white/50">— {{ syn.desc }}</span>
+          <span>{{ syn.emoji }} {{ t(syn.nameKey) }}</span>
+          <span class="ml-1 text-white/50">— {{ t(syn.descKey) }}</span>
         </div>
       </div>
-      <div class="mb-2 text-sm font-black text-cyan-300">技能等級</div>
+      <div class="mb-2 text-sm font-black text-cyan-300">{{ t('gameview.skillLevels') }}</div>
       <div
         v-for="(u, i) in upgradeStatus"
         :key="i"
         class="mb-1 flex items-center justify-between"
         :class="u.level === 0 ? 'text-white/40' : ''"
       >
-        <span>{{ u.emoji }} {{ u.name }}</span>
+        <span>{{ u.emoji }} {{ u.nameKey ? t(u.nameKey) : u.name }}</span>
         <span class="font-bold" :class="u.level >= u.maxLevel ? 'text-amber-300' : 'text-white/80'">
           Lv {{ u.level }}/{{ u.maxLevel }}
         </span>
@@ -147,7 +147,7 @@
       class="absolute bottom-12 right-10 z-10 flex h-20 w-20 items-center justify-center rounded-full bg-sky-500/70 text-base font-black text-white backdrop-blur-md transition active:scale-90"
       @pointerdown.prevent="onJump"
     >
-      跳躍
+      {{ t('gameview.jump') }}
     </button>
 
     <!-- 祝福／詛咒：暫停式大彈窗（state=levelup） -->
@@ -211,7 +211,9 @@ import LevelUpBar from './level-up-bar.vue';
 import GameOverModal from './game-over-modal.vue';
 import VictoryModal from './victory-modal.vue';
 import PauseMenuModal from './pause-menu-modal.vue';
+import { useI18n } from '../i18n';
 
+const { t } = useI18n();
 const props = defineProps<{
   characterColor: [number, number, number];
   characterModel?: string;
@@ -242,7 +244,9 @@ const stats = reactive<GameStats>({
   bossHp: 0,
   bossMaxHp: 0,
   bossName: '',
+  bossNameKey: '',
   bossSkill: '',
+  bossSkillKey: '',
   bossDefeated: 0,
   bossTotal: 5,
   goldEarned: 0,

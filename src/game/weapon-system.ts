@@ -10,6 +10,7 @@ import {
   SceneLoader,
 } from '@babylonjs/core';
 import '@babylonjs/loaders';
+import './draco-config';
 import { CONFIG } from './config';
 import { SpatialGrid } from './spatial-grid';
 import { ZombieHorde } from './zombie-horde';

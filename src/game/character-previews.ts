@@ -9,6 +9,7 @@ import {
   SceneLoader,
 } from '@babylonjs/core';
 import '@babylonjs/loaders';
+import './draco-config';
 
 export interface PreviewHandle {
   dispose: () => void;

@@ -11,6 +11,7 @@ type BossSkill = 'charge' | 'aimed' | 'shockwave' | 'poison' | 'radial';
 
 interface BossDef {
   name: string;
+  nameKey: string;
   model: string;
   radius: number;
   speed: number;
@@ -20,14 +21,17 @@ interface BossDef {
   skillInterval: number;
   /** 招式說明（顯示於王血條） */
   skillName: string;
+  skillNameKey: string;
   /** 圖鑑詳述 */
   desc: string;
+  descKey: string;
 }
 
 /** 依序登場的 5 隻王，打完第 5 隻即破關 */
 const BOSS_DEFS: BossDef[] = [
   {
     name: '巨胖殭屍',
+    nameKey: 'boss.chubby.name',
     model: '/models/zombie/zombie_chubby.glb',
     radius: 6,
     speed: 6,
@@ -36,10 +40,13 @@ const BOSS_DEFS: BossDef[] = [
     skill: 'charge',
     skillInterval: 5,
     skillName: '蓄力衝撞',
+    skillNameKey: 'boss.chubby.skillName',
     desc: '第 1 隻王。高血量肉盾，會短暫蓄力後高速衝撞，注意拉開距離。',
+    descKey: 'boss.chubby.desc',
   },
   {
     name: '狂暴肋骨怪',
+    nameKey: 'boss.ribcage.name',
     model: '/models/zombie/zombie_ribcage.glb',
     radius: 4.8,
     speed: 9,
@@ -48,10 +55,13 @@ const BOSS_DEFS: BossDef[] = [
     skill: 'aimed',
     skillInterval: 2.6,
     skillName: '骨刺連射',
+    skillNameKey: 'boss.ribcage.skillName',
     desc: '第 2 隻王。移動極快，會朝你連射骨刺彈幕，邊跑邊閃。',
+    descKey: 'boss.ribcage.desc',
   },
   {
     name: '斷臂巨怪',
+    nameKey: 'boss.arm.name',
     model: '/models/zombie/zombie_arm.glb',
     radius: 6.4,
     speed: 5.5,
@@ -60,10 +70,13 @@ const BOSS_DEFS: BossDef[] = [
     skill: 'shockwave',
     skillInterval: 4,
     skillName: '震地波',
+    skillNameKey: 'boss.arm.skillName',
     desc: '第 3 隻王。高血量，定期落地震波向外擴散，看到擴張環就走位避開。',
+    descKey: 'boss.arm.desc',
   },
   {
     name: '腐毒殭屍',
+    nameKey: 'boss.basic.name',
     model: '/models/zombie/zombie_basic.glb',
     radius: 6,
     speed: 7,
@@ -72,10 +85,13 @@ const BOSS_DEFS: BossDef[] = [
     skill: 'poison',
     skillInterval: 4.5,
     skillName: '毒池',
+    skillNameKey: 'boss.basic.skillName',
     desc: '第 4 隻王。在你腳下生成毒池，停留會持續扣血，別站在綠池裡。',
+    descKey: 'boss.basic.desc',
   },
   {
     name: '海盜船長',
+    nameKey: 'boss.captain.name',
     model: '/models/zombie/boss_captain.glb',
     radius: 6,
     speed: 7,
@@ -83,11 +99,14 @@ const BOSS_DEFS: BossDef[] = [
     hpMul: 1.3,
     skill: 'aimed',
     skillName: '手槍掃射',
+    skillNameKey: 'boss.captain.skillName',
     skillInterval: 2.4,
     desc: '不死海盜船長，邊逼近邊以手槍朝你掃射彈幕。',
+    descKey: 'boss.captain.desc',
   },
   {
     name: '巨鯊',
+    nameKey: 'boss.shark.name',
     model: '/models/zombie/boss_shark.glb',
     radius: 7,
     speed: 11,
@@ -95,11 +114,14 @@ const BOSS_DEFS: BossDef[] = [
     hpMul: 1.4,
     skill: 'charge',
     skillName: '高速衝咬',
+    skillNameKey: 'boss.shark.skillName',
     skillInterval: 4,
     desc: '從陸上滑行的巨鯊，蓄力後高速衝咬，閃避時機要抓準。',
+    descKey: 'boss.shark.desc',
   },
   {
     name: '深海觸手',
+    nameKey: 'boss.tentacle.name',
     model: '/models/zombie/boss_tentacle.glb',
     radius: 21,
     speed: 3,
@@ -107,8 +129,10 @@ const BOSS_DEFS: BossDef[] = [
     hpMul: 1.9,
     skill: 'radial',
     skillName: '深海彈幕',
+    skillNameKey: 'boss.tentacle.skillName',
     skillInterval: 1.5,
     desc: '最終王。克拉肯之臂緩慢逼近，釋放全方位環形彈幕，擊敗即破關。',
+    descKey: 'boss.tentacle.desc',
   },
 ];
 
@@ -118,8 +142,11 @@ export const BOSS_COUNT = BOSS_DEFS.length;
 /** 王圖鑑資訊（供選單顯示） */
 export const BOSS_INFO = BOSS_DEFS.map((d) => ({
   name: d.name,
+  nameKey: d.nameKey,
   skill: d.skillName,
+  skillKey: d.skillNameKey,
   desc: d.desc,
+  descKey: d.descKey,
   model: d.model,
 }));
 
@@ -141,7 +168,9 @@ export class Boss {
   /** 目前這隻王的索引（0-based）；用於判斷是否為最終王 */
   index = 0;
   name = '';
+  nameKey = '';
   skillName = '';
+  skillNameKey = '';
   radius = BOSS_DEFS[0].radius;
   contactDps = BOSS_DEFS[0].contactDps;
 
@@ -222,7 +251,9 @@ export class Boss {
     const def = BOSS_DEFS[index];
     this.index = index;
     this.name = def.name;
+    this.nameKey = def.nameKey;
     this.skillName = def.skillName;
+    this.skillNameKey = def.skillNameKey;
     this.skill = def.skill;
     this.skillInterval = def.skillInterval;
     this.speed = def.speed;

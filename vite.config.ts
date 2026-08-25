@@ -6,4 +6,13 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   base: './',
   plugins: [vue(), tailwindcss()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('@babylonjs')) return 'babylon';
+        },
+      },
+    },
+  },
 });

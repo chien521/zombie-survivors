@@ -9,6 +9,7 @@ import {
   SceneLoader,
 } from '@babylonjs/core';
 import '@babylonjs/loaders';
+import './draco-config';
 
 /**
  * 將一組模型離屏渲染成靜態縮圖（dataURL），用一個暫時引擎依序產生後釋放，

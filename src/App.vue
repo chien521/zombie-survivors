@@ -36,16 +36,18 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, shallowRef } from 'vue';
-import MenuScreen from './components/menu-screen.vue';
-import GameView from './components/game-view.vue';
+import { defineAsyncComponent, reactive, ref, shallowRef } from 'vue';
 import LandingScreen from './components/landing-screen.vue';
 import LeaderboardScreen from './components/leaderboard-screen.vue';
-import BestiaryScreen from './components/bestiary-screen.vue';
 import DifficultyScreen from './components/difficulty-screen.vue';
 import MessageBoardScreen from './components/message-board-screen.vue';
 import OnlineHistoryScreen from './components/online-history-screen.vue';
 import ModeScreen from './components/mode-screen.vue';
+/** 這三個畫面會用到 Babylon.js（角色預覽／圖鑑縮圖／遊戲本體），改用動態 import
+ *  拆成獨立 chunk，讓 Babylon.js 不擋在首屏（landing）的載入路徑上。 */
+const MenuScreen = defineAsyncComponent(() => import('./components/menu-screen.vue'));
+const GameView = defineAsyncComponent(() => import('./components/game-view.vue'));
+const BestiaryScreen = defineAsyncComponent(() => import('./components/bestiary-screen.vue'));
 import { loadMeta, saveMeta, computeStartRunState, goldMultiplier, PERMA, permaCost } from './game/meta';
 import type { MasteryProgress } from './game/meta';
 import { getCharacter } from './game/characters';

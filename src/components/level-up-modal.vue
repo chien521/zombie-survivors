@@ -3,9 +3,9 @@
     <div class="w-[min(92vw,40rem)] rounded-3xl bg-[#1a2236] p-6 text-white shadow-2xl ring-1 ring-white/10">
       <div class="mb-4 text-center">
         <div class="text-sm font-bold tracking-widest" :class="isChoice ? 'text-fuchsia-300' : 'text-amber-300'">
-          {{ isChoice ? '⚖️ 祝福 / 詛咒' : `升級！ LV ${level}` }}
+          {{ isChoice ? t('levelup.blessingTitle') : t('levelup.levelTitle', { level }) }}
         </div>
-        <div class="text-2xl font-black">{{ isChoice ? '二選一（有得有失）' : '選擇一項強化' }}</div>
+        <div class="text-2xl font-black">{{ isChoice ? t('levelup.blessingSubtitle') : t('levelup.chooseOne') }}</div>
       </div>
 
       <div class="grid gap-3" :class="isChoice ? 'sm:grid-cols-2' : 'sm:grid-cols-3'">
@@ -16,8 +16,8 @@
           @click="emit('choose', i)"
         >
           <span class="text-5xl">{{ c.emoji }}</span>
-          <span class="text-lg font-black">{{ c.name }}</span>
-          <span class="text-sm text-white">{{ c.desc }}</span>
+          <span class="text-lg font-black">{{ c.nameKey ? t(c.nameKey) : c.name }}</span>
+          <span class="text-sm text-white">{{ c.descKey ? t(c.descKey) : c.desc }}</span>
         </button>
       </div>
     </div>
@@ -27,7 +27,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { ChoiceView } from '../game/game';
+import { useI18n } from '../i18n';
 
+const { t } = useI18n();
 const props = defineProps<{ level: number; choices: ChoiceView[] }>();
 const emit = defineEmits<{ (e: 'choose', index: number): void }>();
 

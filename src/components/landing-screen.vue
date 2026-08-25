@@ -10,10 +10,10 @@
           class="text-5xl font-black tracking-widest sm:text-7xl"
           style="color: #c6ff7a; paint-order: stroke fill; -webkit-text-stroke: 6px #14210f; text-shadow: 0 6px 0 rgba(0,0,0,0.35)"
         >
-          殭屍大逃殺<span class="ver" title="查看更新紀錄" @click="openWhatsNew">{{ version }}</span>
+          {{ t('landing.title') }}<span class="ver" title="查看更新紀錄" @click="openWhatsNew">{{ version }}</span>
         </h1>
         <p class="mt-2 text-xs font-bold tracking-wide text-white/70 sm:mt-3 sm:text-lg">
-          在無盡殭屍潮中倖存・3D 倖存者類 roguelite
+          {{ t('landing.subtitle') }}
         </p>
         <!-- 即時在線人數 -->
         <div
@@ -25,25 +25,33 @@
             <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-lime-400"></span>
           </span>
           <span class="text-lime-300">{{ online }}</span>
-          <span class="text-white/60">人正在遊玩</span>
+          <span class="text-white/60">{{ t('landing.onlineSuffix') }}</span>
         </div>
       </div>
+
+      <!-- 語言選擇 -->
+      <select
+        v-model="localeModel"
+        class="rounded-full border-0 bg-black/30 px-3 py-1 text-xs text-white outline-none backdrop-blur-md ring-1 ring-white/15"
+      >
+        <option v-for="l in localeList" :key="l" :value="l" class="bg-zinc-900 text-white">{{ localeNames[l] }}</option>
+      </select>
 
       <!-- VIVERSE 連線狀態（附加功能，不影響原本匿名排行榜流程） -->
       <button
         v-if="viverse.state.status === 'unavailable'"
         class="viverse-chip"
         disabled
-        title="僅在 VIVERSE 平台上可用"
+        :title="t('landing.viverseUnavailable')"
       >
-        VIVERSE：僅平台內可用
+        {{ t('landing.viverseUnavailable') }}
       </button>
       <button
         v-else-if="viverse.state.status === 'logged_in'"
         class="viverse-chip viverse-chip--connected"
         disabled
       >
-        ✓ VIVERSE：{{ viverse.state.user?.displayName }}
+        {{ t('landing.viverseConnected', { name: viverse.state.user?.displayName ?? '' }) }}
       </button>
       <button
         v-else
@@ -51,7 +59,7 @@
         :disabled="viverse.state.status === 'logging_in'"
         @click="viverse.connect"
       >
-        {{ viverse.state.status === 'logging_in' ? '連線中…' : '🔗 連結 VIVERSE 帳號' }}
+        {{ viverse.state.status === 'logging_in' ? t('landing.viverseConnecting') : t('landing.viverseConnect') }}
       </button>
 
       <!-- 暱稱（必填才能開始） -->
@@ -59,13 +67,13 @@
         <input
           v-model="name"
           maxlength="16"
-          placeholder="輸入暱稱後開始"
+          :placeholder="t('landing.namePlaceholder')"
           class="w-full rounded-full bg-black/30 px-5 py-2 text-center font-bold text-white outline-none ring-1 backdrop-blur-md placeholder:text-white/40"
           :class="canStart ? 'ring-white/15' : 'ring-rose-400/50'"
           @change="saveName"
           @blur="saveName"
         />
-        <p v-if="!canStart" class="mt-1 text-center text-xs text-rose-300/80">請先輸入暱稱</p>
+        <p v-if="!canStart" class="mt-1 text-center text-xs text-rose-300/80">{{ t('landing.nameRequired') }}</p>
       </div>
 
       <!-- 按鈕：主 CTA 整排，其餘 4 顆手機 2×2、桌機回堆疊 -->
@@ -76,13 +84,13 @@
           :disabled="!canStart"
           @click="onStart"
         >
-          ▶ 遊戲開始
+          {{ t('landing.play') }}
         </button>
         <div class="grid grid-cols-2 gap-3 sm:grid-cols-1">
-          <button class="portal-btn portal-btn--sub" @click="emit('leaderboard')">🏆 排行榜</button>
-          <button class="portal-btn portal-btn--sub" @click="emit('bestiary')">🧟 圖鑑</button>
-          <button class="portal-btn portal-btn--sub" @click="emit('messages')">💬 留言板</button>
-          <button class="portal-btn portal-btn--sub" @click="emit('onlineHistory')">📈 線上人數</button>
+          <button class="portal-btn portal-btn--sub" @click="emit('leaderboard')">{{ t('landing.leaderboard') }}</button>
+          <button class="portal-btn portal-btn--sub" @click="emit('bestiary')">{{ t('landing.bestiary') }}</button>
+          <button class="portal-btn portal-btn--sub" @click="emit('messages')">{{ t('landing.messages') }}</button>
+          <button class="portal-btn portal-btn--sub" @click="emit('onlineHistory')">{{ t('landing.onlineHistory') }}</button>
         </div>
       </div>
 
@@ -90,19 +98,19 @@
       <div class="grid w-full max-w-xs grid-cols-2 gap-2 sm:flex sm:w-auto sm:max-w-none sm:gap-6">
         <div class="rounded-2xl bg-black/30 px-3 py-2 text-center backdrop-blur-md sm:px-6">
           <div class="text-xl font-black text-lime-300 sm:text-3xl">{{ stats.plays }}</div>
-          <div class="text-xs text-white/55">遊玩場次</div>
+          <div class="text-xs text-white/55">{{ t('landing.statsPlays') }}</div>
         </div>
         <div class="rounded-2xl bg-black/30 px-3 py-2 text-center backdrop-blur-md sm:px-6">
           <div class="text-xl font-black text-lime-300 sm:text-3xl">{{ timeText }}</div>
-          <div class="text-xs text-white/55">累積時間</div>
+          <div class="text-xs text-white/55">{{ t('landing.statsTime') }}</div>
         </div>
         <div class="rounded-2xl bg-black/30 px-3 py-2 text-center backdrop-blur-md sm:px-6">
           <div class="text-xl font-black text-lime-300 sm:text-3xl">{{ stats.totalKills }}</div>
-          <div class="text-xs text-white/55">累積擊殺</div>
+          <div class="text-xs text-white/55">{{ t('landing.statsKills') }}</div>
         </div>
         <div class="rounded-2xl bg-black/30 px-3 py-2 text-center backdrop-blur-md sm:px-6">
           <div class="text-xl font-black text-lime-300 sm:text-3xl">{{ peak }}</div>
-          <div class="text-xs text-white/55">同時在線最高</div>
+          <div class="text-xs text-white/55">{{ t('landing.statsPeak') }}</div>
         </div>
       </div>
     </div>
@@ -118,8 +126,14 @@ import { fetchStats, enterOnline } from '../game/api';
 import { APP_VERSION as version } from '../version';
 import { CHANGELOG, LATEST_VERSION } from '../changelog';
 import { useViverse } from '../viverse/useViverse';
+import { useI18n, type Locale } from '../i18n';
 
 const viverse = useViverse();
+const { t, locale, setLocale, localeList, localeNames } = useI18n();
+const localeModel = computed<Locale>({
+  get: () => locale.value,
+  set: (v) => setLocale(v),
+});
 
 /** 更新紀錄彈窗：首次（或版本更新後）自動跳一次，看過即記住 */
 const CHANGELOG_KEY = 'animal-survivors:changelogSeen';
@@ -183,7 +197,7 @@ const timeText = computed(() => {
   const h = Math.floor(total / 3600);
   const m = Math.floor((total % 3600) / 60);
   if (h > 0) return `${h}h${m}m`;
-  return `${m}分`;
+  return `${m}m`;
 });
 </script>
 

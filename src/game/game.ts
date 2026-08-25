@@ -52,7 +52,9 @@ export type GameState = 'running' | 'levelup' | 'dead' | 'paused' | 'won';
 export interface ChoiceView {
   id: string;
   name: string;
+  nameKey?: string;
   desc: string;
+  descKey?: string;
   emoji: string;
 }
 
@@ -73,7 +75,9 @@ export interface GameStats {
   bossMaxHp: number;
   /** 王名稱與招式（顯示於王血條） */
   bossName: string;
+  bossNameKey: string;
   bossSkill: string;
+  bossSkillKey: string;
   /** 已擊敗王數 / 王總數 */
   bossDefeated: number;
   bossTotal: number;
@@ -154,6 +158,7 @@ export interface GameHandle {
 
 export interface UpgradeStatusView {
   name: string;
+  nameKey?: string;
   emoji: string;
   level: number;
   maxLevel: number;
@@ -161,7 +166,9 @@ export interface UpgradeStatusView {
 
 export interface SynergyStatusView {
   name: string;
+  nameKey: string;
   desc: string;
+  descKey: string;
   emoji: string;
 }
 
@@ -503,7 +510,9 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
     bossHp: 0,
     bossMaxHp: 0,
     bossName: '',
+    bossNameKey: '',
     bossSkill: '',
+    bossSkillKey: '',
     bossDefeated: 0,
     bossTotal: BOSS_COUNT,
     goldEarned: 0,
@@ -527,12 +536,14 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
     stats.xp = Math.floor(xp);
     stats.xpToNext = xpToNext;
     stats.state = state;
-    stats.choices = choices.map((c) => ({ id: c.id, name: c.name, desc: c.desc, emoji: c.emoji }));
+    stats.choices = choices.map((c) => ({ id: c.id, name: c.name, nameKey: c.nameKey, desc: c.desc, descKey: c.descKey, emoji: c.emoji }));
     stats.bossActive = boss.active;
     stats.bossHp = Math.max(0, Math.ceil(boss.hp));
     stats.bossMaxHp = boss.maxHp;
     stats.bossName = boss.name;
+    stats.bossNameKey = boss.nameKey;
     stats.bossSkill = boss.skillName;
+    stats.bossSkillKey = boss.skillNameKey;
     stats.bossDefeated = bossDefeated;
     stats.goldEarned = goldEarned;
     stats.musicTrack = musicTrackIdx;
@@ -1221,16 +1232,19 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
     getUpgradeStatus() {
       return UPGRADES.map((u) => ({
         name: u.name,
+        nameKey: u.nameKey,
         emoji: u.emoji,
         level: levels[u.id] ?? 0,
         maxLevel: u.maxLevel,
       }));
     },
     getActiveSynergies() {
-      return SYNERGY_TIERS.filter((t) => run.synergyUnlocked[t.id]).map((t) => ({
-        name: t.name,
-        desc: t.desc,
-        emoji: t.emoji,
+      return SYNERGY_TIERS.filter((tier) => run.synergyUnlocked[tier.id]).map((tier) => ({
+        name: tier.name,
+        nameKey: tier.nameKey,
+        desc: tier.desc,
+        descKey: tier.descKey,
+        emoji: tier.emoji,
       }));
     },
     getBossNames() {

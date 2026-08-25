@@ -5,7 +5,7 @@
       class="absolute left-3 top-3 z-10 rounded-full bg-white/10 px-4 py-1 text-sm font-black backdrop-blur-md transition hover:bg-white/20 active:scale-95"
       @click="emit('home')"
     >
-      ← 首頁
+      {{ t('menu.home') }}
     </button>
 
     <!-- Debug 開關 -->
@@ -15,22 +15,22 @@
         :class="debug ? 'bg-lime-400 text-black' : 'bg-white/10 text-white/60'"
         @click="toggleDebug"
       >
-        🛠 Debug {{ debug ? 'ON' : 'OFF' }}
+        {{ debug ? t('menu.debugOn') : t('menu.debugOff') }}
       </button>
       <button
         v-if="debug"
         class="rounded-full bg-amber-400 px-3 py-1 text-xs font-black text-black"
         @click="emit('add-gold', 1000)"
       >
-        +1000💰
+        {{ t('menu.debugGold') }}
       </button>
     </div>
 
     <div class="mx-auto flex max-w-3xl flex-col gap-6 p-6">
       <!-- 標題 -->
       <div class="pt-4 text-center">
-        <div class="text-5xl font-black tracking-wider">殭屍大逃殺</div>
-        <div class="mt-1 text-sm text-white/60">在殭屍潮中倖存・3D 倖存者類 roguelite</div>
+        <div class="text-5xl font-black tracking-wider">{{ t('landing.title') }}</div>
+        <div class="mt-1 text-sm text-white/60">{{ t('landing.subtitle') }}</div>
         <div class="mt-3 inline-block rounded-full bg-amber-400/90 px-5 py-1 text-lg font-black text-black">
           💰 {{ meta.gold }}
         </div>
@@ -38,7 +38,7 @@
 
       <!-- 角色 -->
       <div>
-        <div class="mb-2 text-lg font-black">選擇角色</div>
+        <div class="mb-2 text-lg font-black">{{ t('menu.selectCharacter') }}</div>
         <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <div
             v-for="c in characters"
@@ -61,24 +61,24 @@
                 {{ c.emoji }}
               </span>
             </div>
-            <span class="font-black">{{ c.name }}</span>
-            <span class="text-[0.72rem] font-bold leading-tight text-amber-200/80">{{ c.trait }}</span>
-            <span class="text-[0.66rem] leading-snug text-white/55">{{ c.desc }}</span>
+            <span class="font-black">{{ t(c.nameKey) }}</span>
+            <span class="text-[0.72rem] font-bold leading-tight text-amber-200/80">{{ t(c.traitKey) }}</span>
+            <span class="text-[0.66rem] leading-snug text-white/55">{{ t(c.descKey) }}</span>
             <span
               v-if="!isUnlocked(c.id)"
               class="mt-1 rounded-full bg-amber-400 px-2 py-0.5 text-xs font-black text-black"
               :class="{ 'opacity-40': meta.gold < c.cost }"
             >
-              解鎖 💰{{ c.cost }}
+              {{ t('menu.unlockCost', { cost: c.cost }) }}
             </span>
             <span
               v-else-if="masteryTier(meta.mastery[c.id]) > 0"
               class="mt-1 rounded-full bg-cyan-400/90 px-2 py-0.5 text-xs font-black text-black"
             >
-              熟練 Lv{{ masteryTier(meta.mastery[c.id]) }}
+              {{ t('menu.masteryLevel', { tier: masteryTier(meta.mastery[c.id]) }) }}
             </span>
-            <span v-else-if="masteryProgressLabel(meta.mastery[c.id])" class="mt-1 text-[0.6rem] text-white/40">
-              {{ masteryProgressLabel(meta.mastery[c.id]) }}
+            <span v-else-if="masteryProgressText(c.id)" class="mt-1 text-[0.6rem] text-white/40">
+              {{ masteryProgressText(c.id) }}
             </span>
           </div>
         </div>
@@ -86,7 +86,7 @@
 
       <!-- 商店 -->
       <div>
-        <div class="mb-2 text-lg font-black">永久強化</div>
+        <div class="mb-2 text-lg font-black">{{ t('menu.permaUpgrades') }}</div>
         <div class="flex flex-col gap-2">
           <div
             v-for="p in perma"
@@ -95,8 +95,8 @@
           >
             <span class="text-2xl">{{ p.emoji }}</span>
             <div class="flex-1">
-              <div class="font-black">{{ p.name }} <span class="text-white/50">{{ level(p.id) }}/{{ p.maxLevel }}</span></div>
-              <div class="text-xs text-white/60">{{ p.desc }}</div>
+              <div class="font-black">{{ t(p.nameKey) }} <span class="text-white/50">{{ level(p.id) }}/{{ p.maxLevel }}</span></div>
+              <div class="text-xs text-white/60">{{ t(p.descKey) }}</div>
             </div>
             <button
               class="rounded-full px-4 py-2 text-sm font-black transition"
@@ -104,7 +104,7 @@
               :disabled="!canBuy(p)"
               @click="emit('buy', p.id)"
             >
-              {{ level(p.id) >= p.maxLevel ? '已滿' : `💰${cost(p)}` }}
+              {{ level(p.id) >= p.maxLevel ? t('menu.permaMaxed') : `💰${cost(p)}` }}
             </button>
           </div>
         </div>
@@ -115,7 +115,7 @@
         class="sticky bottom-4 mt-2 w-full rounded-full bg-amber-400 py-4 text-2xl font-black text-black shadow-lg transition hover:bg-amber-300 active:scale-95"
         @click="emit('start', selectedId)"
       >
-        ▶ 開始（{{ selectedName }}）
+        {{ t('menu.start', { name: selectedName }) }}
       </button>
 
     </div>
@@ -125,9 +125,11 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { CHARACTERS, getCharacter, type Character } from '../game/characters';
-import { PERMA, permaCost, masteryTier, masteryProgressLabel, type MetaData, type PermaUpgrade } from '../game/meta';
+import { PERMA, permaCost, masteryTier, masteryProgress, type MetaData, type PermaUpgrade } from '../game/meta';
 import { setupCharacterPreview, type PreviewHandle } from '../game/character-previews';
+import { useI18n } from '../i18n';
 
+const { t } = useI18n();
 const props = defineProps<{ meta: MetaData }>();
 const emit = defineEmits<{
   (e: 'start', characterId: string): void;
@@ -180,7 +182,12 @@ function toggleDebug() {
   localStorage.setItem(DEBUG_KEY, debug.value ? '1' : '0');
 }
 
-const selectedName = computed(() => getCharacter(selectedId.value).name);
+const selectedName = computed(() => t(getCharacter(selectedId.value).nameKey));
+
+function masteryProgressText(charId: string): string | null {
+  const p = masteryProgress(props.meta.mastery[charId]);
+  return p ? t(p.key, { cur: p.cur, max: p.max }) : null;
+}
 
 function isUnlocked(id: string) {
   return debug.value || props.meta.unlocked.includes(id);

@@ -5,19 +5,21 @@ import { getCharacter } from './characters';
 export interface PermaUpgrade {
   id: string;
   name: string;
+  nameKey: string;
   emoji: string;
   desc: string;
+  descKey: string;
   maxLevel: number;
   costBase: number;
   costStep: number;
 }
 
 export const PERMA: PermaUpgrade[] = [
-  { id: 'might', name: '威力', emoji: '⚔️', desc: '起始傷害 +1／級', maxLevel: 5, costBase: 100, costStep: 80 },
-  { id: 'haste', name: '急速', emoji: '⚡', desc: '起始攻速 +6%／級', maxLevel: 5, costBase: 120, costStep: 90 },
-  { id: 'vigor', name: '活力', emoji: '❤️', desc: '起始生命 +20／級', maxLevel: 5, costBase: 100, costStep: 80 },
-  { id: 'swift', name: '敏捷', emoji: '👟', desc: '起始移速 +5%／級', maxLevel: 5, costBase: 100, costStep: 80 },
-  { id: 'greed', name: '貪婪', emoji: '💰', desc: '金幣獲得 +15%／級', maxLevel: 5, costBase: 150, costStep: 120 },
+  { id: 'might', name: '威力', nameKey: 'perma.might.name', emoji: '⚔️', desc: '起始傷害 +1／級', descKey: 'perma.might.desc', maxLevel: 5, costBase: 100, costStep: 80 },
+  { id: 'haste', name: '急速', nameKey: 'perma.haste.name', emoji: '⚡', desc: '起始攻速 +6%／級', descKey: 'perma.haste.desc', maxLevel: 5, costBase: 120, costStep: 90 },
+  { id: 'vigor', name: '活力', nameKey: 'perma.vigor.name', emoji: '❤️', desc: '起始生命 +20／級', descKey: 'perma.vigor.desc', maxLevel: 5, costBase: 100, costStep: 80 },
+  { id: 'swift', name: '敏捷', nameKey: 'perma.swift.name', emoji: '👟', desc: '起始移速 +5%／級', descKey: 'perma.swift.desc', maxLevel: 5, costBase: 100, costStep: 80 },
+  { id: 'greed', name: '貪婪', nameKey: 'perma.greed.name', emoji: '💰', desc: '金幣獲得 +15%／級', descKey: 'perma.greed.desc', maxLevel: 5, costBase: 150, costStep: 120 },
 ];
 
 export function permaCost(p: PermaUpgrade, currentLevel: number): number {
@@ -72,13 +74,13 @@ export function masteryTier(progress: MasteryProgress | undefined): 0 | 1 | 2 | 
   return 0;
 }
 
-/** 下一等級的進度文字（供角色卡顯示，如「熟練度 32/50」），已滿等回傳 null */
-export function masteryProgressLabel(progress: MasteryProgress | undefined): string | null {
+/** 下一等級的進度資料（供角色卡顯示，如「熟練度 32/50」；UI 端用 i18n key 組字串），已滿等回傳 null */
+export function masteryProgress(progress: MasteryProgress | undefined): { key: string; cur: number; max: number } | null {
   const tier = masteryTier(progress);
   const p = progress ?? { kills: 0, wins: 0 };
-  if (tier === 0) return `熟練度 ${p.kills}/${MASTERY_TIER1_KILLS}`;
-  if (tier === 1) return `熟練度 ${p.kills}/${MASTERY_TIER2_KILLS}`;
-  if (tier === 2) return `熟練度 ${p.wins}/${MASTERY_TIER3_WINS} 勝`;
+  if (tier === 0) return { key: 'menu.masteryKillsProgress', cur: p.kills, max: MASTERY_TIER1_KILLS };
+  if (tier === 1) return { key: 'menu.masteryKillsProgress', cur: p.kills, max: MASTERY_TIER2_KILLS };
+  if (tier === 2) return { key: 'menu.masteryWinsProgress', cur: p.wins, max: MASTERY_TIER3_WINS };
   return null;
 }
 

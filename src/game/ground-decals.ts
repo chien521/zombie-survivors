@@ -1,5 +1,6 @@
 import { Scene, MeshBuilder, StandardMaterial, DynamicTexture, Color3, TransformNode, SceneLoader } from '@babylonjs/core';
 import '@babylonjs/loaders';
+import './draco-config';
 import { CONFIG } from './config';
 
 /** 路磚原生尺寸（8×8） */

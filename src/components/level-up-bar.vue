@@ -3,7 +3,7 @@
   <div class="pointer-events-none absolute inset-x-0 bottom-44 z-20 flex justify-center px-3 sm:bottom-10">
     <div class="pointer-events-auto w-full max-w-md rounded-2xl bg-black/55 p-2 shadow-2xl ring-1 ring-amber-300/50 backdrop-blur-md">
       <div class="mb-1 text-center text-xs font-black text-amber-300">
-        ⬆ 升級！選一個強化<span v-if="pending > 1" class="text-white/60">（待選 {{ pending }}）</span>
+        {{ t('levelup.barTitle') }}<span v-if="pending > 1" class="text-white/60">{{ t('levelup.pending', { n: pending }) }}</span>
       </div>
       <div class="grid grid-cols-3 gap-2">
         <button
@@ -13,8 +13,8 @@
           @pointerdown.prevent="emit('choose', i)"
         >
           <span class="text-2xl sm:text-3xl">{{ c.emoji }}</span>
-          <span class="text-xs font-black leading-tight text-white sm:text-sm">{{ c.name }}</span>
-          <span class="text-[0.62rem] leading-tight text-white">{{ c.desc }}</span>
+          <span class="text-xs font-black leading-tight text-white sm:text-sm">{{ c.nameKey ? t(c.nameKey) : c.name }}</span>
+          <span class="text-[0.62rem] leading-tight text-white">{{ c.descKey ? t(c.descKey) : c.desc }}</span>
         </button>
       </div>
     </div>
@@ -23,7 +23,9 @@
 
 <script setup lang="ts">
 import type { ChoiceView } from '../game/game';
+import { useI18n } from '../i18n';
 
+const { t } = useI18n();
 defineProps<{ choices: ChoiceView[]; pending: number }>();
 const emit = defineEmits<{ (e: 'choose', index: number): void }>();
 </script>

@@ -2,7 +2,12 @@ import type { RunState } from './upgrades';
 
 export interface Character {
   id: string;
+  /** 中文原文（後端排行榜提交用，維持原樣不隨語系變動） */
   name: string;
+  /** UI 顯示用翻譯 key（見 src/i18n.ts） */
+  nameKey: string;
+  traitKey: string;
+  descKey: string;
   emoji: string;
   /** 解鎖所需金幣，0 為預設已解鎖 */
   cost: number;
@@ -24,6 +29,9 @@ export const CHARACTERS: Character[] = [
   {
     id: 'matt',
     name: '麥特',
+    nameKey: 'character.matt.name',
+    traitKey: 'character.matt.trait',
+    descKey: 'character.matt.desc',
     emoji: '🔫',
     cost: 0,
     trait: '均衡｜起始攻擊：強化單發子彈',
@@ -38,6 +46,9 @@ export const CHARACTERS: Character[] = [
   {
     id: 'lis',
     name: '莉絲',
+    nameKey: 'character.lis.name',
+    traitKey: 'character.lis.trait',
+    descKey: 'character.lis.desc',
     emoji: '👟',
     cost: 300,
     trait: '高速脆皮｜起始攻擊：三連發散射',
@@ -54,6 +65,9 @@ export const CHARACTERS: Character[] = [
   {
     id: 'sam',
     name: '山姆',
+    nameKey: 'character.sam.name',
+    traitKey: 'character.sam.trait',
+    descKey: 'character.sam.desc',
     emoji: '⚡',
     cost: 300,
     trait: '輸出爆發｜起始攻擊：極速連射',
@@ -69,6 +83,9 @@ export const CHARACTERS: Character[] = [
   {
     id: 'shaun',
     name: '尚恩',
+    nameKey: 'character.shaun.name',
+    traitKey: 'character.shaun.trait',
+    descKey: 'character.shaun.desc',
     emoji: '🧲',
     cost: 200,
     trait: '拾取廣｜起始攻擊：環繞飛斧',
@@ -85,6 +102,9 @@ export const CHARACTERS: Character[] = [
   {
     id: 'shepherd',
     name: '德國狼犬',
+    nameKey: 'character.shepherd.name',
+    traitKey: 'character.shepherd.trait',
+    descKey: 'character.shepherd.desc',
     emoji: '🐕',
     cost: 400,
     trait: '機動忠犬｜起始攻擊：連鎖閃電',
@@ -101,6 +121,9 @@ export const CHARACTERS: Character[] = [
   {
     id: 'pug',
     name: '巴哥犬',
+    nameKey: 'character.pug.name',
+    traitKey: 'character.pug.trait',
+    descKey: 'character.pug.desc',
     emoji: '🐶',
     cost: 350,
     trait: '肉盾｜起始攻擊：傷害光環',
@@ -120,6 +143,9 @@ export const CHARACTERS: Character[] = [
   {
     id: 'anne',
     name: '砲手安妮',
+    nameKey: 'character.anne.name',
+    traitKey: 'character.anne.trait',
+    descKey: 'character.anne.desc',
     emoji: '💥',
     cost: 400,
     trait: '範圍轟炸｜起始攻擊：新星爆',
@@ -135,6 +161,9 @@ export const CHARACTERS: Character[] = [
   {
     id: 'mako',
     name: '鯊牙馬可',
+    nameKey: 'character.mako.name',
+    traitKey: 'character.mako.trait',
+    descKey: 'character.mako.desc',
     emoji: '🦈',
     cost: 450,
     trait: '暴擊爆發｜起始攻擊：高暴擊',
