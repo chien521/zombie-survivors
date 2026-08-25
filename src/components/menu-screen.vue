@@ -71,6 +71,15 @@
             >
               解鎖 💰{{ c.cost }}
             </span>
+            <span
+              v-else-if="masteryTier(meta.mastery[c.id]) > 0"
+              class="mt-1 rounded-full bg-cyan-400/90 px-2 py-0.5 text-xs font-black text-black"
+            >
+              熟練 Lv{{ masteryTier(meta.mastery[c.id]) }}
+            </span>
+            <span v-else-if="masteryProgressLabel(meta.mastery[c.id])" class="mt-1 text-[0.6rem] text-white/40">
+              {{ masteryProgressLabel(meta.mastery[c.id]) }}
+            </span>
           </div>
         </div>
       </div>
@@ -116,7 +125,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { CHARACTERS, getCharacter, type Character } from '../game/characters';
-import { PERMA, permaCost, type MetaData, type PermaUpgrade } from '../game/meta';
+import { PERMA, permaCost, masteryTier, masteryProgressLabel, type MetaData, type PermaUpgrade } from '../game/meta';
 import { setupCharacterPreview, type PreviewHandle } from '../game/character-previews';
 
 const props = defineProps<{ meta: MetaData }>();

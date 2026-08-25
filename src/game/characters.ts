@@ -16,6 +16,8 @@ export interface Character {
   model?: string;
   /** 套用至起始 RunState 的角色差異 */
   apply: (s: RunState) => void;
+  /** 該角色熟練度 Lv3（累積 10 勝）解鎖的專屬加成 */
+  masteryBonus?: (s: RunState) => void;
 }
 
 export const CHARACTERS: Character[] = [
@@ -31,6 +33,7 @@ export const CHARACTERS: Character[] = [
     apply: (s) => {
       s.damage += 1;
     },
+    masteryBonus: (s) => (s.projectileCount += 1),
   },
   {
     id: 'lis',
@@ -46,6 +49,7 @@ export const CHARACTERS: Character[] = [
       s.maxHp -= 25;
       s.projectileCount = 3;
     },
+    masteryBonus: (s) => (s.projectileCount += 1),
   },
   {
     id: 'sam',
@@ -60,6 +64,7 @@ export const CHARACTERS: Character[] = [
       s.fireInterval *= 0.55;
       s.maxHp -= 15;
     },
+    masteryBonus: (s) => (s.fireInterval *= 0.9),
   },
   {
     id: 'shaun',
@@ -75,6 +80,7 @@ export const CHARACTERS: Character[] = [
       s.xpMultiplier *= 1.2;
       s.orbitalCount = 1;
     },
+    masteryBonus: (s) => (s.orbitalCount += 1),
   },
   {
     id: 'shepherd',
@@ -90,6 +96,7 @@ export const CHARACTERS: Character[] = [
       s.range *= 1.15;
       s.lightningCount = 1;
     },
+    masteryBonus: (s) => (s.lightningCount += 1),
   },
   {
     id: 'pug',
@@ -105,6 +112,10 @@ export const CHARACTERS: Character[] = [
       s.moveSpeed *= 0.9;
       s.auraRadius = 4;
     },
+    masteryBonus: (s) => {
+      s.auraRadius += 1.5;
+      s.auraDamage += 1;
+    },
   },
   {
     id: 'anne',
@@ -119,6 +130,7 @@ export const CHARACTERS: Character[] = [
       s.novaRadius = 6;
       s.novaDamage += 2;
     },
+    masteryBonus: (s) => (s.novaDamage += 2),
   },
   {
     id: 'mako',
@@ -133,6 +145,7 @@ export const CHARACTERS: Character[] = [
       s.critChance = 0.3;
       s.damage += 1;
     },
+    masteryBonus: (s) => (s.critChance = Math.min(0.6, s.critChance + 0.1)),
   },
 ];
 

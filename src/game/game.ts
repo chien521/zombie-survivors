@@ -43,7 +43,7 @@ import { Boss, BOSS_COUNT, BOSS_INFO } from './boss';
 import { BossHazards } from './boss-hazards';
 import { BloodDecals } from './decals';
 import { Obstacle, resolveObstacles } from './obstacles';
-import { createRunState, rollChoices, xpForLevel, UPGRADES, type RunState, type Upgrade } from './upgrades';
+import { createRunState, rollChoices, xpForLevel, checkSynergyUnlocks, UPGRADES, SYNERGY_TIERS, type RunState, type Upgrade } from './upgrades';
 import { levelUpBurst, bossDeathBurst, hurtBurst, enemyDeathBurst, spawnText, setGlowLayer } from './effects';
 import { sound } from './sound';
 
@@ -145,6 +145,7 @@ export interface GameHandle {
   getDebugParams: () => DebugParamView[];
   setDebugParam: (index: number, value: number) => void;
   getUpgradeStatus: () => UpgradeStatusView[];
+  getActiveSynergies: () => SynergyStatusView[];
   getBossNames: () => string[];
   summonBoss: (index: number) => void;
   /** 標記本局動過 debug（開啟 debug 面板時呼叫）→ 不列入排行榜 */
@@ -156,6 +157,12 @@ export interface UpgradeStatusView {
   emoji: string;
   level: number;
   maxLevel: number;
+}
+
+export interface SynergyStatusView {
+  name: string;
+  desc: string;
+  emoji: string;
 }
 
 export interface DebugParamView {
@@ -323,7 +330,7 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
   let bossDefeated = 0;
 
   /** 一輪狀態 */
-  let run: RunState = { ...runTemplate };
+  let run: RunState = { ...runTemplate, synergyUnlocked: {} };
   let levels: Record<string, number> = {};
   let level = 1;
   let xp = 0;
@@ -1099,6 +1106,7 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
       if (!upgrade) return;
       upgrade.apply(run);
       levels[upgrade.id] = (levels[upgrade.id] ?? 0) + 1;
+      checkSynergyUnlocks(run, levels);
       /** 最大生命升級補滿，其餘升級回復 30% 最大生命 */
       if (upgrade.id === 'maxhp') hp = run.maxHp;
       else hp = Math.min(run.maxHp, hp + run.maxHp * 0.3);
@@ -1114,7 +1122,7 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
       pushStats();
     },
     restart() {
-      run = { ...runTemplate };
+      run = { ...runTemplate, synergyUnlocked: {} };
       levels = {};
       level = 1;
       xp = 0;
@@ -1216,6 +1224,13 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
         emoji: u.emoji,
         level: levels[u.id] ?? 0,
         maxLevel: u.maxLevel,
+      }));
+    },
+    getActiveSynergies() {
+      return SYNERGY_TIERS.filter((t) => run.synergyUnlocked[t.id]).map((t) => ({
+        name: t.name,
+        desc: t.desc,
+        emoji: t.emoji,
       }));
     },
     getBossNames() {

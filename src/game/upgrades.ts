@@ -49,6 +49,8 @@ export interface RunState {
   pierce: number; // 子彈穿透數
   explodeRadius: number; // 爆裂半徑（0=關）
   explodeDamage: number;
+  // 升級羈絆（synergy）：已解鎖的羈絆 id 集合，每局重置
+  synergyUnlocked: Record<string, true>;
 }
 
 export function createRunState(): RunState {
@@ -88,8 +90,12 @@ export function createRunState(): RunState {
     pierce: 0,
     explodeRadius: 0,
     explodeDamage: 3,
+    synergyUnlocked: {},
   };
 }
+
+/** 升級羈絆分類（每個升級恰屬於一種流派） */
+export type SynergyTag = 'berserker' | 'controller' | 'guardian' | 'swarm' | 'scout';
 
 export interface Upgrade {
   id: string;
@@ -97,33 +103,37 @@ export interface Upgrade {
   desc: string;
   emoji: string;
   maxLevel: number;
+  /** 羈絆流派；死鬥模式的祝福/詛咒等一次性特殊選項不屬於任何流派，留空即可 */
+  tag?: SynergyTag;
   apply: (s: RunState) => void;
 }
 
 export const UPGRADES: Upgrade[] = [
-  { id: 'damage', name: '攻擊力', desc: '武器傷害 +1', emoji: '⚔️', maxLevel: 8, apply: (s) => (s.damage += 1) },
-  { id: 'firerate', name: '攻速', desc: '發射間隔 −12%', emoji: '⚡', maxLevel: 8, apply: (s) => (s.fireInterval *= 0.88) },
-  { id: 'multishot', name: '多重彈', desc: '投射物 +1', emoji: '🎯', maxLevel: 4, apply: (s) => (s.projectileCount += 1) },
-  { id: 'range', name: '射程', desc: '鎖定範圍 +20%', emoji: '🔭', maxLevel: 5, apply: (s) => (s.range *= 1.2) },
-  { id: 'projspeed', name: '彈速', desc: '投射物速度 +20%', emoji: '💨', maxLevel: 5, apply: (s) => (s.projectileSpeed *= 1.2) },
-  { id: 'movespeed', name: '移動速度', desc: '移速 +10%', emoji: '👟', maxLevel: 5, apply: (s) => (s.moveSpeed *= 1.1) },
+  { id: 'damage', name: '攻擊力', desc: '武器傷害 +1', emoji: '⚔️', maxLevel: 8, tag: 'berserker', apply: (s) => (s.damage += 1) },
+  { id: 'firerate', name: '攻速', desc: '發射間隔 −12%', emoji: '⚡', maxLevel: 8, tag: 'berserker', apply: (s) => (s.fireInterval *= 0.88) },
+  { id: 'multishot', name: '多重彈', desc: '投射物 +1', emoji: '🎯', maxLevel: 4, tag: 'scout', apply: (s) => (s.projectileCount += 1) },
+  { id: 'range', name: '射程', desc: '鎖定範圍 +20%', emoji: '🔭', maxLevel: 5, tag: 'scout', apply: (s) => (s.range *= 1.2) },
+  { id: 'projspeed', name: '彈速', desc: '投射物速度 +20%', emoji: '💨', maxLevel: 5, tag: 'scout', apply: (s) => (s.projectileSpeed *= 1.2) },
+  { id: 'movespeed', name: '移動速度', desc: '移速 +10%', emoji: '👟', maxLevel: 5, tag: 'scout', apply: (s) => (s.moveSpeed *= 1.1) },
   {
     id: 'jump',
     name: '跳躍強化',
     desc: '跳得更高、滯空更久（騰空可閃避接觸傷害）',
     emoji: '🦘',
     maxLevel: 4,
+    tag: 'scout',
     apply: (s) => (s.jumpStrength += 2),
   },
-  { id: 'maxhp', name: '最大生命', desc: '生命上限 +20 並補滿', emoji: '❤️', maxLevel: 5, apply: (s) => (s.maxHp += 20) },
-  { id: 'magnet', name: '拾取範圍', desc: '經驗吸取範圍 +30%', emoji: '🧲', maxLevel: 5, apply: (s) => (s.pickupRadius *= 1.3) },
-  { id: 'xpgain', name: '經驗加成', desc: '經驗獲得 +15%', emoji: '⭐', maxLevel: 5, apply: (s) => (s.xpMultiplier *= 1.15) },
+  { id: 'maxhp', name: '最大生命', desc: '生命上限 +20 並補滿', emoji: '❤️', maxLevel: 5, tag: 'guardian', apply: (s) => (s.maxHp += 20) },
+  { id: 'magnet', name: '拾取範圍', desc: '經驗吸取範圍 +30%', emoji: '🧲', maxLevel: 5, tag: 'scout', apply: (s) => (s.pickupRadius *= 1.3) },
+  { id: 'xpgain', name: '經驗加成', desc: '經驗獲得 +15%', emoji: '⭐', maxLevel: 5, tag: 'scout', apply: (s) => (s.xpMultiplier *= 1.15) },
   {
     id: 'orbital',
     name: '環繞飛斧',
     desc: '召喚環繞身邊的旋轉斧頭，碰撞傷害敵人；已有則 +1 把並擴大環繞範圍',
     emoji: '🪓',
     maxLevel: 10,
+    tag: 'swarm',
     apply: (s) => {
       s.orbitalCount += 1;
       s.orbitalDamage += 1;
@@ -136,6 +146,7 @@ export const UPGRADES: Upgrade[] = [
     desc: '展開持續傷害光環，自動灼燒靠近的敵人；已有則擴大並增傷',
     emoji: '🌀',
     maxLevel: 10,
+    tag: 'swarm',
     apply: (s) => {
       s.auraRadius = s.auraRadius === 0 ? 4 : s.auraRadius + 1.6;
       s.auraDamage += 1;
@@ -147,6 +158,7 @@ export const UPGRADES: Upgrade[] = [
     desc: '定期電擊最近的敵人並向周圍連鎖；已有則 +1 連鎖數並增傷',
     emoji: '⚡',
     maxLevel: 10,
+    tag: 'controller',
     apply: (s) => {
       s.lightningCount += 1;
       s.lightningDamage += 1;
@@ -158,6 +170,7 @@ export const UPGRADES: Upgrade[] = [
     desc: '定期釋放向外擴張的衝擊波，炸傷周圍所有敵人；已有則擴大並增傷',
     emoji: '💥',
     maxLevel: 10,
+    tag: 'swarm',
     apply: (s) => {
       s.novaRadius = s.novaRadius === 0 ? 6 : s.novaRadius + 1;
       s.novaDamage += 2;
@@ -169,6 +182,7 @@ export const UPGRADES: Upgrade[] = [
     desc: '定期丟出長矛飛出再飛回，沿途貫穿傷害敵人；已有則 +1 支並增傷',
     emoji: '🪃',
     maxLevel: 10,
+    tag: 'swarm',
     apply: (s) => {
       s.boomerangCount += 1;
       s.boomerangDamage += 1;
@@ -181,6 +195,7 @@ export const UPGRADES: Upgrade[] = [
     desc: '身邊一圈的殭屍移動變慢；已有則擴大範圍',
     emoji: '❄️',
     maxLevel: 5,
+    tag: 'controller',
     apply: (s) => {
       s.slowRadius = s.slowRadius === 0 ? 7 : s.slowRadius + 1.5;
       s.slowFactor = Math.max(0.3, s.slowFactor - 0.05);
@@ -192,6 +207,7 @@ export const UPGRADES: Upgrade[] = [
     desc: '全場殭屍永久減速 8%',
     emoji: '🐌',
     maxLevel: 5,
+    tag: 'controller',
     apply: (s) => (s.enemySpeedMul *= 0.92),
   },
   {
@@ -200,6 +216,7 @@ export const UPGRADES: Upgrade[] = [
     desc: '子彈命中有機率短暫冰凍殭屍；已有則機率提升',
     emoji: '🧊',
     maxLevel: 5,
+    tag: 'controller',
     apply: (s) => (s.freezeChance = Math.min(0.5, s.freezeChance + 0.08)),
   },
   // ===== 防禦／續航 =====
@@ -209,6 +226,7 @@ export const UPGRADES: Upgrade[] = [
     desc: '擊殺殭屍回復生命（每秒回血有上限）；已有則上限提升',
     emoji: '🩸',
     maxLevel: 5,
+    tag: 'guardian',
     apply: (s) => (s.lifestealOnKill += 0.35),
   },
   {
@@ -217,6 +235,7 @@ export const UPGRADES: Upgrade[] = [
     desc: '每秒回復生命；已有則回更多',
     emoji: '❤️‍🩹',
     maxLevel: 5,
+    tag: 'guardian',
     apply: (s) => (s.hpRegen += 0.7),
   },
   {
@@ -225,6 +244,7 @@ export const UPGRADES: Upgrade[] = [
     desc: '受到的傷害減免 10%（最多 70%）',
     emoji: '🛡️',
     maxLevel: 5,
+    tag: 'guardian',
     apply: (s) => (s.damageReduction = Math.min(0.7, s.damageReduction + 0.1)),
   },
   {
@@ -233,6 +253,7 @@ export const UPGRADES: Upgrade[] = [
     desc: '定期生成可擋一次傷害的護盾；已有則生成更快',
     emoji: '🔆',
     maxLevel: 5,
+    tag: 'guardian',
     apply: (s) => (s.shieldInterval = s.shieldInterval === 0 ? 12 : Math.max(4, s.shieldInterval - 2)),
   },
   // ===== 進攻修飾 =====
@@ -242,6 +263,7 @@ export const UPGRADES: Upgrade[] = [
     desc: '子彈有機率造成 2 倍傷害；已有則機率提升',
     emoji: '💥',
     maxLevel: 5,
+    tag: 'berserker',
     apply: (s) => (s.critChance = Math.min(0.6, s.critChance + 0.1)),
   },
   {
@@ -250,6 +272,7 @@ export const UPGRADES: Upgrade[] = [
     desc: '子彈可貫穿 +1 隻殭屍不消失',
     emoji: '🎯',
     maxLevel: 4,
+    tag: 'berserker',
     apply: (s) => (s.pierce += 1),
   },
   {
@@ -258,12 +281,82 @@ export const UPGRADES: Upgrade[] = [
     desc: '子彈命中產生範圍爆炸；已有則擴大並增傷',
     emoji: '🧨',
     maxLevel: 5,
+    tag: 'berserker',
     apply: (s) => {
       s.explodeRadius = s.explodeRadius === 0 ? 3 : s.explodeRadius + 0.8;
       s.explodeDamage += 2;
     },
   },
 ];
+
+export interface SynergyTier {
+  id: string;
+  tag: SynergyTag;
+  /** 該流派需擁有幾種不同升級（不看等級，只看是否擁有）才會解鎖 */
+  threshold: number;
+  name: string;
+  desc: string;
+  emoji: string;
+  apply: (s: RunState) => void;
+}
+
+/** 升級羈絆：同一流派擁有的「不同升級種類數」達門檻時，一次性解鎖額外加成（不隨等級重複疊加） */
+export const SYNERGY_TIERS: SynergyTier[] = [
+  { id: 'berserker-1', tag: 'berserker', threshold: 3, name: '嗜血 I', desc: '暴擊率額外 +5%', emoji: '🔴', apply: (s) => (s.critChance = Math.min(0.6, s.critChance + 0.05)) },
+  { id: 'berserker-2', tag: 'berserker', threshold: 5, name: '嗜血 II', desc: '暴擊傷害倍率額外 +0.5', emoji: '🔴', apply: (s) => (s.critMult += 0.5) },
+  { id: 'controller-1', tag: 'controller', threshold: 2, name: '寒霜 I', desc: '冰凍機率額外 +5%', emoji: '🔵', apply: (s) => (s.freezeChance = Math.min(0.5, s.freezeChance + 0.05)) },
+  { id: 'controller-2', tag: 'controller', threshold: 4, name: '寒霜 II', desc: '全場殭屍再減速 5%', emoji: '🔵', apply: (s) => (s.enemySpeedMul *= 0.95) },
+  { id: 'guardian-1', tag: 'guardian', threshold: 3, name: '不屈 I', desc: '傷害減免額外 +5%', emoji: '🟢', apply: (s) => (s.damageReduction = Math.min(0.7, s.damageReduction + 0.05)) },
+  { id: 'guardian-2', tag: 'guardian', threshold: 5, name: '不屈 II', desc: '每秒回血額外 +1', emoji: '🟢', apply: (s) => (s.hpRegen += 1) },
+  {
+    id: 'swarm-1',
+    tag: 'swarm',
+    threshold: 2,
+    name: '亂舞 I',
+    desc: '所有副武器傷害額外 +1',
+    emoji: '🟣',
+    apply: (s) => {
+      s.orbitalDamage += 1;
+      s.auraDamage += 1;
+      s.lightningDamage += 1;
+      s.novaDamage += 1;
+      s.boomerangDamage += 1;
+    },
+  },
+  {
+    id: 'swarm-2',
+    tag: 'swarm',
+    threshold: 4,
+    name: '亂舞 II',
+    desc: '所有副武器傷害再 +1，環繞／光環範圍擴大',
+    emoji: '🟣',
+    apply: (s) => {
+      s.orbitalDamage += 1;
+      s.auraDamage += 1;
+      s.lightningDamage += 1;
+      s.novaDamage += 1;
+      s.boomerangDamage += 1;
+      s.orbitalRadius += 1;
+      s.auraRadius += 1;
+    },
+  },
+  { id: 'scout-1', tag: 'scout', threshold: 4, name: '疾行 I', desc: '經驗獲得額外 +10%', emoji: '🟡', apply: (s) => (s.xpMultiplier *= 1.1) },
+  { id: 'scout-2', tag: 'scout', threshold: 7, name: '疾行 II', desc: '移速額外 +5%、拾取範圍額外 +30%', emoji: '🟡', apply: (s) => { s.moveSpeed *= 1.05; s.pickupRadius *= 1.3; } },
+];
+
+/** 檢查是否有新的流派羈絆達門檻；若有則套用加成、記錄已解鎖，並回傳新解鎖的羈絆列表（供 UI 提示） */
+export function checkSynergyUnlocks(run: RunState, levels: Record<string, number>): SynergyTier[] {
+  const unlocked: SynergyTier[] = [];
+  for (const tier of SYNERGY_TIERS) {
+    if (run.synergyUnlocked[tier.id]) continue;
+    const owned = UPGRADES.filter((u) => u.tag === tier.tag && (levels[u.id] ?? 0) > 0).length;
+    if (owned < tier.threshold) continue;
+    tier.apply(run);
+    run.synergyUnlocked[tier.id] = true;
+    unlocked.push(tier);
+  }
+  return unlocked;
+}
 
 /** 從尚未滿級的升級中隨機抽 n 個；uncapped=true 時忽略滿級上限（死鬥無盡強化） */
 export function rollChoices(levels: Record<string, number>, n = 3, uncapped = false): Upgrade[] {

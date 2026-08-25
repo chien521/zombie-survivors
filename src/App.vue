@@ -47,6 +47,7 @@ import MessageBoardScreen from './components/message-board-screen.vue';
 import OnlineHistoryScreen from './components/online-history-screen.vue';
 import ModeScreen from './components/mode-screen.vue';
 import { loadMeta, saveMeta, computeStartRunState, goldMultiplier, PERMA, permaCost } from './game/meta';
+import type { MasteryProgress } from './game/meta';
 import { getCharacter } from './game/characters';
 import { addRecord, recordStats, getPlayerName } from './game/leaderboard';
 import { getDifficulty, type Difficulty } from './game/difficulty';
@@ -82,7 +83,7 @@ function onSelectDifficulty(id: string) {
 function onStart(charId: string) {
   const ch = getCharacter(charId);
   lastCharId = charId;
-  startRun.value = computeStartRunState(charId, meta.perma);
+  startRun.value = computeStartRunState(charId, meta.perma, meta.mastery);
   characterColor.value = ch.bodyColor;
   characterModel.value = ch.model;
   goldMul.value = goldMultiplier(meta.perma) * difficulty.value.goldReward;
@@ -91,6 +92,13 @@ function onStart(charId: string) {
 
 function onGameOver(result: RunResult) {
   meta.gold += result.gold;
+  /** 熟練度：動過 debug 的局不計入（跟本機/全球排行榜同一套判定） */
+  if (!result.cheated) {
+    const progress: MasteryProgress = meta.mastery[lastCharId] ?? { kills: 0, wins: 0 };
+    progress.kills += result.kills;
+    if (result.won) progress.wins += 1;
+    meta.mastery[lastCharId] = progress;
+  }
   saveMeta(meta);
   const playerName = getPlayerName() || '倖存者';
   const character = getCharacter(lastCharId).name;

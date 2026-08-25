@@ -66,6 +66,13 @@
       v-if="showStats && stats.state === 'running'"
       class="absolute right-4 top-20 z-20 max-h-[78vh] w-60 overflow-y-auto rounded-2xl bg-black/75 p-3 text-xs text-white shadow-2xl ring-1 ring-white/10 backdrop-blur-md"
     >
+      <div v-if="activeSynergies.length" class="mb-3 rounded-lg bg-white/5 p-2">
+        <div class="mb-1 text-sm font-black text-amber-300">羈絆</div>
+        <div v-for="(syn, i) in activeSynergies" :key="i" class="mb-1 text-white/90">
+          <span>{{ syn.emoji }} {{ syn.name }}</span>
+          <span class="ml-1 text-white/50">— {{ syn.desc }}</span>
+        </div>
+      </div>
       <div class="mb-2 text-sm font-black text-cyan-300">技能等級</div>
       <div
         v-for="(u, i) in upgradeStatus"
@@ -191,6 +198,7 @@ import {
   type RunResult,
   type DebugParamView,
   type UpgradeStatusView,
+  type SynergyStatusView,
   type GameMode,
 } from '../game/game';
 import { QUALITIES, type QualityId } from '../game/quality';
@@ -259,6 +267,7 @@ const quality = ref<QualityId>((localStorage.getItem(QUALITY_KEY) as QualityId) 
 
 const showStats = ref(false);
 const upgradeStatus = ref<UpgradeStatusView[]>([]);
+const activeSynergies = ref<SynergyStatusView[]>([]);
 
 const showDebug = ref(false);
 const debugParams = ref<DebugParamView[]>([]);
@@ -285,7 +294,10 @@ onMounted(() => {
     mode: props.mode,
     onStats: (s) => {
       Object.assign(stats, s);
-      if (showStats.value && game) upgradeStatus.value = game.getUpgradeStatus();
+      if (showStats.value && game) {
+        upgradeStatus.value = game.getUpgradeStatus();
+        activeSynergies.value = game.getActiveSynergies();
+      }
     },
     onGameOver: (r) => emit('gameover', r),
   });
@@ -325,7 +337,10 @@ function onQuality() {
 }
 function onToggleStats() {
   showStats.value = !showStats.value;
-  if (showStats.value && game) upgradeStatus.value = game.getUpgradeStatus();
+  if (showStats.value && game) {
+    upgradeStatus.value = game.getUpgradeStatus();
+    activeSynergies.value = game.getActiveSynergies();
+  }
 }
 function onToggleDebug() {
   /** 每次開啟參數面板都需通過驗證（答對作者全名）；關閉不需要 */
