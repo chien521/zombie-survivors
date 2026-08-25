@@ -271,4 +271,15 @@ docs/                  # 介紹網站（GitHub Pages，/docs）
 ## 🎨 素材
 3D 模型取自第三方低面數模型包（角色、殭屍、武器、場景道具），實際使用的檔案以 Draco 壓縮後放在 `public/models/zombie/`。原始素材包置於 `download/`，已 gitignore、不納入版控。換皮做法詳見 [GAME.md](GAME.md)。
 
-**素材授權**：上游 repo 沒有留下每個模型檔案的來源／授權紀錄，本 fork 起新增 [docs/ASSET_LICENSES.md](docs/ASSET_LICENSES.md) 逐檔追蹤來源與授權狀態。目前已將 **6 個角色模型**＋**3 種武器道具**換成確認為 CC0 的素材（[Quaternius Ultimate Modular Men Pack](https://quaternius.com/packs/ultimatemodularcharacters.html)、[Frontend Pashtet Melee Weapon Pack](https://drxwat.itch.io/melee-weapon-pack)）；殭屍、王、場景道具、2 隻狗角色仍是上游原始檔案，於該檔案中標記為「unverified」，留待後續分批確認。
+**素材授權**：上游 repo 沒有留下每個模型檔案的來源／授權紀錄，本 fork 起新增 [docs/ASSET_LICENSES.md](docs/ASSET_LICENSES.md) 逐檔追蹤來源與授權狀態。目前已將 **6 個角色模型**＋**3 種武器道具**換成確認為 CC0 的素材（[Quaternius Ultimate Modular Men Pack](https://quaternius.com/packs/ultimatemodularcharacters.html)、[Frontend Pashtet Melee Weapon Pack](https://drxwat.itch.io/melee-weapon-pack)）。
+
+進一步比對後確認：現有的殭屍／場景道具／血跡貼花／2 隻狗角色模型，幾乎全部（用 `gltf-transform inspect` 逐檔比對頂點數與包圍盒，皆精確吻合）都來自 [**Quaternius「Post Apocalypse Pack」**](https://poly.pizza/bundle/Post-Apocolypse-Pack-jg0We8Clu0)，極可能就是上游原作實際使用的素材包。其中多數為 CC0，少數（德國狼犬、巴哥犬角色與 2 種殭屍變體）為 **CC-BY**（可自由使用，但需標註來源）——見下方「素材致謝」。剩餘缺口（3 隻專屬王模型、2 種骷髏殭屍、卡車道具）於 [docs/ASSET_LICENSES.md](docs/ASSET_LICENSES.md) 中列為「unverified」，留待後續分批確認／尋源。
+
+### 🙏 素材致謝
+以下模型使用 [Quaternius](https://quaternius.com/) 的 CC-BY 3.0 素材（[Post Apocalypse Pack](https://poly.pizza/bundle/Post-Apocolypse-Pack-jg0We8Clu0)），依授權條款標註來源：
+- `char_shepherd.glb`（德國狼犬角色）— "German Shepard" by Quaternius
+- `char_pug.glb`（巴哥犬角色）— "Characters Pug" by Quaternius
+- `zombie_ribcage.glb`（肋骨怪）— "Zombie half" by Quaternius
+- `zombie_chubby.glb`（胖殭屍）、`zombie_arm.glb`（斷臂殭屍）— "Zombie" / "Big arm" by Quaternius（此包內同名模型有 CC0 與 CC-BY 兩種版本，本 fork 無法百分之百確認這兩個檔案對應哪個確切版本，故一律標註致謝以策安全）
+
+授權全文：[CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)
