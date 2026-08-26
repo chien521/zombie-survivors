@@ -1,16 +1,16 @@
 # 撐到最後 Last Stand 🧟
 
 > 🍴 本專案 fork 自 [craig7351/zombie-survivors](https://github.com/craig7351/zombie-survivors)（原作者尚未於上游標註 license，本 fork 目前僅供個人開發／學習用途，公開上架前會另行確認授權）。在原版基礎上新增：
-> - **VIVERSE 平台登入整合**（`src/viverse/`）——詳見〈[VIVERSE 上架](#viverse-上架另一條發布路徑與-cloudflare-pages-並存)〉。
+> - **VIVERSE 平台登入與全球排行榜整合**（`src/viverse/`）——詳見〈[VIVERSE 上架](#viverse-上架另一條發布路徑與-cloudflare-pages-並存)〉。
 > - **升級羈絆**與**角色熟練度**兩套新的養成系統（見下方「🔗 升級羈絆」「🎖️ 角色熟練度」章節）。
 > - 6 個角色模型＋3 種武器道具換成來源明確的 **CC0 免費素材**（原版模型來源不明，見下方「🎨 素材」章節）。
 >
-> 原有玩法、Cloudflare D1 全球排行榜／留言板皆保持不變。
+> 原有玩法保持不變；留言板功能已移除，全球排行榜已由 Cloudflare D1 改為 **VIVERSE Leaderboard**（僅在 VIVERSE World App 內可用，見下方「VIVERSE 上架」）。
 
-3D 倖存者類（Vampire Survivors-like）roguelite。操控一名倖存者（或狗狗、海盜），在無盡殭屍潮中自動開火、撿經驗升級、三選一強化武器。兩種模式：**劇情模式**依序擊敗 8 隻殭屍王破關、**死鬥模式**無盡波數比誰撐最高。低面數美術、跨平台（桌機鍵鼠 + 手機觸控），含 **全球排行榜／即時在線人數**（Cloudflare D1 後端，離線自動回退本機）。
+3D 倖存者類（Vampire Survivors-like）roguelite。操控一名倖存者（或狗狗、海盜），在無盡殭屍潮中自動開火、撿經驗升級、三選一強化武器。兩種模式：**劇情模式**依序擊敗 8 隻殭屍王破關、**死鬥模式**無盡波數比誰撐最高。低面數美術、跨平台（桌機鍵鼠 + 手機觸控），含 **即時在線人數**（Cloudflare D1 後端，離線自動回退本機）與 **VIVERSE 全球排行榜**（僅 VIVERSE World App 內可用，本機／GitHub Pages／Cloudflare Pages 皆回退成本機排行）。
 
-> 線上試玩（GitHub Pages，隨 main 分支自動部署）：**https://chien521.github.io/zombie-survivors/**
-> 線上試玩（Cloudflare Pages，含全球排行榜／統計後端，⚠️ 目前為手動部署，版本可能落後）：**https://zombie-survivors-e4y.pages.dev**
+> 線上試玩（GitHub Pages，隨 main 分支自動部署，無全球排行榜）：**https://chien521.github.io/zombie-survivors/**
+> 線上試玩（Cloudflare Pages，含統計／即時在線後端，⚠️ 目前為手動部署，版本可能落後）：**https://zombie-survivors-e4y.pages.dev**
 > 介紹網站（上游原作）：**https://craig7351.github.io/zombie-survivors/**
 
 ![撐到最後 遊戲畫面](docs/assets/shot1.png)
@@ -72,7 +72,7 @@
 - **模式選擇**：按「遊戲開始」後選 🧟 劇情 或 💀 死鬥。
 - **難度選擇**：再選 5 種難度之一（死鬥模式為起始強度）。
 - **角色選擇**：8 個角色即時 3D 預覽（播 idle、自轉）＋ 詳細介紹；含永久強化商店。
-- **排行榜**：全球排行（Cloudflare D1），分 🧟劇情（破關榜／生存榜）與 💀死鬥（比分數），皆可**依難度分頁過濾**；抓不到後端時回退本機。
+- **排行榜**：分 🧟劇情（破關榜／生存榜）與 💀死鬥（比分數）。已連結 VIVERSE 帳號時顯示 **VIVERSE 全球排行榜**（名次／玩家／數值，無難度分頁）；未連結（或非 VIVERSE 環境，如 GitHub Pages）時顯示**本機排行**（含難度分頁過濾）。
 - **怪物圖鑑**：10 種殭屍 ＋ 8 隻王的模型縮圖與招式說明，另附**組合羈絆圖鑑**（見下方「🔗 升級羈絆」）。
 
 ---
@@ -191,8 +191,8 @@
 - **Vite** + **Tailwind CSS v4**
 - Web Audio 程式合成音效與背景音樂（零音檔）；背景音樂 4 首隨擊敗王數**自動切換**（暗潮→獵殺→肅殺→狂亂）
 - **畫質高／中／低**切換（右上下拉，即時生效）：調整算繪解析度、抗鋸齒、發光、可視距離；不影響玩法數值
-- **後端**：Cloudflare Pages Functions + **D1（SQLite）** 提供全球排行榜（劇情／死鬥分流＋反作弊）／累計統計／即時在線；同源 `/api`、全部 fail-soft（離線或無後端時自動回退本機資料，不影響遊戲本身可玩）
-- 進度／本機排行存於 localStorage；**雙重部署**：Cloudflare Pages（含後端）與 GitHub Pages（純靜態，透過 GitHub Actions 自動部署，全球排行榜等功能回退本機）。所有資源路徑（模型／API／Draco 解碼器）皆為**相對路徑**，兩種部署方式都能正確運作
+- **後端**：Cloudflare Pages Functions + **D1（SQLite）** 提供累計統計／即時在線；同源 `/api`、全部 fail-soft（離線或無後端時自動回退本機資料，不影響遊戲本身可玩）。全球排行榜改由 **VIVERSE Leaderboard** 提供（見下方「VIVERSE 上架」），與 D1 無關
+- 進度／本機排行存於 localStorage；**雙重部署**：Cloudflare Pages（含統計／在線後端）與 GitHub Pages（純靜態，透過 GitHub Actions 自動部署）。所有資源路徑（模型／API／Draco 解碼器）皆為**相對路徑**，兩種部署方式都能正確運作
 
 ### 模型最佳化
 - 所有模型以 **Draco** 壓縮為二進位 `.glb`（37MB → 9.6MB，玩家首次下載省約 26MB）。
@@ -229,14 +229,23 @@ SPA 轉址由 `public/_redirects` 處理（`/* /index.html 200`）；D1 綁定�
 ```bash
 gh api -X POST repos/<owner>/<repo>/pages -f "build_type=workflow"
 ```
-之後每次 push 到 `main` 都會自動重新部署。由於是純靜態託管，`functions/` 後端不會運作——全球排行榜／統計／即時在線會自動 fail-soft 回退成本機資料，遊戲本身完全可玩。
+之後每次 push 到 `main` 都會自動重新部署。由於是純靜態託管，`functions/` 後端不會運作——統計／即時在線會自動 fail-soft 回退成本機資料；全球排行榜本來就僅限 VIVERSE World App 內可用，GitHub Pages 上一律顯示本機排行。遊戲本身完全可玩。
 
 ### VIVERSE 上架（另一條發布路徑，與 Cloudflare Pages／GitHub Pages 並存）
-本專案額外整合了 **VIVERSE 登入（Auth）**，做法與本機其他專案（graviflip / SURGE / puzzle_game）一致，詳見 `src/viverse/ViverseSession.ts`。這個階段**只加登入**，不含 VIVERSE 排行榜——原有的 Cloudflare D1 全球排行榜維持不變、三者並存。
+本專案整合了 **VIVERSE 登入（Auth）與全球排行榜（Leaderboard）**，做法與本機其他專案（graviflip / SURGE / puzzle_game）一致，詳見 `src/viverse/ViverseSession.ts`。此功能**只在建置時有設定 `VITE_VIVERSE_CLIENT_ID` 的版本上生效**（目前只有 VIVERSE 發布流程會設定）——Cloudflare Pages／GitHub Pages 兩個網頁 demo 都沒有全球排行榜，一律顯示本機排行；這是刻意的部署範圍決定，不是 bug。
+
+**排行榜運作方式**：全球排行榜已完全改用 VIVERSE Leaderboard，取代原本的 Cloudflare D1 排行榜（D1 現在只剩統計／在線人數）。3 張榜對應 3 個 VIVERSE Studio API name（見 `.env.example`）：
+| 榜 | API name（預設） | 數值 | Studio 排序方向 |
+|---|---|---|---|
+| 破關榜 | `clearedtime` | 破關秒數 | Ascending（越快越前） |
+| 生存榜 | `survivaltime` | 存活秒數 | Descending（越久越前） |
+| 死鬥榜 | `deathmatchscore` | 波數×1000＋擊殺＋秒數 | Descending（越高越前） |
+
+⚠️ **上架前必須先在 VIVERSE Studio 手動建立這 3 張榜**（同一個 App ID 底下）：Numerical 型別、依上表設定排序方向、更新規則選「保留每位玩家最佳分數」（不要選累加型的 Append，時間/分數不該跨局累加）。API name 需與上表**完全一致**（含大小寫）。送出分數需先登入 VIVERSE 帳號（訪客無法上傳，但可瀏覽）；玩家在結算畫面點「🏆 上傳到 VIVERSE 排行榜」時，若尚未登入會先導轉登入，登入完成回來後自動續傳並跳到排行榜頁面確認。
 
 ```bash
 # 1. 在 VIVERSE Studio 建立 World App，複製 App ID，填入 .env
-cp .env.example .env   # 編輯 VITE_VIVERSE_CLIENT_ID=<App ID>
+cp .env.example .env   # 編輯 VITE_VIVERSE_CLIENT_ID=<App ID>（3 個排行榜 API name 已有預設值，同上表）
 
 # 2. 建置並驗證
 pnpm build
@@ -260,7 +269,7 @@ src/
 │  ├─ upgrades.ts      # RunState、25 種升級表、10 種組合羈絆（COMBO_SYNERGIES）
 │  ├─ characters.ts / meta.ts / difficulty.ts  # 8 角色、roguelite meta（含羈絆傳承 LEGACY）、5 難度
 │  ├─ deathmatch.ts                      # 死鬥無盡參數、突變子、計分
-│  ├─ leaderboard.ts / api.ts            # 本機排行/統計、後端 API（排行榜/在線）
+│  ├─ leaderboard.ts / api.ts            # 本機排行（VIVERSE 不可用時的回退）/統計、後端 API（統計/在線）
 │  ├─ terrain.ts / ground-decals.ts      # 地面（柏油材質）、馬路與地面貼片
 │  ├─ effects.ts / sound.ts / decals.ts  # 粒子、音效+背景音樂、血跡
 │  ├─ spatial-grid.ts / obstacles.ts     # 空間網格、障礙碰撞
@@ -274,7 +283,7 @@ public/
 ├─ models/zombie/      # Draco 壓縮 .glb 模型（角色、殭屍、武器、道具）
 ├─ draco/              # 自帶 Draco 解碼器
 └─ _redirects          # SPA fallback（僅 Cloudflare Pages 用）
-schema.sql              # D1 資料表（runs / stats / presence / online_hourly；messages 為留言板功能移除後的殘留資料表，未被使用）
+schema.sql              # D1 資料表（stats / presence / online_hourly；runs、messages 為排行榜／留言板功能移除後的殘留資料表，未被使用）
 docs/                   # 介紹網站（上游原作的 GitHub Pages，/docs；與本 fork 的遊戲本體部署是兩回事）
 .github/workflows/      # deploy-pages.yml：push 到 main 自動建置並部署到本 fork 的 GitHub Pages
 ```

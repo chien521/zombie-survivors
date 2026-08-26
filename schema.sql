@@ -1,6 +1,7 @@
--- 殭屍大逃殺後端 D1 結構（排行榜 + 統計 + 在線 + 留言）
+-- 殭屍大逃殺後端 D1 結構（統計 + 在線；排行榜已改用 VIVERSE Leaderboard，留言板功能亦已移除）
 -- 套用：wrangler d1 execute animal-survivors-db --file=./schema.sql --remote
 
+-- 已停用：排行榜改用 VIVERSE Leaderboard，此表為排行榜功能移除後的殘留資料表，未被使用
 CREATE TABLE IF NOT EXISTS runs (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   device_id TEXT,

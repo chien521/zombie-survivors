@@ -184,6 +184,7 @@
     <game-over-modal
       v-if="stats.state === 'dead'"
       :stats="stats"
+      :cheated="lastCheated"
       @restart="onRestart"
       @menu="emit('menu')"
     />
@@ -191,6 +192,7 @@
     <victory-modal
       v-if="stats.state === 'won'"
       :stats="stats"
+      :cheated="lastCheated"
       @restart="onRestart"
       @menu="emit('menu')"
     />
@@ -244,6 +246,8 @@ const emit = defineEmits<{
 }>();
 
 const canvasRef = ref<HTMLCanvasElement>();
+/** 本局是否動過 debug（供結算彈窗判斷能否送 VIVERSE 排行榜） */
+const lastCheated = ref(false);
 const stats = reactive<GameStats>({
   fps: 0,
   enemies: 0,
@@ -347,7 +351,10 @@ onMounted(() => {
         activeSynergies.value = game.getActiveSynergies();
       }
     },
-    onGameOver: (r) => emit('gameover', r),
+    onGameOver: (r) => {
+      lastCheated.value = r.cheated;
+      emit('gameover', r);
+    },
   });
   game.setMuted(muted.value);
 });

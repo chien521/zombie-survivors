@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, reactive, ref, shallowRef } from 'vue';
+import { defineAsyncComponent, onMounted, reactive, ref, shallowRef } from 'vue';
 import LandingScreen from './components/landing-screen.vue';
 import LeaderboardScreen from './components/leaderboard-screen.vue';
 import DifficultyScreen from './components/difficulty-screen.vue';
@@ -48,7 +48,8 @@ import type { MasteryProgress } from './game/meta';
 import { getCharacter } from './game/characters';
 import { addRecord, recordStats, getPlayerName } from './game/leaderboard';
 import { getDifficulty, type Difficulty } from './game/difficulty';
-import { submitRun } from './game/api';
+import { reportStats } from './game/api';
+import { viverseSession } from './viverse/ViverseSession';
 import type { RunState } from './game/upgrades';
 import type { RunResult, GameMode } from './game/game';
 
@@ -118,22 +119,21 @@ function onGameOver(result: RunResult) {
       at: Date.now(),
     });
   }
-  /** 一律上傳全球（帶 cheated 旗標，後端負責標記、排除排行榜、且不累加統計）；失敗則忽略 */
-  void submitRun({
-    name: playerName,
-    character,
-    time: result.time,
-    kills: result.kills,
-    level: result.level,
-    gold: result.gold,
-    won: result.won,
-    difficulty: diffId,
-    cheated: result.cheated,
-    mode: result.mode,
-    wave: result.wave,
-    score: result.score,
-  });
+  /** 一律回報全球累計統計（帶 cheated 旗標，後端負責排除、不累加）；失敗則忽略。
+   *  排行榜已改用 VIVERSE（見 game-over-modal.vue / victory-modal.vue 的「上傳到 VIVERSE 排行榜」按鈕），
+   *  此處不再自動送出名次資料。 */
+  void reportStats(result.time, result.kills, result.cheated);
 }
+
+/** App 開機時：若上次因 VIVERSE 登入導轉而暫存了排行榜提交，且現在已登入成功，續做該筆提交，
+ *  並跳到排行榜頁讓玩家看到結果（重新整理後結算彈窗已不在，這是唯一能給回饋的地方）。 */
+onMounted(async () => {
+  const pending = await viverseSession.resumePending();
+  if (pending?.reason === 'leaderboard' && typeof pending.name === 'string' && typeof pending.value === 'number') {
+    await viverseSession.submitScore(pending.name, pending.value);
+    screen.value = 'leaderboard';
+  }
+});
 
 function onBuy(permaId: string) {
   const p = PERMA.find((x) => x.id === permaId);

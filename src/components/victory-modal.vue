@@ -41,6 +41,16 @@
         </button>
       </div>
 
+      <button
+        v-if="viverse.state.status !== 'unavailable' && !cheated"
+        class="mt-3 block w-full rounded-md border-2 px-4 py-2.5 text-center text-sm font-black transition active:scale-95"
+        :class="viverseBtnClass"
+        :disabled="viverseSubmitState === 'submitting' || viverseSubmitState === 'done'"
+        @click="submitToViverse"
+      >
+        {{ viverseBtnLabel }}
+      </button>
+
       <a
         href="https://www.facebook.com/people/Book-Ai/61584339789020/"
         target="_blank"
@@ -54,13 +64,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import type { GameStats } from '../game/game';
 import { useI18n } from '../i18n';
+import { useViverse } from '../viverse/useViverse';
+import { pickLeaderboard } from '../viverse/leaderboardSubmit';
 
 const { t } = useI18n();
-const props = defineProps<{ stats: GameStats }>();
+const props = defineProps<{ stats: GameStats; cheated?: boolean }>();
 const emit = defineEmits<{ (e: 'restart'): void; (e: 'menu'): void }>();
+const viverse = useViverse();
 
 const timeText = computed(() => {
   const total = Math.floor(props.stats.time);
@@ -68,4 +81,28 @@ const timeText = computed(() => {
   const s = total % 60;
   return `${m}:${s.toString().padStart(2, '0')}`;
 });
+
+/** 送 VIVERSE 排行榜（本結算畫面一律代表成功：破關榜或死鬥榜，見 pickLeaderboard） */
+const viverseSubmitState = ref<'idle' | 'submitting' | 'done' | 'error'>('idle');
+const viverseBtnLabel = computed(() => {
+  if (viverseSubmitState.value === 'submitting') return t('leaderboard.viverseSubmitting');
+  if (viverseSubmitState.value === 'done') return t('leaderboard.viverseSubmitted');
+  if (viverseSubmitState.value === 'error') return t('leaderboard.viverseSubmitFailed');
+  return t('leaderboard.viverseSubmit');
+});
+const viverseBtnClass = computed(() =>
+  viverseSubmitState.value === 'done'
+    ? 'border-[#3f7a3a] text-[#3f7a3a] bg-white/30'
+    : viverseSubmitState.value === 'error'
+      ? 'border-[#8a2020] text-[#8a2020] bg-white/30'
+      : 'border-[#a67c00] text-[#a67c00] bg-white/30 hover:bg-white/50',
+);
+async function submitToViverse() {
+  if (viverseSubmitState.value !== 'idle') return;
+  viverseSubmitState.value = 'submitting';
+  const { name, value } = pickLeaderboard(props.stats, true);
+  const ok = await viverse.ensureLoginAndSubmit(name, value, { reason: 'leaderboard', name, value });
+  if (ok === null) return;
+  viverseSubmitState.value = ok ? 'done' : 'error';
+}
 </script>

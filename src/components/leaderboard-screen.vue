@@ -47,8 +47,8 @@
 
       <p class="-mt-1 text-center text-xs text-[#14210f]/50">{{ hint }}</p>
 
-      <!-- 難度分頁 -->
-      <div class="flex flex-wrap gap-2">
+      <!-- 難度分頁（僅本機回退榜適用；VIVERSE 全球榜無難度分流） -->
+      <div v-if="!isGlobal" class="flex flex-wrap gap-2">
         <button
           v-for="t in tabs"
           :key="t.id"
@@ -60,11 +60,32 @@
         </button>
       </div>
 
-      <div v-if="records.length === 0" class="rounded-md bg-white/30 p-8 text-center text-[#14210f]/60 ring-2 ring-[#14210f]">
+      <div v-if="isGlobal ? viverseRecords.length === 0 : records.length === 0" class="rounded-md bg-white/30 p-8 text-center text-[#14210f]/60 ring-2 ring-[#14210f]">
         {{ emptyHint }}
       </div>
 
-      <!-- 死鬥榜 -->
+      <!-- VIVERSE 全球榜：只有名次／玩家／數值（VIVERSE API 不回傳擊殺/等級/波數等細節） -->
+      <div v-else-if="isGlobal" class="overflow-hidden rounded-md bg-white/30 ring-2 ring-[#14210f]">
+        <div class="grid grid-cols-[2.5rem_1fr_5rem] gap-2 border-b border-[#14210f]/20 px-4 py-2 text-xs font-black text-[#14210f]/50">
+          <span>#</span>
+          <span>{{ t('leaderboard.colPlayer') }}</span>
+          <span class="text-right">{{ gameMode === 'deathmatch' ? t('leaderboard.colScore') : board === 'cleared' ? t('leaderboard.colCleared') : t('leaderboard.colSurvived') }}</span>
+        </div>
+        <div
+          v-for="r in viverseRecords"
+          :key="r.rank"
+          class="grid grid-cols-[2.5rem_1fr_5rem] items-center gap-2 px-4 py-2 text-sm"
+          :class="r.rank % 2 ? 'bg-white/20' : 'bg-transparent'"
+        >
+          <span class="font-black" :class="rankClass(r.rank - 1)">{{ r.rank }}</span>
+          <span class="min-w-0 truncate font-bold">{{ r.name || t('leaderboard.defaultName') }}</span>
+          <span class="text-right font-mono" :class="gameMode === 'deathmatch' ? 'text-[#a67c00]' : ''">
+            {{ gameMode === 'deathmatch' ? r.value : timeText(r.value) }}
+          </span>
+        </div>
+      </div>
+
+      <!-- 死鬥榜（本機） -->
       <div v-else-if="gameMode === 'deathmatch'" class="overflow-hidden rounded-md bg-white/30 ring-2 ring-[#14210f]">
         <div class="grid grid-cols-[2.5rem_1fr_3rem_3.5rem_4.5rem] gap-2 border-b border-[#14210f]/20 px-4 py-2 text-xs font-black text-[#14210f]/50">
           <span>#</span>
@@ -93,7 +114,7 @@
         </div>
       </div>
 
-      <!-- 劇情榜（破關/生存） -->
+      <!-- 劇情榜（本機，破關/生存） -->
       <div v-else class="overflow-hidden rounded-md bg-white/30 ring-2 ring-[#14210f]">
         <div class="grid grid-cols-[2.5rem_1fr_4.5rem_3.5rem_3rem] gap-2 border-b border-[#14210f]/20 px-4 py-2 text-xs font-black text-[#14210f]/50">
           <span>#</span>
@@ -126,15 +147,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import BackgroundPolygons from './background-polygons.vue';
 import { loadRecords, type RunRecord } from '../game/leaderboard';
-import { fetchLeaderboard } from '../game/api';
 import { DIFFICULTIES, getDifficulty } from '../game/difficulty';
 import { useI18n } from '../i18n';
+import { useViverse } from '../viverse/useViverse';
+import { LEADERBOARD_CLEARED, LEADERBOARD_SURVIVAL, LEADERBOARD_DEATHMATCH } from '../viverse/leaderboardSubmit';
+import type { LeaderboardRow } from '../viverse/ViverseSession';
 
 const { t } = useI18n();
 const emit = defineEmits<{ (e: 'back'): void }>();
+const viverse = useViverse();
 
 type GameMode = 'story' | 'deathmatch';
 type Board = 'cleared' | 'survival';
@@ -154,8 +178,11 @@ const tabs = computed(() => [
 const gameMode = ref<GameMode>('story');
 const board = ref<Board>('cleared');
 const selected = ref('');
+/** 本機回退榜（VIVERSE 不可用時顯示；VIVERSE 沒有難度分頁概念，此列表仍受難度分頁過濾） */
 const records = ref<RunRecord[]>([]);
-const isGlobal = ref(false);
+/** VIVERSE 全球榜（可用時優先顯示，取代本機列表） */
+const viverseRecords = ref<LeaderboardRow[]>([]);
+const isGlobal = computed(() => viverse.state.status !== 'unavailable');
 
 const hint = computed(() => {
   if (gameMode.value === 'deathmatch') return t('leaderboard.hintDeathmatch');
@@ -165,6 +192,11 @@ const emptyHint = computed(() => {
   if (gameMode.value === 'deathmatch') return t('leaderboard.emptyDeathmatch');
   return board.value === 'cleared' ? t('leaderboard.emptyCleared') : t('leaderboard.emptySurvival');
 });
+
+function leaderboardName(): string {
+  if (gameMode.value === 'deathmatch') return LEADERBOARD_DEATHMATCH;
+  return board.value === 'cleared' ? LEADERBOARD_CLEARED : LEADERBOARD_SURVIVAL;
+}
 
 async function refresh() {
   const diff = selected.value;
@@ -181,11 +213,8 @@ async function refresh() {
       gm === 'deathmatch' ? b.score - a.score : board.value === 'cleared' ? a.time - b.time : b.time - a.time,
     )
     .slice(0, 10);
-  isGlobal.value = false;
-  const global = await fetchLeaderboard(10, diff || undefined, board.value, gm);
-  if (global) {
-    records.value = global;
-    isGlobal.value = true;
+  if (isGlobal.value) {
+    viverseRecords.value = await viverse.fetchLeaderboard(leaderboardName(), 10);
   }
 }
 function selectGameMode(g: GameMode) {
@@ -201,6 +230,8 @@ function selectTab(id: string) {
   void refresh();
 }
 onMounted(refresh);
+/** VIVERSE 狀態初次解析（bootstrap 為非同步）或登入/登出後，重新抓一次榜單 */
+watch(() => viverse.state.status, () => void refresh());
 
 function timeText(t: number) {
   const total = Math.floor(t);

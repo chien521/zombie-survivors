@@ -1,4 +1,4 @@
-import type { RunRecord, GlobalStats } from './leaderboard';
+import type { GlobalStats } from './leaderboard';
 
 /** 後端 API（Cloudflare Pages Functions，同源 /api）。全部失敗時回傳 null，由呼叫端回退本機資料。 */
 const BASE = 'api';
@@ -13,57 +13,19 @@ function deviceId(): string {
   return id;
 }
 
-export interface RunSubmit {
-  name: string;
-  character: string;
-  time: number;
-  kills: number;
-  level: number;
-  gold: number;
-  won: boolean;
-  difficulty: string;
-  /** 本局是否動過 debug（後端據此標記、排除於排行榜） */
-  cheated: boolean;
-  /** 遊戲模式 story/deathmatch */
-  mode: string;
-  /** 死鬥波數 */
-  wave: number;
-  /** 死鬥分數 */
-  score: number;
-}
-
-/** 送出一場結算（fire-and-forget，離線/失敗則忽略） */
-export async function submitRun(run: RunSubmit): Promise<void> {
+/**
+ * 回報一場結算的全球累計統計（場次／時間／擊殺，fire-and-forget，離線/失敗則忽略）。
+ * 排行榜已改用 VIVERSE Leaderboard（見 src/viverse/ViverseSession.ts），此處只累加 /api/stats 用的全域計數。
+ */
+export async function reportStats(time: number, kills: number, cheated: boolean): Promise<void> {
   try {
     await fetch(`${BASE}/run`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ ...run, deviceId: deviceId() }),
+      body: JSON.stringify({ time, kills, cheated, deviceId: deviceId() }),
     });
   } catch {
     /* 離線忽略 */
-  }
-}
-
-/**
- * 取全球排行榜。
- * - gameMode='story'：board=cleared 破關榜（最快）/survival 生存榜（最久）
- * - gameMode='deathmatch'：死鬥榜（依分數高到低，board 參數忽略）
- * 可選難度過濾；失敗回傳 null
- */
-export async function fetchLeaderboard(
-  limit = 10,
-  difficulty?: string,
-  board: 'cleared' | 'survival' = 'survival',
-  gameMode: 'story' | 'deathmatch' = 'story',
-): Promise<RunRecord[] | null> {
-  try {
-    const q = difficulty ? `&difficulty=${encodeURIComponent(difficulty)}` : '';
-    const res = await fetch(`${BASE}/leaderboard?limit=${limit}&mode=${board}&gmode=${gameMode}${q}`);
-    if (!res.ok) return null;
-    return (await res.json()) as RunRecord[];
-  } catch {
-    return null;
   }
 }
 
