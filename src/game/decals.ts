@@ -4,9 +4,9 @@ import './draco-config';
 
 /** 血跡貼圖模型（殭屍死亡地面血痕） */
 const BLOOD_PATHS = [
-  '/models/zombie/blood_1.glb',
-  '/models/zombie/blood_2.glb',
-  '/models/zombie/blood_3.glb',
+  'models/zombie/blood_1.glb',
+  'models/zombie/blood_2.glb',
+  'models/zombie/blood_3.glb',
 ];
 /** 每種血跡預先複製的數量；總池大小 = 種類數 × 此值（環狀循環覆寫） */
 const POOL_PER = 10;

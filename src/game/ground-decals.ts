@@ -114,9 +114,9 @@ export function scatterGroundDecals(scene: Scene, heightAt: (x: number, z: numbe
  */
 export async function buildRoads(scene: Scene, heightAt: (x: number, z: number) => number) {
   const paths = [
-    '/models/zombie/street_straight.glb',
-    '/models/zombie/street_crack1.glb',
-    '/models/zombie/street_crack2.glb',
+    'models/zombie/street_straight.glb',
+    'models/zombie/street_crack1.glb',
+    'models/zombie/street_crack2.glb',
   ];
   const templates = await Promise.all(
     paths.map(async (p) => {

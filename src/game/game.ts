@@ -332,7 +332,7 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
 
   /** 寶箱模型範本（非同步載入，spawn 時複製；未就緒則退回程序化方塊） */
   let chestTemplate: TransformNode | null = null;
-  void loadModel(scene, '/models/zombie/item_chest.glb', 1.1).then((n) => {
+  void loadModel(scene, 'models/zombie/item_chest.glb', 1.1).then((n) => {
     if (n) {
       n.setEnabled(false);
       /** 套上自發光材質，讓 GlowLayer 泛光（金色） */
@@ -1361,19 +1361,19 @@ function createHealMesh(scene: Scene): Mesh {
 async function scatterProps(scene: Scene, obstacles: Obstacle[], heightAt: (x: number, z: number) => number) {
   const half = CONFIG.arenaHalf;
   const props: { path: string; height: number; count: number; solid?: number }[] = [
-    { path: '/models/zombie/barrel.glb', height: 2.2, count: 10, solid: 1 },
-    { path: '/models/zombie/container.glb', height: 4, count: 4, solid: 2.8 },
-    { path: '/models/zombie/prop_container_red.glb', height: 4, count: 3, solid: 2.8 },
-    { path: '/models/zombie/cone.glb', height: 1.5, count: 10 },
-    { path: '/models/zombie/watertower.glb', height: 10, count: 2, solid: 2.2 },
-    { path: '/models/zombie/prop_truck.glb', height: 4.5, count: 3, solid: 4 },
-    { path: '/models/zombie/prop_couch.glb', height: 1.8, count: 5, solid: 2 },
-    { path: '/models/zombie/prop_hydrant.glb', height: 1.8, count: 6, solid: 0.8 },
-    { path: '/models/zombie/prop_barrier.glb', height: 1.6, count: 7, solid: 1.5 },
-    { path: '/models/zombie/prop_wheels.glb', height: 1.6, count: 5, solid: 1 },
-    { path: '/models/zombie/prop_pallet.glb', height: 0.9, count: 8 },
-    { path: '/models/zombie/prop_trashbag.glb', height: 1.4, count: 10 },
-    { path: '/models/zombie/prop_cinderblock.glb', height: 0.9, count: 8 },
+    { path: 'models/zombie/barrel.glb', height: 2.2, count: 10, solid: 1 },
+    { path: 'models/zombie/container.glb', height: 4, count: 4, solid: 2.8 },
+    { path: 'models/zombie/prop_container_red.glb', height: 4, count: 3, solid: 2.8 },
+    { path: 'models/zombie/cone.glb', height: 1.5, count: 10 },
+    { path: 'models/zombie/watertower.glb', height: 10, count: 2, solid: 2.2 },
+    { path: 'models/zombie/prop_truck.glb', height: 4.5, count: 3, solid: 4 },
+    { path: 'models/zombie/prop_couch.glb', height: 1.8, count: 5, solid: 2 },
+    { path: 'models/zombie/prop_hydrant.glb', height: 1.8, count: 6, solid: 0.8 },
+    { path: 'models/zombie/prop_barrier.glb', height: 1.6, count: 7, solid: 1.5 },
+    { path: 'models/zombie/prop_wheels.glb', height: 1.6, count: 5, solid: 1 },
+    { path: 'models/zombie/prop_pallet.glb', height: 0.9, count: 8 },
+    { path: 'models/zombie/prop_trashbag.glb', height: 1.4, count: 10 },
+    { path: 'models/zombie/prop_cinderblock.glb', height: 0.9, count: 8 },
   ];
 
   for (const p of props) {

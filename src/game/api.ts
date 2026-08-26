@@ -1,7 +1,7 @@
 import type { RunRecord, GlobalStats } from './leaderboard';
 
 /** 後端 API（Cloudflare Pages Functions，同源 /api）。全部失敗時回傳 null，由呼叫端回退本機資料。 */
-const BASE = '/api';
+const BASE = 'api';
 const DEVICE_KEY = 'animal-survivors:deviceId';
 
 function deviceId(): string {
