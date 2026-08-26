@@ -32,6 +32,12 @@ const BOOMERANG_HITR = 1.3;
 const BOOMERANG_SPIN = 18;
 const BOOMERANG_Y = 1;
 
+/** 連鎖新星羈絆：每個閃電連鎖節點的小範圍新星半徑 */
+const CHAIN_NOVA_RADIUS = 2.5;
+/** 回鏢閃電羈絆：返航起點放電的鎖敵範圍、連鎖數 */
+const BOOMERANG_STORM_RANGE2 = 10 * 10;
+const BOOMERANG_STORM_CHAIN = 2;
+
 /**
  * 額外武器（吸血鬼倖存者風格），皆預設關閉（數值為 0），透過升級開啟與強化：
  *  - 環繞衛星：能量球繞玩家旋轉，碰到敵人造成傷害
@@ -70,6 +76,8 @@ export class ExtraWeapons {
     dirZ: number;
     bossHit: boolean;
     hit: Set<number>;
+    /** 回鏢閃電羈絆：本次來回是否已在返航起點放過電 */
+    returnZapped: boolean;
   }[] = [];
 
   constructor(scene: Scene) {
@@ -183,7 +191,7 @@ export class ExtraWeapons {
       }
       holder.scaling.setAll(this.boomerangScale);
       holder.setEnabled(false);
-      this.boomerangs.push({ node: holder, active: false, t: 0, dirX: 0, dirZ: 1, bossHit: false, hit: new Set() });
+      this.boomerangs.push({ node: holder, active: false, t: 0, dirX: 0, dirZ: 1, bossHit: false, hit: new Set(), returnZapped: false });
     }
     this.boomerangReady = true;
   }
@@ -208,6 +216,7 @@ export class ExtraWeapons {
       b.active = true;
       b.bossHit = false;
       b.hit.clear();
+      b.returnZapped = false;
       b.node.setEnabled(true);
       assigned++;
     }
@@ -242,9 +251,14 @@ export class ExtraWeapons {
     run: RunState,
     onKill: (x: number, z: number) => void,
     baseY: number,
+    onAuraDamage?: (dmg: number) => void,
+    onNovaPulse?: (x: number, z: number, r: number) => void,
   ): number {
     this.baseY = baseY;
     let kills = 0;
+
+    /** 五武齊全羈絆：副武器冷卻隨場上敵數加速（上限 +50%） */
+    const cdDt = run.weaponsCrowdHaste ? dt * (1 + Math.min(1, enemies.count / 40) * 0.5) : dt;
 
     /** ===== 環繞衛星 ===== */
     const n = Math.min(MAX_ORBS, run.orbitalCount);
@@ -262,7 +276,7 @@ export class ExtraWeapons {
     }
 
     if (n > 0) {
-      this.orbitTimer += dt;
+      this.orbitTimer += cdDt;
       if (this.orbitTimer >= ORBIT_HIT_INTERVAL) {
         this.orbitTimer = 0;
         const hitR = ORB_RADIUS + 0.6;
@@ -306,6 +320,7 @@ export class ExtraWeapons {
       if (this.auraTimer >= AURA_TICK_INTERVAL) {
         this.auraTimer = 0;
         const r2 = run.auraRadius * run.auraRadius;
+        let auraDamageDealt = 0;
         for (let j = 0; j < enemies.count; j++) {
           if (!enemies.isAlive(j)) continue;
           const dx = enemies.getX(j) - px;
@@ -313,13 +328,16 @@ export class ExtraWeapons {
           if (dx * dx + dz * dz <= r2) {
             const ex = enemies.getX(j);
             const ez = enemies.getZ(j);
+            auraDamageDealt += run.auraDamage;
             if (enemies.damage(j, run.auraDamage, px, pz)) {
               kills++;
               onKill(ex, ez);
             }
           }
         }
-        boss.hitTest(px, pz, run.auraRadius, run.auraDamage);
+        if (boss.hitTest(px, pz, run.auraRadius, run.auraDamage)) auraDamageDealt += run.auraDamage;
+        /** 吸血光環羈絆：光環傷害轉換為回血（比例由呼叫端結算，見 game.ts） */
+        if (run.vampiricAura && auraDamageDealt > 0) onAuraDamage?.(auraDamageDealt);
       }
     } else if (this.aura.isEnabled()) {
       this.aura.setEnabled(false);
@@ -327,7 +345,7 @@ export class ExtraWeapons {
 
     /** ===== 連鎖閃電 ===== */
     if (run.lightningCount > 0) {
-      this.lightningTimer += dt;
+      this.lightningTimer += cdDt;
       if (this.lightningTimer >= LIGHTNING_INTERVAL) {
         this.lightningTimer = 0;
         kills += this.fireLightning(px, pz, enemies, boss, run, onKill);
@@ -336,7 +354,7 @@ export class ExtraWeapons {
 
     /** ===== 新星爆 ===== */
     if (run.novaRadius > 0) {
-      this.novaTimer += dt;
+      this.novaTimer += cdDt;
       if (this.novaTimer >= NOVA_INTERVAL) {
         this.novaTimer = 0;
         const r2 = run.novaRadius * run.novaRadius;
@@ -354,6 +372,8 @@ export class ExtraWeapons {
           }
         }
         boss.hitTest(px, pz, run.novaRadius, run.novaDamage);
+        /** 磁力新星羈絆：爆炸範圍內的經驗寶石被吸向玩家 */
+        if (run.magnetNova) onNovaPulse?.(px, pz, run.novaRadius);
         /** 視覺：擴張環 */
         const ring = MeshBuilder.CreateTorus('nova', { diameter: 2, thickness: 0.5, tessellation: 40 }, this.scene);
         ring.material = this.novaMat;
@@ -366,7 +386,7 @@ export class ExtraWeapons {
     /** ===== 回力鏢 ===== */
     if (this.boomerangReady) {
       if (run.boomerangCount > 0) {
-        this.boomerangTimer += dt;
+        this.boomerangTimer += cdDt;
         if (this.boomerangTimer >= BOOMERANG_INTERVAL) {
           this.boomerangTimer = 0;
           this.throwBoomerangs(run.boomerangCount);
@@ -388,6 +408,12 @@ export class ExtraWeapons {
         const bz = pz + b.dirZ * dist;
         b.node.position.set(bx, baseY + BOOMERANG_Y, bz);
         b.node.rotation.y += dt * BOOMERANG_SPIN;
+
+        /** 回鏢閃電羈絆：一到返航段（frac 過中點）就對周圍最近幾隻敵人放電，本次來回只觸發一次 */
+        if (run.boomerangStorm && !b.returnZapped && frac >= 0.5) {
+          b.returnZapped = true;
+          kills += this.boomerangStormZap(bx, bz, enemies, boss, run, px, pz, onKill);
+        }
 
         let any = false;
         for (let j = 0; j < enemies.count; j++) {
@@ -453,6 +479,24 @@ export class ExtraWeapons {
         kills++;
         onKill(ex, ez);
       }
+      /** 連鎖新星羈絆：每個連鎖節點額外引爆小範圍新星 */
+      if (run.chainNova) {
+        const cnR2 = CHAIN_NOVA_RADIUS * CHAIN_NOVA_RADIUS;
+        for (let j = 0; j < enemies.count; j++) {
+          if (j === best || hit.has(j) || !enemies.isAlive(j)) continue;
+          const ndx = enemies.getX(j) - ex;
+          const ndz = enemies.getZ(j) - ez;
+          if (ndx * ndx + ndz * ndz <= cnR2) {
+            const nx = enemies.getX(j);
+            const nz = enemies.getZ(j);
+            if (enemies.damage(j, run.novaDamage, px, pz)) {
+              kills++;
+              onKill(nx, nz);
+            }
+          }
+        }
+        boss.hitTest(ex, ez, CHAIN_NOVA_RADIUS, run.novaDamage);
+      }
       fromX = ex;
       fromZ = ez;
     }
@@ -462,6 +506,55 @@ export class ExtraWeapons {
 
     if (points.length > 1) {
       const bolt = MeshBuilder.CreateLines('bolt', { points: jaggedPath(points, fxY) }, this.scene);
+      bolt.color = new Color3(0.75, 0.95, 1);
+      bolt.isPickable = false;
+      this.lightningFx.push({ mesh: bolt, t: 0 });
+    }
+    return kills;
+  }
+
+  /** 回鏢閃電羈絆：從回力鏢返航起點對最近幾隻敵人放電（不連鎖，各自獨立命中），回傳擊殺數 */
+  private boomerangStormZap(
+    bx: number,
+    bz: number,
+    enemies: ZombieHorde,
+    boss: Boss,
+    run: RunState,
+    px: number,
+    pz: number,
+    onKill: (x: number, z: number) => void,
+  ): number {
+    let kills = 0;
+    const hit = new Set<number>();
+    const fxY = this.baseY + FX_Y;
+    const points: Vector3[] = [new Vector3(bx, fxY, bz)];
+    for (let c = 0; c < BOOMERANG_STORM_CHAIN; c++) {
+      let best = -1;
+      let bestD = BOOMERANG_STORM_RANGE2;
+      for (let j = 0; j < enemies.count; j++) {
+        if (hit.has(j) || !enemies.isAlive(j)) continue;
+        const dx = enemies.getX(j) - bx;
+        const dz = enemies.getZ(j) - bz;
+        const d2 = dx * dx + dz * dz;
+        if (d2 < bestD) {
+          bestD = d2;
+          best = j;
+        }
+      }
+      if (best < 0) break;
+      hit.add(best);
+      const ex = enemies.getX(best);
+      const ez = enemies.getZ(best);
+      points.push(new Vector3(ex, fxY, ez));
+      hitSpark(this.scene, new Vector3(ex, fxY, ez));
+      if (enemies.damage(best, run.lightningDamage, px, pz)) {
+        kills++;
+        onKill(ex, ez);
+      }
+    }
+    boss.hitTest(bx, bz, 2, run.lightningDamage);
+    if (points.length > 1) {
+      const bolt = MeshBuilder.CreateLines('boomerang-bolt', { points: jaggedPath(points, fxY) }, this.scene);
       bolt.color = new Color3(0.75, 0.95, 1);
       bolt.isPickable = false;
       this.lightningFx.push({ mesh: bolt, t: 0 });

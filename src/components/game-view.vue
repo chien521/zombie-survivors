@@ -23,6 +23,21 @@
       </div>
     </div>
 
+    <!-- 羈絆解鎖提示（升級選到組成羈絆的最後一項時短暫顯示） -->
+    <div
+      v-if="synergyToast && stats.state === 'running'"
+      class="pointer-events-none absolute left-1/2 top-24 z-20 -translate-x-1/2 sm:top-28"
+    >
+      <div
+        :key="stats.synergyToastId"
+        class="synergy-toast flex items-center gap-2 whitespace-nowrap rounded-full bg-black/70 px-4 py-2 text-sm font-bold text-amber-300 shadow-2xl ring-1 ring-amber-300/40 backdrop-blur-md sm:text-base"
+      >
+        <span class="text-lg sm:text-xl">{{ synergyToast.emoji }}</span>
+        <span>{{ t('gameview.synergyUnlocked') }} {{ synergyToast.name }}</span>
+        <span class="font-normal text-white/70">— {{ synergyToast.desc }}</span>
+      </div>
+    </div>
+
     <!-- 右上控制：靜音／暫停／技能等級／Debug -->
     <div v-show="stats.state === 'running'" class="absolute right-3 top-3 z-10 flex items-center gap-1.5 sm:right-4 sm:top-4 sm:gap-2">
       <button
@@ -203,7 +218,7 @@ import {
 } from '../game/game';
 import { QUALITIES, type QualityId } from '../game/quality';
 import { MUTATORS } from '../game/deathmatch';
-import type { RunState } from '../game/upgrades';
+import { SYNERGY_TIERS, COMBO_SYNERGIES, type RunState } from '../game/upgrades';
 import type { Difficulty } from '../game/difficulty';
 import Hud from './hud.vue';
 import Joystick from './joystick.vue';
@@ -259,6 +274,7 @@ const stats = reactive<GameStats>({
   mutatorId: '',
   bloodTide: false,
   pendingLevels: 0,
+  synergyToastId: '',
 });
 
 const waveCardText = computed(() => {
@@ -278,6 +294,13 @@ const waveCardText = computed(() => {
     default:
       return '';
   }
+});
+
+/** 羈絆解鎖提示：查表（流派羈絆 + 組合羈絆）組出顯示文字 */
+const synergyToast = computed(() => {
+  if (!stats.synergyToastId) return null;
+  const s = [...SYNERGY_TIERS, ...COMBO_SYNERGIES].find((x) => x.id === stats.synergyToastId);
+  return s ? { emoji: s.emoji, name: t(s.nameKey), desc: t(s.descKey) } : null;
 });
 
 let game: GameHandle | undefined;
@@ -414,5 +437,14 @@ function fmt(v: number) {
   30% { transform: scale(1); opacity: 1; }
   75% { opacity: 1; }
   100% { transform: scale(1); opacity: 0; }
+}
+.synergy-toast {
+  animation: synergy-pop 2.6s ease-out forwards;
+}
+@keyframes synergy-pop {
+  0% { transform: translateY(-12px); opacity: 0; }
+  12% { transform: translateY(0); opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateY(-6px); opacity: 0; }
 }
 </style>

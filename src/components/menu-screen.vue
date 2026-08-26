@@ -110,6 +110,32 @@
         </div>
       </div>
 
+      <!-- 羈絆傳承 -->
+      <div>
+        <div class="mb-2 text-lg font-black">{{ t('menu.legacyTitle') }}</div>
+        <div class="flex flex-col gap-2">
+          <div
+            v-for="l in legacy"
+            :key="l.id"
+            class="flex items-center gap-3 rounded-2xl bg-white/5 p-3"
+          >
+            <span class="text-2xl">{{ l.emoji }}</span>
+            <div class="flex-1">
+              <div class="font-black">{{ t(l.nameKey) }}</div>
+              <div class="text-xs text-white/60">{{ t(l.descKey) }}</div>
+            </div>
+            <button
+              class="rounded-full px-4 py-2 text-sm font-black transition"
+              :class="legacyOwned(l.id) ? 'bg-white/10 text-white/40' : buyClassLegacy(l)"
+              :disabled="legacyOwned(l.id) || !canBuyLegacy(l)"
+              @click="emit('buy-legacy', l.id)"
+            >
+              {{ legacyOwned(l.id) ? t('menu.permaMaxed') : `💰${l.cost}` }}
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- 開始 -->
       <button
         class="sticky bottom-4 mt-2 w-full rounded-full bg-amber-400 py-4 text-2xl font-black text-black shadow-lg transition hover:bg-amber-300 active:scale-95"
@@ -125,7 +151,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { CHARACTERS, getCharacter, type Character } from '../game/characters';
-import { PERMA, permaCost, masteryTier, masteryProgress, type MetaData, type PermaUpgrade } from '../game/meta';
+import { PERMA, permaCost, masteryTier, masteryProgress, LEGACY, type MetaData, type PermaUpgrade, type SynergyLegacy } from '../game/meta';
 import { setupCharacterPreview, type PreviewHandle } from '../game/character-previews';
 import { useI18n } from '../i18n';
 
@@ -134,6 +160,7 @@ const props = defineProps<{ meta: MetaData }>();
 const emit = defineEmits<{
   (e: 'start', characterId: string): void;
   (e: 'buy', permaId: string): void;
+  (e: 'buy-legacy', legacyId: string): void;
   (e: 'unlock', characterId: string): void;
   (e: 'add-gold', amount: number): void;
   (e: 'home'): void;
@@ -141,6 +168,7 @@ const emit = defineEmits<{
 
 const characters = CHARACTERS;
 const perma = PERMA;
+const legacy = LEGACY;
 const selectedId = ref('matt');
 
 /** 角色即時 3D 預覽：每張卡一個引擎，播 idle 並旋轉；就緒前以 emoji 替代 */
@@ -203,6 +231,15 @@ function canBuy(p: PermaUpgrade) {
 }
 function buyClass(p: PermaUpgrade) {
   return canBuy(p) ? 'bg-amber-400 text-black hover:bg-amber-300' : 'bg-white/10 text-white/40';
+}
+function legacyOwned(id: string) {
+  return props.meta.legacy[id] ?? false;
+}
+function canBuyLegacy(l: SynergyLegacy) {
+  return !legacyOwned(l.id) && props.meta.gold >= l.cost;
+}
+function buyClassLegacy(l: SynergyLegacy) {
+  return canBuyLegacy(l) ? 'bg-amber-400 text-black hover:bg-amber-300' : 'bg-white/10 text-white/40';
 }
 function cardClass(id: string) {
   if (selectedId.value === id) return 'bg-amber-400/20 ring-amber-300';

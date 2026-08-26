@@ -50,6 +50,42 @@
           </div>
         </div>
       </div>
+
+      <!-- 組合羈絆 -->
+      <div>
+        <div class="mb-2 text-lg font-black">{{ t('bestiary.synergyHeading') }}</div>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div
+            v-for="c in comboInfo"
+            :key="c.id"
+            class="rounded-2xl bg-white/5 p-3 ring-1 ring-white/10"
+          >
+            <div class="flex items-center gap-2">
+              <span class="text-2xl">{{ c.emoji }}</span>
+              <div class="font-black">{{ t(c.nameKey) }}</div>
+              <span
+                v-if="hasLegacy(c.id)"
+                class="ml-auto shrink-0 rounded-full bg-amber-400/20 px-2 py-0.5 text-[0.65rem] font-bold text-amber-300"
+              >
+                {{ t('bestiary.legacyBadge') }}
+              </span>
+            </div>
+            <div class="mt-1 text-[0.72rem] leading-snug text-white/55">{{ t(c.descKey) }}</div>
+            <div v-if="c.requires" class="mt-2 flex flex-wrap gap-1">
+              <span
+                v-for="rid in c.requires"
+                :key="rid"
+                class="rounded-full bg-white/10 px-2 py-0.5 text-[0.65rem] text-white/80"
+              >
+                {{ upgradeChip(rid) }}
+              </span>
+            </div>
+            <div v-else class="mt-2 text-[0.65rem] text-white/40">
+              {{ t('bestiary.tagSpreadHint', { n: c.tagSpreadCount ?? 0 }) }}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -59,6 +95,8 @@ import { onMounted, ref } from 'vue';
 import BackgroundPolygons from './background-polygons.vue';
 import { ZOMBIE_INFO } from '../game/zombie-horde';
 import { BOSS_INFO } from '../game/boss';
+import { COMBO_SYNERGIES, UPGRADES } from '../game/upgrades';
+import { LEGACY } from '../game/meta';
 import { renderModelThumbnails } from '../game/model-thumbs';
 import { useI18n } from '../i18n';
 
@@ -67,7 +105,17 @@ const emit = defineEmits<{ (e: 'back'): void }>();
 
 const zombieInfo = ZOMBIE_INFO;
 const bossInfo = BOSS_INFO;
+const comboInfo = COMBO_SYNERGIES;
 const modelThumbs = ref<Record<string, string>>({});
+
+function upgradeChip(id: string): string {
+  const u = UPGRADES.find((x) => x.id === id);
+  if (!u) return id;
+  return `${u.emoji} ${u.nameKey ? t(u.nameKey) : u.name}`;
+}
+function hasLegacy(comboId: string): boolean {
+  return LEGACY.some((l) => l.comboId === comboId);
+}
 
 onMounted(() => {
   const models = [...ZOMBIE_INFO.map((z) => z.model), ...BOSS_INFO.map((b) => b.model)];

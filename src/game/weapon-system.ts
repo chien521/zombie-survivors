@@ -25,6 +25,8 @@ const SPREAD_STEP = 0.16;
 const KNIFE_SPIN = 20;
 /** 冰凍持續時間（秒） */
 const FREEZE_DUR = 1.2;
+/** 貫穿灼痕羈絆：穿透點灼燒半徑 */
+const PIERCE_TRAIL_RADIUS = 2.2;
 
 /** 自動武器：定時朝最近敵人發射投射物（數量／傷害／射程等讀取 RunState，隨升級變動）。 */
 export class WeaponSystem {
@@ -215,8 +217,15 @@ export class WeaponSystem {
         const ex = enemies.getX(hitEnemy);
         const ez = enemies.getZ(hitEnemy);
         hitSpark(this.scene, new Vector3(hx, this.y, hz));
-        /** 暴擊 */
-        const dmg = run.critChance > 0 && Math.random() < run.critChance ? run.damage * run.critMult : run.damage;
+        /** 暴擊：冰鍛羈絆下，命中冰凍中的敵人必定暴擊 */
+        const forcedCrit = run.frostforge && enemies.isFrozen(hitEnemy);
+        let dmg = forcedCrit || (run.critChance > 0 && Math.random() < run.critChance) ? run.damage * run.critMult : run.damage;
+        /** 狂暴凍域羈絆：對減速光環範圍內的敵人加成傷害 */
+        if (run.berserkSlow && run.slowRadius > 0) {
+          const sdx = ex - playerX;
+          const sdz = ez - playerZ;
+          if (sdx * sdx + sdz * sdz <= run.slowRadius * run.slowRadius) dmg *= 1.3;
+        }
         if (enemies.damage(hitEnemy, dmg, playerX, playerZ)) {
           kills++;
           onKill(ex, ez);
@@ -225,6 +234,8 @@ export class WeaponSystem {
         if (run.freezeChance > 0 && Math.random() < run.freezeChance) enemies.freeze(hitEnemy, FREEZE_DUR);
         /** 爆裂彈 */
         if (run.explodeRadius > 0) kills += this.explode(hx, hz, enemies, boss, run, playerX, playerZ, onKill);
+        /** 貫穿灼痕羈絆：子彈還會繼續穿透飛行時，灼燒穿透點周圍敵人 */
+        if (run.piercingTrail && this.pierce[i] > 0) kills += this.piercingTrailBurn(hx, hz, hitEnemy, enemies, boss, run, playerX, playerZ, onKill);
         /** 穿透：還有穿透數則繼續飛 */
         if (this.pierce[i] > 0) this.pierce[i]--;
         else this.active[i] = 0;
@@ -272,6 +283,37 @@ export class WeaponSystem {
     }
     boss.hitTest(x, z, run.explodeRadius, run.explodeDamage);
     hitSpark(this.scene, new Vector3(x, this.y, z));
+    return k;
+  }
+
+  /** 貫穿灼痕羈絆：子彈穿透續飛時，灼燒穿透點周圍敵人（排除剛命中的那隻，避免雙重計傷），回傳擊殺數 */
+  private piercingTrailBurn(
+    x: number,
+    z: number,
+    excludeEnemy: number,
+    enemies: ZombieHorde,
+    boss: Boss,
+    run: RunState,
+    playerX: number,
+    playerZ: number,
+    onKill: (x: number, z: number) => void,
+  ): number {
+    let k = 0;
+    const r2 = PIERCE_TRAIL_RADIUS * PIERCE_TRAIL_RADIUS;
+    for (let j = 0; j < enemies.count; j++) {
+      if (j === excludeEnemy || !enemies.isAlive(j)) continue;
+      const dx = enemies.getX(j) - x;
+      const dz = enemies.getZ(j) - z;
+      if (dx * dx + dz * dz <= r2) {
+        const ex = enemies.getX(j);
+        const ez = enemies.getZ(j);
+        if (enemies.damage(j, run.auraDamage, playerX, playerZ)) {
+          k++;
+          onKill(ex, ez);
+        }
+      }
+    }
+    boss.hitTest(x, z, PIERCE_TRAIL_RADIUS, run.auraDamage);
     return k;
   }
 

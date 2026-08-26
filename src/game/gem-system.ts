@@ -22,6 +22,8 @@ export class GemSystem {
   private px = new Float32Array(CAPACITY);
   private pz = new Float32Array(CAPACITY);
   private active = new Uint8Array(CAPACITY);
+  /** 磁力新星羈絆：一旦被脈衝命中就持續磁吸，不受一般 magnetRadius 限制，直到被拾取 */
+  private forceMagnet = new Uint8Array(CAPACITY);
   private matrixBuffer = new Float32Array(CAPACITY * 16);
   private cursor = 0;
 
@@ -83,12 +85,13 @@ export class GemSystem {
 
       if (d2 <= collect2) {
         this.active[i] = 0;
+        this.forceMagnet[i] = 0;
         collected++;
         this.writeMatrix(i);
         continue;
       }
 
-      if (d2 <= magnet2) {
+      if (d2 <= magnet2 || this.forceMagnet[i]) {
         const d = Math.sqrt(d2) || 1;
         this.px[i] += (dx / d) * MAGNET_SPEED * dt;
         this.pz[i] += (dz / d) * MAGNET_SPEED * dt;
@@ -100,8 +103,20 @@ export class GemSystem {
     return collected;
   }
 
+  /** 磁力新星羈絆：對範圍內的寶石標記持續磁吸，之後每幀自動被拉向玩家直到拾取 */
+  pulse(cx: number, cz: number, radius: number) {
+    const r2 = radius * radius;
+    for (let i = 0; i < CAPACITY; i++) {
+      if (!this.active[i] || this.forceMagnet[i]) continue;
+      const dx = cx - this.px[i];
+      const dz = cz - this.pz[i];
+      if (dx * dx + dz * dz <= r2) this.forceMagnet[i] = 1;
+    }
+  }
+
   reset() {
     this.active.fill(0);
+    this.forceMagnet.fill(0);
     this.cursor = 0;
     for (let i = 0; i < CAPACITY; i++) this.writeMatrix(i);
     this.mesh.thinInstanceBufferUpdated('matrix');

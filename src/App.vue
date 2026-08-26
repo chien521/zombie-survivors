@@ -18,6 +18,7 @@
     :meta="meta"
     @start="onStart"
     @buy="onBuy"
+    @buy-legacy="onBuyLegacy"
     @unlock="onUnlock"
     @add-gold="onAddGold"
     @home="screen = 'landing'"
@@ -48,7 +49,7 @@ import ModeScreen from './components/mode-screen.vue';
 const MenuScreen = defineAsyncComponent(() => import('./components/menu-screen.vue'));
 const GameView = defineAsyncComponent(() => import('./components/game-view.vue'));
 const BestiaryScreen = defineAsyncComponent(() => import('./components/bestiary-screen.vue'));
-import { loadMeta, saveMeta, computeStartRunState, goldMultiplier, PERMA, permaCost } from './game/meta';
+import { loadMeta, saveMeta, computeStartRunState, goldMultiplier, PERMA, permaCost, LEGACY } from './game/meta';
 import type { MasteryProgress } from './game/meta';
 import { getCharacter } from './game/characters';
 import { addRecord, recordStats, getPlayerName } from './game/leaderboard';
@@ -85,7 +86,7 @@ function onSelectDifficulty(id: string) {
 function onStart(charId: string) {
   const ch = getCharacter(charId);
   lastCharId = charId;
-  startRun.value = computeStartRunState(charId, meta.perma, meta.mastery);
+  startRun.value = computeStartRunState(charId, meta.perma, meta.mastery, meta.legacy);
   characterColor.value = ch.bodyColor;
   characterModel.value = ch.model;
   goldMul.value = goldMultiplier(meta.perma) * difficulty.value.goldReward;
@@ -149,6 +150,14 @@ function onBuy(permaId: string) {
   if (meta.gold < c) return;
   meta.gold -= c;
   meta.perma[permaId] = lvl + 1;
+  saveMeta(meta);
+}
+
+function onBuyLegacy(legacyId: string) {
+  const entry = LEGACY.find((x) => x.id === legacyId);
+  if (!entry || meta.legacy[legacyId] || meta.gold < entry.cost) return;
+  meta.gold -= entry.cost;
+  meta.legacy[legacyId] = true;
   saveMeta(meta);
 }
 

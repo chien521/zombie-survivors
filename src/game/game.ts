@@ -43,7 +43,18 @@ import { Boss, BOSS_COUNT, BOSS_INFO } from './boss';
 import { BossHazards } from './boss-hazards';
 import { BloodDecals } from './decals';
 import { Obstacle, resolveObstacles } from './obstacles';
-import { createRunState, rollChoices, xpForLevel, checkSynergyUnlocks, UPGRADES, SYNERGY_TIERS, type RunState, type Upgrade } from './upgrades';
+import {
+  createRunState,
+  rollChoices,
+  xpForLevel,
+  checkSynergyUnlocks,
+  checkComboSynergyUnlocks,
+  UPGRADES,
+  SYNERGY_TIERS,
+  COMBO_SYNERGIES,
+  type RunState,
+  type Upgrade,
+} from './upgrades';
 import { levelUpBurst, bossDeathBurst, hurtBurst, enemyDeathBurst, spawnText, setGlowLayer } from './effects';
 import { sound } from './sound';
 
@@ -98,6 +109,8 @@ export interface GameStats {
   bloodTide: boolean;
   /** 待選升級次數（≥1 時顯示不暫停的升級選項列） */
   pendingLevels: number;
+  /** 剛解鎖的流派/組合羈絆 id（短暫顯示提示用），無則為空字串 */
+  synergyToastId: string;
 }
 
 export interface RunResult {
@@ -357,6 +370,9 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
   let pendingLevelUps = 0;
   let waveCardKind: GameStats['waveCardKind'] = '';
   let waveCardUntil = 0;
+  /** 羈絆解鎖提示：剛解鎖的流派/組合羈絆 id，短暫顯示後清空（畫面端查表組字串） */
+  let synergyToastId = '';
+  let synergyToastUntil = 0;
   let curMutator: Mutator | null = null;
   let bloodTideUntil = 0;
   let bloodTideActive = false;
@@ -526,6 +542,7 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
     mutatorId: '',
     bloodTide: false,
     pendingLevels: 0,
+    synergyToastId: '',
   };
 
   function pushStats() {
@@ -553,6 +570,7 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
     stats.wave = wave;
     stats.combo = combo;
     stats.waveCardKind = time < waveCardUntil ? waveCardKind : '';
+    stats.synergyToastId = time < synergyToastUntil ? synergyToastId : '';
     stats.pendingLevels = pendingLevelUps;
     stats.mutatorId = isDM && curMutator ? curMutator.id : '';
     stats.bloodTide = isDM && time < bloodTideUntil;
@@ -819,8 +837,14 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
       }
       sound.hit();
     };
+    /** 吸血光環羈絆：光環傷害的 30% 轉換為回血，直接結算（光環本身已有 0.5s 結算間隔，不需再額外封頂） */
+    const onAuraDamage = (dmg: number) => {
+      if (hp > 0) hp = Math.min(run.maxHp, hp + dmg * 0.3);
+    };
+    /** 磁力新星羈絆：新星爆炸時，範圍內的經驗寶石開始持續被吸向玩家 */
+    const onNovaPulse = (x: number, z: number, r: number) => gems.pulse(x, z, r);
     kills += weapon.update(dt, px, pz, enemies, boss, grid, eff, onKill, groundY);
-    kills += extras.update(dt, px, pz, enemies, boss, eff, onKill, groundY);
+    kills += extras.update(dt, px, pz, enemies, boss, eff, onKill, groundY, onAuraDamage, onNovaPulse);
     /** 吸血結算：每秒回血上限 = 1 + 1.6 × 每殺回血（與擊殺率脫鉤，殺再快也封頂） */
     if (lifestealAccrued > 0 && hp > 0) {
       const capPerSec = 1 + 1.6 * eff.lifestealOnKill;
@@ -942,6 +966,8 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
     incoming += explodeAccrued; // 爆裂突變傷害
     if (invincible) incoming = 0;
     incoming *= 1 - eff.damageReduction;
+    /** 裝甲衛星羈絆：環繞武器啟動時額外減傷 15% */
+    if (eff.armoredOrbit && eff.orbitalCount > 0) incoming *= 0.85;
     if (incoming > 0 && shieldReady) {
       incoming = 0;
       shieldReady = false;
@@ -1115,10 +1141,41 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
       if (!upgrade) return;
       upgrade.apply(run);
       levels[upgrade.id] = (levels[upgrade.id] ?? 0) + 1;
-      checkSynergyUnlocks(run, levels);
+      const newTiers = checkSynergyUnlocks(run, levels);
+      const newCombos = checkComboSynergyUnlocks(run, levels);
+      /** 提示：一次只顯示一個新解鎖羈絆（同時解鎖多個的罕見情況只提示第一個） */
+      const newSynergy = newTiers[0] ?? newCombos[0];
+      if (newSynergy) {
+        synergyToastId = newSynergy.id;
+        synergyToastUntil = time + 2.6;
+      }
       /** 最大生命升級補滿，其餘升級回復 30% 最大生命 */
       if (upgrade.id === 'maxhp') hp = run.maxHp;
       else hp = Math.min(run.maxHp, hp + run.maxHp * 0.3);
+      /** 三修者羈絆：升級瞬間對周圍敵人釋放一波衝擊波 */
+      if (run.classUltimate) {
+        const ux = player.position.x;
+        const uz = player.position.z;
+        const radius = 10;
+        const r2 = radius * radius;
+        const dmg = run.damage * 4 + level * 2;
+        for (let j = 0; j < enemies.count; j++) {
+          if (!enemies.isAlive(j)) continue;
+          const dx = enemies.getX(j) - ux;
+          const dz = enemies.getZ(j) - uz;
+          if (dx * dx + dz * dz <= r2) {
+            const ex = enemies.getX(j);
+            const ez = enemies.getZ(j);
+            if (enemies.damage(j, dmg, ux, uz)) {
+              kills++;
+              gems.spawn(ex, ez);
+            }
+          }
+        }
+        boss.hitTest(ux, uz, radius, dmg);
+        levelUpBurst(scene, new Vector3(ux, player.position.y + 1, uz));
+        sound.levelUp();
+      }
       if (state === 'levelup') {
         /** 祝福／詛咒（暫停式）：選完恢復遊戲 */
         choices = [];
@@ -1174,6 +1231,8 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
       curMutator = null;
       waveCardKind = '';
       waveCardUntil = 0;
+      synergyToastId = '';
+      synergyToastUntil = 0;
       bloodTideUntil = 0;
       bloodTideActive = false;
       scene.clearColor = baseClear;
@@ -1237,12 +1296,14 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
       }));
     },
     getActiveSynergies() {
-      return SYNERGY_TIERS.filter((tier) => run.synergyUnlocked[tier.id]).map((tier) => ({
-        name: tier.name,
-        nameKey: tier.nameKey,
-        desc: tier.desc,
-        descKey: tier.descKey,
-        emoji: tier.emoji,
+      const tiers = SYNERGY_TIERS.filter((tier) => run.synergyUnlocked[tier.id]);
+      const combos = COMBO_SYNERGIES.filter((combo) => run.synergyUnlocked[combo.id]);
+      return [...tiers, ...combos].map((s) => ({
+        name: s.name,
+        nameKey: s.nameKey,
+        desc: s.desc,
+        descKey: s.descKey,
+        emoji: s.emoji,
       }));
     },
     getBossNames() {

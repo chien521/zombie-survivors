@@ -1,4 +1,4 @@
-import { createRunState, type RunState } from './upgrades';
+import { createRunState, COMBO_SYNERGIES, type RunState } from './upgrades';
 import { getCharacter } from './characters';
 
 /** 永久升級（roguelite meta，花金幣，套用到每一輪） */
@@ -26,6 +26,23 @@ export function permaCost(p: PermaUpgrade, currentLevel: number): number {
   return p.costBase + p.costStep * currentLevel;
 }
 
+/** 羈絆傳承：花金幣永久解鎖，解鎖後每輪開局即自動擁有該組合羈絆（不必再重新湊齊所需升級） */
+export interface SynergyLegacy {
+  id: string;
+  /** 對應 upgrades.ts COMBO_SYNERGIES 的 id */
+  comboId: string;
+  nameKey: string;
+  descKey: string;
+  emoji: string;
+  cost: number;
+}
+
+export const LEGACY: SynergyLegacy[] = [
+  { id: 'legacy-frostforge', comboId: 'combo-frostforge', nameKey: 'legacy.frostforge.name', descKey: 'legacy.frostforge.desc', emoji: '🧊', cost: 400 },
+  { id: 'legacy-vampaura', comboId: 'combo-vampaura', nameKey: 'legacy.vampaura.name', descKey: 'legacy.vampaura.desc', emoji: '🩸', cost: 400 },
+  { id: 'legacy-fullarsenal', comboId: 'combo-fullarsenal', nameKey: 'legacy.fullarsenal.name', descKey: 'legacy.fullarsenal.desc', emoji: '🎇', cost: 600 },
+];
+
 /** 角色熟練度：累積擊殺數／勝場數，達門檻解鎖被動加成 */
 export interface MasteryProgress {
   kills: number;
@@ -38,6 +55,8 @@ export interface MetaData {
   perma: Record<string, number>;
   /** 每個角色各自累積；舊存檔沒有此欄位時預設為空物件 */
   mastery: Record<string, MasteryProgress>;
+  /** 已花金幣永久解鎖的羈絆傳承 id 集合；舊存檔沒有此欄位時預設為空物件 */
+  legacy: Record<string, boolean>;
 }
 
 const KEY = 'animal-survivors:meta:v2';
@@ -52,12 +71,13 @@ export function loadMeta(): MetaData {
         unlocked: data.unlocked ?? ['matt'],
         perma: data.perma ?? {},
         mastery: data.mastery ?? {},
+        legacy: data.legacy ?? {},
       };
     }
   } catch {
     /* 忽略損毀資料 */
   }
-  return { gold: 0, unlocked: ['matt'], perma: {}, mastery: {} };
+  return { gold: 0, unlocked: ['matt'], perma: {}, mastery: {}, legacy: {} };
 }
 
 /** 熟練度門檻：Lv1/Lv2 看累積擊殺，Lv3（角色專屬加成）看累積勝場 */
@@ -105,6 +125,7 @@ export function computeStartRunState(
   characterId: string,
   perma: Record<string, number>,
   mastery?: Record<string, MasteryProgress>,
+  legacy?: Record<string, boolean>,
 ): RunState {
   const s = createRunState();
   getCharacter(characterId).apply(s);
@@ -119,6 +140,16 @@ export function computeStartRunState(
   s.maxHp += 20 * vigor;
   s.moveSpeed *= Math.pow(1.05, swift);
   applyMastery(s, characterId, mastery?.[characterId]);
+  /** 羈絆傳承：已永久解鎖的組合羈絆，開局直接套用（並標記為已解鎖，避免本輪再次觸發提示） */
+  if (legacy) {
+    for (const entry of LEGACY) {
+      if (!legacy[entry.id]) continue;
+      const combo = COMBO_SYNERGIES.find((c) => c.id === entry.comboId);
+      if (!combo) continue;
+      combo.apply(s);
+      s.synergyUnlocked[combo.id] = true;
+    }
+  }
   return s;
 }
 

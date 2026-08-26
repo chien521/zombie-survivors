@@ -51,6 +51,17 @@ export interface RunState {
   explodeDamage: number;
   // 升級羈絆（synergy）：已解鎖的羈絆 id 集合，每局重置
   synergyUnlocked: Record<string, true>;
+  // 組合羈絆（combo synergy）旗標：見 COMBO_SYNERGIES
+  frostforge: boolean; // 冰鍛：命中冰凍中的敵人必定暴擊
+  berserkSlow: boolean; // 狂暴凍域：對減速光環範圍內敵人加成傷害
+  vampiricAura: boolean; // 吸血光環：光環傷害轉換為回血
+  armoredOrbit: boolean; // 裝甲衛星：環繞武器啟動時額外減傷
+  weaponsCrowdHaste: boolean; // 五武齊全：副武器冷卻隨場上敵數加速
+  chainNova: boolean; // 連鎖新星：閃電每次連鎖跳躍時額外引爆小範圍新星
+  boomerangStorm: boolean; // 回鏢閃電：回力鏢返航時對周圍敵人放電
+  piercingTrail: boolean; // 貫穿灼痕：子彈穿透續飛時灼燒穿透點周圍敵人
+  magnetNova: boolean; // 磁力新星：新星爆炸範圍內的經驗寶石被吸向玩家
+  classUltimate: boolean; // 三修者：升級瞬間對周圍敵人釋放衝擊波
 }
 
 export function createRunState(): RunState {
@@ -91,6 +102,16 @@ export function createRunState(): RunState {
     explodeRadius: 0,
     explodeDamage: 3,
     synergyUnlocked: {},
+    frostforge: false,
+    berserkSlow: false,
+    vampiricAura: false,
+    armoredOrbit: false,
+    weaponsCrowdHaste: false,
+    chainNova: false,
+    boomerangStorm: false,
+    piercingTrail: false,
+    magnetNova: false,
+    classUltimate: false,
   };
 }
 
@@ -384,6 +405,156 @@ export const SYNERGY_TIERS: SynergyTier[] = [
   { id: 'scout-1', tag: 'scout', threshold: 4, name: '疾行 I', nameKey: 'synergy.scout-1.name', desc: '經驗獲得額外 +10%', descKey: 'synergy.scout-1.desc', emoji: '🟡', apply: (s) => (s.xpMultiplier *= 1.1) },
   { id: 'scout-2', tag: 'scout', threshold: 7, name: '疾行 II', nameKey: 'synergy.scout-2.name', desc: '移速額外 +5%、拾取範圍額外 +30%', descKey: 'synergy.scout-2.desc', emoji: '🟡', apply: (s) => { s.moveSpeed *= 1.05; s.pickupRadius *= 1.3; } },
 ];
+
+export interface ComboSynergy {
+  id: string;
+  name: string;
+  nameKey: string;
+  desc: string;
+  descKey: string;
+  emoji: string;
+  /** 需同時擁有（等級 > 0）的升級 id 集合，可跨流派；與 tagSpreadCount 擇一使用 */
+  requires?: string[];
+  /** 跨流派廣度型解鎖：擁有升級的「不同流派數」達此門檻即算達成（與 requires 擇一使用） */
+  tagSpreadCount?: number;
+  apply: (s: RunState) => void;
+}
+
+/** 已擁有（等級 > 0）升級所涵蓋的不同流派數 */
+function distinctTagsOwned(levels: Record<string, number>): number {
+  const tags = new Set<SynergyTag>();
+  for (const u of UPGRADES) {
+    if (u.tag && (levels[u.id] ?? 0) > 0) tags.add(u.tag);
+  }
+  return tags.size;
+}
+
+/**
+ * 組合羈絆（TFT 風格）：不看流派內數量，而是看是否同時擁有「特定幾種升級」，
+ * 一次性解鎖加成或專屬效果（不隨等級重複疊加）。id 前綴 combo- 以區分於 SYNERGY_TIERS，
+ * 兩者共用 run.synergyUnlocked 記錄集合。
+ */
+export const COMBO_SYNERGIES: ComboSynergy[] = [
+  {
+    id: 'combo-frostforge',
+    name: '冰鍛',
+    nameKey: 'synergy.combo-frostforge.name',
+    desc: '命中冰凍中的敵人必定暴擊',
+    descKey: 'synergy.combo-frostforge.desc',
+    emoji: '🧊',
+    requires: ['crit', 'freeze'],
+    apply: (s) => (s.frostforge = true),
+  },
+  {
+    id: 'combo-berserkslow',
+    name: '狂暴凍域',
+    nameKey: 'synergy.combo-berserkslow.name',
+    desc: '對減速光環範圍內的敵人造成 +30% 傷害',
+    descKey: 'synergy.combo-berserkslow.desc',
+    emoji: '🥶',
+    requires: ['firerate', 'slowfield'],
+    apply: (s) => (s.berserkSlow = true),
+  },
+  {
+    id: 'combo-vampaura',
+    name: '吸血光環',
+    nameKey: 'synergy.combo-vampaura.name',
+    desc: '傷害光環造成的傷害額外回復生命',
+    descKey: 'synergy.combo-vampaura.desc',
+    emoji: '🩸',
+    requires: ['lifesteal', 'aura'],
+    apply: (s) => (s.vampiricAura = true),
+  },
+  {
+    id: 'combo-armoredorbit',
+    name: '裝甲衛星',
+    nameKey: 'synergy.combo-armoredorbit.name',
+    desc: '環繞武器啟動時，受到的傷害額外減少 15%',
+    descKey: 'synergy.combo-armoredorbit.desc',
+    emoji: '🛡️',
+    requires: ['armor', 'orbital'],
+    apply: (s) => (s.armoredOrbit = true),
+  },
+  {
+    id: 'combo-fullarsenal',
+    name: '五武齊全',
+    nameKey: 'synergy.combo-fullarsenal.name',
+    desc: '同時擁有全部 5 種副武器：副武器冷卻隨場上敵數增加而加速',
+    descKey: 'synergy.combo-fullarsenal.desc',
+    emoji: '🎇',
+    requires: ['orbital', 'aura', 'lightning', 'nova', 'boomerang'],
+    apply: (s) => (s.weaponsCrowdHaste = true),
+  },
+  {
+    id: 'combo-chainnova',
+    name: '連鎖新星',
+    nameKey: 'synergy.combo-chainnova.name',
+    desc: '連鎖閃電每次跳躍時，額外引爆小範圍新星',
+    descKey: 'synergy.combo-chainnova.desc',
+    emoji: '🌩️',
+    requires: ['lightning', 'nova'],
+    apply: (s) => (s.chainNova = true),
+  },
+  {
+    id: 'combo-boomerangstorm',
+    name: '回鏢閃電',
+    nameKey: 'synergy.combo-boomerangstorm.name',
+    desc: '回力鏢返航時對周圍敵人放電',
+    descKey: 'synergy.combo-boomerangstorm.desc',
+    emoji: '🪃',
+    requires: ['boomerang', 'lightning'],
+    apply: (s) => (s.boomerangStorm = true),
+  },
+  {
+    id: 'combo-piercingtrail',
+    name: '貫穿灼痕',
+    nameKey: 'synergy.combo-piercingtrail.name',
+    desc: '子彈穿透續飛時，灼燒穿透點周圍敵人',
+    descKey: 'synergy.combo-piercingtrail.desc',
+    emoji: '🔥',
+    requires: ['pierce', 'aura'],
+    apply: (s) => (s.piercingTrail = true),
+  },
+  {
+    id: 'combo-magnetnova',
+    name: '磁力新星',
+    nameKey: 'synergy.combo-magnetnova.name',
+    desc: '新星爆炸範圍內的經驗寶石會被吸向你',
+    descKey: 'synergy.combo-magnetnova.desc',
+    emoji: '🧲',
+    requires: ['magnet', 'nova'],
+    apply: (s) => (s.magnetNova = true),
+  },
+  {
+    id: 'combo-classultimate',
+    name: '三修者',
+    nameKey: 'synergy.combo-classultimate.name',
+    desc: '升級橫跨 3 種不同流派：每次升級瞬間對周圍敵人釋放衝擊波',
+    descKey: 'synergy.combo-classultimate.desc',
+    emoji: '✨',
+    tagSpreadCount: 3,
+    apply: (s) => (s.classUltimate = true),
+  },
+];
+
+/** 檢查是否有新的組合羈絆達成；若有則套用、記錄已解鎖，並回傳新解鎖列表 */
+export function checkComboSynergyUnlocks(run: RunState, levels: Record<string, number>): ComboSynergy[] {
+  const unlocked: ComboSynergy[] = [];
+  let spreadCount = -1; // 惰性計算，只有存在 tagSpreadCount 型組合時才算一次
+  for (const combo of COMBO_SYNERGIES) {
+    if (run.synergyUnlocked[combo.id]) continue;
+    if (combo.tagSpreadCount != null) {
+      if (spreadCount < 0) spreadCount = distinctTagsOwned(levels);
+      if (spreadCount < combo.tagSpreadCount) continue;
+    } else if (!combo.requires || !combo.requires.every((id) => (levels[id] ?? 0) > 0)) {
+      continue;
+    }
+    combo.apply(run);
+    run.synergyUnlocked[combo.id] = true;
+    unlocked.push(combo);
+  }
+  return unlocked;
+}
 
 /** 檢查是否有新的流派羈絆達門檻；若有則套用加成、記錄已解鎖，並回傳新解鎖的羈絆列表（供 UI 提示） */
 export function checkSynergyUnlocks(run: RunState, levels: Record<string, number>): SynergyTier[] {
