@@ -12,6 +12,8 @@ import {
   TransformNode,
   Mesh,
   GlowLayer,
+  ParticleSystem,
+  DynamicTexture,
 } from '@babylonjs/core';
 import { loadModel, loadCharacter } from './model-loader';
 import type { AnimationGroup } from '@babylonjs/core';
@@ -210,9 +212,9 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
   sound.startMusic();
 
   const scene = new Scene(engine);
-  scene.clearColor = new Color4(0.05, 0.07, 0.13, 1);
+  scene.clearColor = new Color4(0.831, 0.91, 0.722, 1);
   const baseClear = scene.clearColor.clone();
-  const tideClear = new Color4(0.2, 0.04, 0.05, 1); // 血潮：畫面轉紅
+  const tideClear = new Color4(0.55, 0.1, 0.1, 1); // 血潮：畫面轉紅
   /** 輝光層：讓發光材質（子彈、衛星、閃電、火花等）泛光更顯眼 */
   const glow = new GlowLayer('glow', scene);
   glow.intensity = quality.glow;
@@ -220,7 +222,7 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
   setGlowLayer(glow);
   /** 線性霧增加遠處深度感 */
   scene.fogMode = Scene.FOGMODE_LINEAR;
-  scene.fogColor = new Color3(0.05, 0.07, 0.13);
+  scene.fogColor = new Color3(0.831, 0.91, 0.722);
   scene.fogStart = 55;
   scene.fogEnd = quality.fogEnd;
 
@@ -235,10 +237,10 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
   camera.pinchPrecision = 60; // 手機雙指縮放靈敏度
   camera.panningSensibility = 0; // 停用平移（鎖定跟隨玩家）
   const light = new HemisphericLight('light', new Vector3(0.4, 1, 0.3), scene);
-  light.intensity = 0.85;
-  light.groundColor = new Color3(0.25, 0.28, 0.4);
+  light.intensity = 0.95;
+  light.groundColor = new Color3(0.55, 0.55, 0.42);
   const sun = new DirectionalLight('sun', new Vector3(-0.5, -1, -0.3), scene);
-  sun.intensity = 0.6;
+  sun.intensity = 0.65;
 
   const { heightAt } = createTerrain(scene);
   void buildRoads(scene, heightAt);
@@ -264,6 +266,37 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
   playerMaterial.emissiveColor = new Color3(pc[0] * 0.3, pc[1] * 0.3, pc[2] * 0.3);
   playerMaterial.specularColor = Color3.Black();
   fallbackBody.material = playerMaterial;
+
+  /** 環境浮塵：跟隨玩家的柔光顆粒，增加空氣感（低畫質時關閉省效能） */
+  if (quality.id !== 'low') {
+    const dustTex = new DynamicTexture('dust-tex', 32, scene, false);
+    const dctx = dustTex.getContext();
+    const dg = dctx.createRadialGradient(16, 16, 0, 16, 16, 16);
+    dg.addColorStop(0, 'rgba(255,250,225,0.9)');
+    dg.addColorStop(1, 'rgba(255,250,225,0)');
+    dctx.fillStyle = dg;
+    dctx.fillRect(0, 0, 32, 32);
+    dustTex.update();
+
+    const dust = new ParticleSystem('ambient-dust', 120, scene);
+    dust.particleTexture = dustTex;
+    dust.emitter = player.position;
+    dust.createBoxEmitter(new Vector3(-1, 0.3, -1), new Vector3(1, 1, 1), new Vector3(-28, 0, -28), new Vector3(28, 14, 28));
+    dust.color1 = new Color4(1, 0.97, 0.85, 0.35);
+    dust.color2 = new Color4(0.95, 0.9, 0.7, 0.2);
+    dust.colorDead = new Color4(0.9, 0.85, 0.6, 0);
+    dust.minSize = 0.1;
+    dust.maxSize = 0.3;
+    dust.minLifeTime = 6;
+    dust.maxLifeTime = 10;
+    dust.emitRate = 12;
+    dust.blendMode = ParticleSystem.BLENDMODE_STANDARD;
+    dust.gravity = Vector3.Zero();
+    dust.minEmitPower = 0;
+    dust.maxEmitPower = 0;
+    dust.updateSpeed = 0.01;
+    dust.start();
+  }
 
   /** 角色 idle／walk 動畫群組（移動時切換成走路） */
   let playerWalk: AnimationGroup | undefined;

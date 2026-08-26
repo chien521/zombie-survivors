@@ -28,7 +28,7 @@ export interface Character {
 export const CHARACTERS: Character[] = [
   {
     id: 'matt',
-    name: '麥特',
+    name: '工頭麥特',
     nameKey: 'character.matt.name',
     traitKey: 'character.matt.trait',
     descKey: 'character.matt.desc',
@@ -45,7 +45,7 @@ export const CHARACTERS: Character[] = [
   },
   {
     id: 'lis',
-    name: '莉絲',
+    name: '飛毛腿莉絲',
     nameKey: 'character.lis.name',
     traitKey: 'character.lis.trait',
     descKey: 'character.lis.desc',
@@ -64,7 +64,7 @@ export const CHARACTERS: Character[] = [
   },
   {
     id: 'sam',
-    name: '山姆',
+    name: '龐克山姆',
     nameKey: 'character.sam.name',
     traitKey: 'character.sam.trait',
     descKey: 'character.sam.desc',
@@ -82,7 +82,7 @@ export const CHARACTERS: Character[] = [
   },
   {
     id: 'shaun',
-    name: '尚恩',
+    name: '背包客尚恩',
     nameKey: 'character.shaun.name',
     traitKey: 'character.shaun.trait',
     descKey: 'character.shaun.desc',
@@ -142,7 +142,7 @@ export const CHARACTERS: Character[] = [
   },
   {
     id: 'anne',
-    name: '砲手安妮',
+    name: '特勤安妮',
     nameKey: 'character.anne.name',
     traitKey: 'character.anne.trait',
     descKey: 'character.anne.desc',
@@ -160,11 +160,11 @@ export const CHARACTERS: Character[] = [
   },
   {
     id: 'mako',
-    name: '鯊牙馬可',
+    name: '西裝馬可',
     nameKey: 'character.mako.name',
     traitKey: 'character.mako.trait',
     descKey: 'character.mako.desc',
-    emoji: '🦈',
+    emoji: '🎯',
     cost: 450,
     trait: '暴擊爆發｜起始攻擊：高暴擊',
     desc: '30% 暴擊率開局，子彈常打出 2 倍傷害，單體爆發兇猛；疊攻擊力後更可怕。',
