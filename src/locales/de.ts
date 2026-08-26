@@ -280,6 +280,12 @@ export const de: Record<string, string> = {
   'zombie.crawl.name': 'Kriechender Zombie',
   'zombie.crawl.role': 'Kriecher',
   'zombie.crawl.desc': 'Kriecht am Boden auf dich zu, langsam, aber unauffällig und in einer Horde leicht zu übersehen.',
+  'zombie.half.name': 'Verwester',
+  'zombie.half.role': 'Kriecher',
+  'zombie.half.desc': 'Ein verwesender Zombie, der dicht am Boden kriecht — langsam, aber schwer einzuschätzen.',
+  'zombie.ghost.name': 'Böser Geist',
+  'zombie.ghost.role': 'Flieger',
+  'zombie.ghost.desc': 'Ein schwebender Geist, der Hindernisse komplett ignoriert und schnell heranrückt.',
 
 
 

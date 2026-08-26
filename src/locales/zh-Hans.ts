@@ -280,6 +280,12 @@ export const zhHans: Record<string, string> = {
   'zombie.crawl.name': '爬行僵尸',
   'zombie.crawl.role': '爬行',
   'zombie.crawl.desc': '趴在地上爬行逼近，速度偏慢但姿态低、混在尸群中不易察觉。',
+  'zombie.half.name': '腐尸',
+  'zombie.half.role': '爬行',
+  'zombie.half.desc': '浑身腐烂的僵尸，贴地爬行逼近，动作虽慢但难以用肉眼判断距离。',
+  'zombie.ghost.name': '恶灵',
+  'zombie.ghost.role': '飞行',
+  'zombie.ghost.desc': '悬空飘浮的怨灵，无视障碍物直接穿越逼近，速度偏快。',
 
 
 

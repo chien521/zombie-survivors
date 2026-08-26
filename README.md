@@ -9,8 +9,9 @@
 
 3D 倖存者類（Vampire Survivors-like）roguelite。操控一名倖存者（或狗狗、海盜），在無盡殭屍潮中自動開火、撿經驗升級、三選一強化武器。兩種模式：**劇情模式**依序擊敗 7 隻殭屍王破關、**死鬥模式**無盡波數比誰撐最高。低面數美術、跨平台（桌機鍵鼠 + 手機觸控），含 **全球排行榜／即時在線人數**（Cloudflare D1 後端，離線自動回退本機）。
 
-> 線上試玩：**https://zombie-survivors-e4y.pages.dev**
-> 介紹網站：**https://craig7351.github.io/zombie-survivors/**
+> 線上試玩（GitHub Pages，隨 main 分支自動部署）：**https://chien521.github.io/zombie-survivors/**
+> 線上試玩（Cloudflare Pages，含全球排行榜／統計後端，⚠️ 目前為手動部署，版本可能落後）：**https://zombie-survivors-e4y.pages.dev**
+> 介紹網站（上游原作）：**https://craig7351.github.io/zombie-survivors/**
 
 ![撐到最後 遊戲畫面](docs/assets/shot1.png)
 
@@ -72,7 +73,7 @@
 - **難度選擇**：再選 5 種難度之一（死鬥模式為起始強度）。
 - **角色選擇**：8 個角色即時 3D 預覽（播 idle、自轉）＋ 詳細介紹；含永久強化商店。
 - **排行榜**：全球排行（Cloudflare D1），分 🧟劇情（破關榜／生存榜）與 💀死鬥（比分數），皆可**依難度分頁過濾**；抓不到後端時回退本機。
-- **怪物圖鑑**：7 種殭屍 ＋ 7 隻王的模型縮圖與招式說明。
+- **怪物圖鑑**：9 種殭屍 ＋ 7 隻王的模型縮圖與招式說明，另附**組合羈絆圖鑑**（見下方「🔗 升級羈絆」）。
 
 ---
 
@@ -124,6 +125,25 @@
 
 死鬥模式的祝福／詛咒選項不屬於任何流派，不計入羈絆門檻。
 
+### 🧬 組合羈絆（TFT 風格）
+除了「流派」門檻外，另有 **10 種組合羈絆**：同時擁有下列特定升級（不看等級，只看是否擁有）即一次性解鎖加成或專屬效果。可在圖鑑頁的「組合羈絆」區塊查看每個組合的所需升級，遊戲中解鎖瞬間會跳出短暫提示。
+
+| 組合 | 需求 | 效果 |
+|---|---|---|
+| 🧊 冰鍛 | 暴擊 + 冰凍彈 | 命中冰凍中的敵人必定暴擊 |
+| 🥶 狂暴凍域 | 攻速 + 減速光環 | 對減速光環範圍內的敵人 +30% 傷害 |
+| 🩸 吸血光環 | 吸血 + 傷害光環 | 光環造成的傷害額外回復生命 |
+| 🛡️ 裝甲衛星 | 護甲 + 環繞飛斧 | 環繞武器啟動時，受到的傷害額外 −15% |
+| 🎇 五武齊全 | 全部 5 種額外武器 | 副武器冷卻隨場上敵數增加而加速 |
+| 🌩️ 連鎖新星 | 連鎖閃電 + 新星爆 | 每次連鎖跳躍額外引爆小範圍新星 |
+| 🪃 回鏢閃電 | 回力鏢 + 連鎖閃電 | 回力鏢返航時對周圍敵人放電 |
+| 🔥 貫穿灼痕 | 穿透 + 傷害光環 | 子彈穿透續飛時，灼燒穿透點周圍敵人 |
+| 🧲 磁力新星 | 拾取範圍 + 新星爆 | 新星爆炸範圍內的經驗寶石會被吸向玩家 |
+| ✨ 三修者 | 升級橫跨 3 種不同流派 | 每次升級瞬間對周圍敵人釋放衝擊波 |
+
+### 🏦 羈絆傳承（永久解鎖）
+角色選擇頁的商店除了「永久強化」外，另有**羈絆傳承**：花金幣永久解鎖後，之後每輪一開局就直接擁有該組合羈絆，不必再湊齊所需升級。目前開放 3 種：冰鍛傳承（💰400）、吸血光環傳承（💰400）、五武齊全傳承（💰600）。與永久強化各自獨立疊加，存於同一份 `localStorage`。
+
 ## 🧟 殭屍王（依序登場，打完第 7 隻即破關）
 | # | 王 | 招式 |
 |---|---|---|
@@ -135,7 +155,7 @@
 | 6 | 巨鯊 | 高速衝咬 |
 | 7 | 深海觸手（最終王） | 深海彈幕（全方位） |
 
-雜兵 7 種：基本殭屍、肋骨怪（快速）、胖殭屍（坦克）、斷臂殭屍、骷髏兵（不死）、無頭骷髏（遠程射手）、爬行殭屍（趴地爬行）。怪群的移動動作（快跑／擺臂跑／邊跑邊砍／走路）會隨機混搭。
+雜兵 9 種：基本殭屍、肋骨怪（快速）、胖殭屍（坦克）、斷臂殭屍、骷髏兵（不死）、無頭骷髏（遠程射手）、爬行殭屍（趴地爬行）、腐屍（天生爬行、渾身腐爛）、惡靈（懸空飛行、無視障礙物）。怪群的移動動作（快跑／擺臂跑／邊跑邊砍／走路）會隨機混搭。
 
 ## 🐕 角色（各有不同起始攻擊）
 | 角色 | 起始攻擊 | 特性 | 解鎖 |
@@ -170,8 +190,8 @@
 - **Vite** + **Tailwind CSS v4**
 - Web Audio 程式合成音效與背景音樂（零音檔）；背景音樂 4 首隨擊敗王數**自動切換**（暗潮→獵殺→肅殺→狂亂）
 - **畫質高／中／低**切換（右上下拉，即時生效）：調整算繪解析度、抗鋸齒、發光、可視距離；不影響玩法數值
-- **後端**：Cloudflare Pages Functions + **D1（SQLite）** 提供全球排行榜（劇情／死鬥分流＋反作弊）／累計統計／即時在線；同源 `/api`、全部 fail-soft（離線回退本機）
-- 進度／本機排行存於 localStorage；部署於 **Cloudflare Pages**
+- **後端**：Cloudflare Pages Functions + **D1（SQLite）** 提供全球排行榜（劇情／死鬥分流＋反作弊）／累計統計／即時在線；同源 `/api`、全部 fail-soft（離線或無後端時自動回退本機資料，不影響遊戲本身可玩）
+- 進度／本機排行存於 localStorage；**雙重部署**：Cloudflare Pages（含後端）與 GitHub Pages（純靜態，透過 GitHub Actions 自動部署，全球排行榜等功能回退本機）。所有資源路徑（模型／API／Draco 解碼器）皆為**相對路徑**，兩種部署方式都能正確運作
 
 ### 模型最佳化
 - 所有模型以 **Draco** 壓縮為二進位 `.glb`（37MB → 9.6MB，玩家首次下載省約 26MB）。
@@ -194,17 +214,24 @@ pnpm dev      # 開發伺服器（--host，手機可連區網）
 pnpm build    # vue-tsc 型別檢查 + vite 建置
 pnpm preview  # 預覽 build 結果
 
-# 部署（Cloudflare Pages，含 functions/ 後端）
+# 部署（Cloudflare Pages，含 functions/ 後端；專案名稱見 wrangler.jsonc 的 name 欄位）
 pnpm build
-npx wrangler pages deploy dist --project-name=zombie-survivors --branch=main
+npx wrangler pages deploy dist --project-name=animal-survivors --branch=main
 
 # D1 資料表（首次/變更時）
 npx wrangler d1 execute <db-name> --file=./schema.sql --remote
 ```
 SPA 轉址由 `public/_redirects` 處理（`/* /index.html 200`）；D1 綁定見 `wrangler.jsonc`。
 
-### VIVERSE 上架（另一條發布路徑，與 Cloudflare Pages 並存）
-本專案額外整合了 **VIVERSE 登入（Auth）**，做法與本機其他專案（graviflip / SURGE / puzzle_game）一致，詳見 `src/viverse/ViverseSession.ts`。這個階段**只加登入**，不含 VIVERSE 排行榜——原有的 Cloudflare D1 全球排行榜／留言板維持不變、兩者並存。
+### GitHub Pages（純靜態，無後端）
+`.github/workflows/deploy-pages.yml` 會在每次 push 到 `main` 時自動 build 並部署到 GitHub Pages，不需要手動操作。首次啟用需在 repo 設定一次：
+```bash
+gh api -X POST repos/<owner>/<repo>/pages -f "build_type=workflow"
+```
+之後每次 push 到 `main` 都會自動重新部署。由於是純靜態託管，`functions/` 後端不會運作——全球排行榜／統計／即時在線會自動 fail-soft 回退成本機資料，遊戲本身完全可玩。
+
+### VIVERSE 上架（另一條發布路徑，與 Cloudflare Pages／GitHub Pages 並存）
+本專案額外整合了 **VIVERSE 登入（Auth）**，做法與本機其他專案（graviflip / SURGE / puzzle_game）一致，詳見 `src/viverse/ViverseSession.ts`。這個階段**只加登入**，不含 VIVERSE 排行榜——原有的 Cloudflare D1 全球排行榜維持不變、三者並存。
 
 ```bash
 # 1. 在 VIVERSE Studio 建立 World App，複製 App ID，填入 .env
@@ -229,27 +256,28 @@ src/
 │  ├─ extra-weapons.ts # 環繞飛斧／光環／閃電／新星／回力鏢
 │  ├─ boss.ts          # 7 隻王與招式狀態機
 │  ├─ boss-hazards.ts  # 王招式對玩家的傷害實體（彈幕/震波/毒池）
-│  ├─ upgrades.ts      # RunState 與 25 種升級表
-│  ├─ characters.ts / meta.ts / difficulty.ts  # 8 角色、roguelite meta、5 難度
+│  ├─ upgrades.ts      # RunState、25 種升級表、10 種組合羈絆（COMBO_SYNERGIES）
+│  ├─ characters.ts / meta.ts / difficulty.ts  # 8 角色、roguelite meta（含羈絆傳承 LEGACY）、5 難度
 │  ├─ deathmatch.ts                      # 死鬥無盡參數、突變子、計分
-│  ├─ leaderboard.ts / api.ts            # 本機排行/統計、後端 API（排行榜/在線/留言）
+│  ├─ leaderboard.ts / api.ts            # 本機排行/統計、後端 API（排行榜/在線）
 │  ├─ terrain.ts / ground-decals.ts      # 地面（柏油材質）、馬路與地面貼片
 │  ├─ effects.ts / sound.ts / decals.ts  # 粒子、音效+背景音樂、血跡
 │  ├─ spatial-grid.ts / obstacles.ts     # 空間網格、障礙碰撞
 │  ├─ quality.ts                         # 畫質（高/中/低）設定
 │  ├─ character-previews.ts / model-thumbs.ts  # 選單即時預覽 / 圖鑑縮圖
 │  └─ model-loader.ts / gem-system.ts / input.ts / config.ts
-├─ components/         # landing / mode / difficulty / leaderboard / bestiary / message-board / online-history / menu / hud / game-view / 各 modal
+├─ components/         # landing / mode / difficulty / leaderboard / bestiary / menu / hud / game-view / 各 modal
 └─ App.vue
-functions/api/         # Pages Functions：run / leaderboard / stats / heartbeat / online / online-history / messages
+functions/api/         # Pages Functions：run / leaderboard / stats / heartbeat / online（僅 Cloudflare Pages 有效）
 public/
 ├─ models/zombie/      # Draco 壓縮 .glb 模型（角色、殭屍、武器、道具）
 ├─ draco/              # 自帶 Draco 解碼器
-└─ _redirects          # SPA fallback
-schema.sql             # D1 資料表（runs / stats / presence / online_hourly / messages）
-docs/                  # 介紹網站（GitHub Pages，/docs）
+└─ _redirects          # SPA fallback（僅 Cloudflare Pages 用）
+schema.sql              # D1 資料表（runs / stats / presence / online_hourly；messages 為留言板功能移除後的殘留資料表，未被使用）
+docs/                   # 介紹網站（上游原作的 GitHub Pages，/docs；與本 fork 的遊戲本體部署是兩回事）
+.github/workflows/      # deploy-pages.yml：push 到 main 自動建置並部署到本 fork 的 GitHub Pages
 ```
-頁面流程：`landing` → `mode`（模式）→ `difficulty` → `menu`（角色選擇）→ `game`；另有 `leaderboard`、`bestiary`、`messages`、`onlineHistory` 分頁。
+頁面流程：`landing` → `mode`（模式）→ `difficulty` → `menu`（角色選擇）→ `game`；另有 `leaderboard`、`bestiary` 分頁。
 
 ## 📝 更新紀錄（Changelog）
 
@@ -279,5 +307,6 @@ docs/                  # 介紹網站（GitHub Pages，/docs）
 - `char_pug.glb`（巴哥犬角色）— "Characters Pug" by Quaternius
 - `zombie_ribcage.glb`（肋骨怪）— "Zombie half" by Quaternius
 - `zombie_chubby.glb`（胖殭屍）、`zombie_arm.glb`（斷臂殭屍）— "Zombie" / "Big arm" by Quaternius（此包內同名模型有 CC0 與 CC-BY 兩種版本，本 fork 無法百分之百確認這兩個檔案對應哪個確切版本，故一律標註致謝以策安全）
+- `zombie_half.glb`（腐屍）— "Animated Zombie" by Quaternius
 
 授權全文：[CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)

@@ -280,6 +280,12 @@ export const es: Record<string, string> = {
   'zombie.crawl.name': 'Zombi rastrero',
   'zombie.crawl.role': 'Rastrero',
   'zombie.crawl.desc': 'Se arrastra por el suelo hacia ti, lento pero de perfil bajo y difícil de notar entre la multitud.',
+  'zombie.half.name': 'Podrido',
+  'zombie.half.role': 'Rastrero',
+  'zombie.half.desc': 'Un zombi en descomposición que se arrastra pegado al suelo, lento pero difícil de calcular la distancia.',
+  'zombie.ghost.name': 'Espíritu Maligno',
+  'zombie.ghost.role': 'Volador',
+  'zombie.ghost.desc': 'Un espíritu flotante que ignora los obstáculos por completo y se acerca rápido.',
 
 
 

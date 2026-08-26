@@ -280,6 +280,12 @@ export const fr: Record<string, string> = {
   'zombie.crawl.name': 'Zombie rampant',
   'zombie.crawl.role': 'Rampant',
   'zombie.crawl.desc': 'Rampe au sol vers vous, lent mais discret et facile à manquer dans une foule.',
+  'zombie.half.name': 'Putréfié',
+  'zombie.half.role': 'Rampant',
+  'zombie.half.desc': 'Un zombie en décomposition qui rampe au sol, lent mais difficile à jauger.',
+  'zombie.ghost.name': 'Esprit Maléfique',
+  'zombie.ghost.role': 'Volant',
+  'zombie.ghost.desc': 'Un esprit flottant qui ignore complètement les obstacles et approche rapidement.',
 
 
 

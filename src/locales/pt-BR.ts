@@ -280,6 +280,12 @@ export const ptBR: Record<string, string> = {
   'zombie.crawl.name': 'Zumbi rastejante',
   'zombie.crawl.role': 'Rastejante',
   'zombie.crawl.desc': 'Rasteja pelo chão na sua direção, lento mas discreto e difícil de notar na multidão.',
+  'zombie.half.name': 'Podre',
+  'zombie.half.role': 'Rastejante',
+  'zombie.half.desc': 'Um zumbi em decomposição que rasteja rente ao chão — lento, mas difícil de calcular a distância.',
+  'zombie.ghost.name': 'Espírito Maligno',
+  'zombie.ghost.role': 'Voador',
+  'zombie.ghost.desc': 'Um espírito flutuante que ignora completamente os obstáculos e se aproxima rapidamente.',
 
 
 

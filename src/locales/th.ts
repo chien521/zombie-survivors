@@ -280,6 +280,12 @@ export const th: Record<string, string> = {
   'zombie.crawl.name': 'ซอมบี้คลาน',
   'zombie.crawl.role': 'คลาน',
   'zombie.crawl.desc': 'คลานเข้าหาคุณบนพื้น ช้าแต่ตัวเตี้ยและสังเกตยากท่ามกลางฝูง',
+  'zombie.half.name': 'ซอมบี้เน่า',
+  'zombie.half.role': 'คลาน',
+  'zombie.half.desc': 'ซอมบี้เน่าเปื่อยที่คลานเข้าใกล้ตัวคุณ ช้าแต่กะระยะได้ยาก',
+  'zombie.ghost.name': 'วิญญาณร้าย',
+  'zombie.ghost.role': 'บิน',
+  'zombie.ghost.desc': 'วิญญาณลอยได้ที่เพิกเฉยต่อสิ่งกีดขวางและเข้าใกล้อย่างรวดเร็ว',
 
 
 

@@ -280,6 +280,12 @@ export const ko: Record<string, string> = {
   'zombie.crawl.name': '기어다니는 좀비',
   'zombie.crawl.role': '기어다님',
   'zombie.crawl.desc': '땅을 기어서 접근하며 속도는 느리지만 자세가 낮아 무리 속에서 눈에 잘 띄지 않는다.',
+  'zombie.half.name': '부패한 좀비',
+  'zombie.half.role': '기어다니는 자',
+  'zombie.half.desc': '땅을 기어오는 부패한 좀비. 느리지만 거리 감각을 잡기 어렵다.',
+  'zombie.ghost.name': '악령',
+  'zombie.ghost.role': '비행',
+  'zombie.ghost.desc': '장애물을 무시하고 공중을 떠다니며 다가오는 악령. 속도가 빠르다.',
 
 
 

@@ -280,6 +280,12 @@ export const ar: Record<string, string> = {
   'zombie.crawl.name': 'زومبي زاحف',
   'zombie.crawl.role': 'زاحف',
   'zombie.crawl.desc': 'يزحف على الأرض نحوك، بطيء لكنه منخفض الوضوح ويصعب ملاحظته وسط الحشد.',
+  'zombie.half.name': 'المتعفن',
+  'zombie.half.role': 'زاحف',
+  'zombie.half.desc': 'زومبي متعفن يزحف قريبًا من الأرض — بطيء لكن يصعب تقدير المسافة.',
+  'zombie.ghost.name': 'روح شريرة',
+  'zombie.ghost.role': 'طائر',
+  'zombie.ghost.desc': 'روح طائرة تتجاهل العوائق تمامًا وتقترب بسرعة.',
 
 
 

@@ -280,6 +280,12 @@ export const ru: Record<string, string> = {
   'zombie.crawl.name': 'Ползущий зомби',
   'zombie.crawl.role': 'Ползун',
   'zombie.crawl.desc': 'Ползёт по земле к вам — медленный, но малозаметный в толпе.',
+  'zombie.half.name': 'Гниющий',
+  'zombie.half.role': 'Ползущий',
+  'zombie.half.desc': 'Разлагающийся зомби, ползущий низко над землёй — медленный, но трудно оценить расстояние.',
+  'zombie.ghost.name': 'Злой Дух',
+  'zombie.ghost.role': 'Летающий',
+  'zombie.ghost.desc': 'Парящий дух, полностью игнорирующий препятствия и быстро приближающийся.',
 
 
 

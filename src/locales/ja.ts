@@ -280,6 +280,12 @@ export const ja: Record<string, string> = {
   'zombie.crawl.name': 'クロウリングゾンビ',
   'zombie.crawl.role': '匍匐',
   'zombie.crawl.desc': '地面を這って近づいてくる。動きは遅いが姿勢が低く、群れの中で見逃しやすい。',
+  'zombie.half.name': '腐乱ゾンビ',
+  'zombie.half.role': 'クローラー',
+  'zombie.half.desc': '地面を這って迫る腐乱死体。動きは遅いが距離感を掴みにくい。',
+  'zombie.ghost.name': '悪霊',
+  'zombie.ghost.role': '飛行',
+  'zombie.ghost.desc': '障害物を無視して宙を漂いながら迫る悪霊。動きは速い。',
 
 
 

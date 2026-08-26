@@ -280,6 +280,12 @@ export const hi: Record<string, string> = {
   'zombie.crawl.name': 'रेंगने वाला ज़ॉम्बी',
   'zombie.crawl.role': 'रेंगने वाला',
   'zombie.crawl.desc': 'जमीन पर रेंगते हुए आपकी ओर बढ़ता है, धीमा लेकिन नीची चाल के कारण भीड़ में पहचानना मुश्किल।',
+  'zombie.half.name': 'सड़ा हुआ ज़ॉम्बी',
+  'zombie.half.role': 'रेंगने वाला',
+  'zombie.half.desc': 'ज़मीन पर रेंगता एक सड़ा हुआ ज़ॉम्बी—धीमा लेकिन दूरी आंकना मुश्किल।',
+  'zombie.ghost.name': 'दुष्ट आत्मा',
+  'zombie.ghost.role': 'उड़ने वाला',
+  'zombie.ghost.desc': 'एक तैरती हुई आत्मा जो बाधाओं को पूरी तरह अनदेखा करती है और तेज़ी से पास आती है।',
 
 
 
