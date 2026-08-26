@@ -4,15 +4,11 @@
     @start="screen = 'mode'"
     @leaderboard="screen = 'leaderboard'"
     @bestiary="screen = 'bestiary'"
-    @messages="screen = 'messages'"
-    @online-history="screen = 'onlineHistory'"
   />
   <mode-screen v-else-if="screen === 'mode'" @select="onSelectMode" @back="screen = 'landing'" />
   <difficulty-screen v-else-if="screen === 'difficulty'" @select="onSelectDifficulty" @back="screen = 'mode'" />
   <leaderboard-screen v-else-if="screen === 'leaderboard'" @back="screen = 'landing'" />
   <bestiary-screen v-else-if="screen === 'bestiary'" @back="screen = 'landing'" />
-  <message-board-screen v-else-if="screen === 'messages'" @back="screen = 'landing'" />
-  <online-history-screen v-else-if="screen === 'onlineHistory'" @back="screen = 'landing'" />
   <menu-screen
     v-else-if="screen === 'menu'"
     :meta="meta"
@@ -41,8 +37,6 @@ import { defineAsyncComponent, reactive, ref, shallowRef } from 'vue';
 import LandingScreen from './components/landing-screen.vue';
 import LeaderboardScreen from './components/leaderboard-screen.vue';
 import DifficultyScreen from './components/difficulty-screen.vue';
-import MessageBoardScreen from './components/message-board-screen.vue';
-import OnlineHistoryScreen from './components/online-history-screen.vue';
 import ModeScreen from './components/mode-screen.vue';
 /** 這三個畫面會用到 Babylon.js（角色預覽／圖鑑縮圖／遊戲本體），改用動態 import
  *  拆成獨立 chunk，讓 Babylon.js 不擋在首屏（landing）的載入路徑上。 */
@@ -60,7 +54,7 @@ import type { RunResult, GameMode } from './game/game';
 
 const meta = reactive(loadMeta());
 const screen = ref<
-  'landing' | 'mode' | 'difficulty' | 'menu' | 'game' | 'leaderboard' | 'bestiary' | 'messages' | 'onlineHistory'
+  'landing' | 'mode' | 'difficulty' | 'menu' | 'game' | 'leaderboard' | 'bestiary'
 >('landing');
 
 const gameMode = ref<GameMode>('story');

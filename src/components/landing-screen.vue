@@ -32,7 +32,7 @@
       <!-- 語言選擇 -->
       <select
         v-model="localeModel"
-        class="rounded-xl border-0 bg-[#1a1d29] px-3 py-1 text-xs text-white outline-none ring-1 ring-[#2a2f45]"
+        class="portal-btn portal-btn--sub w-full max-w-xs text-center"
       >
         <option v-for="l in localeList" :key="l" :value="l" class="bg-zinc-900 text-white">{{ localeNames[l] }}</option>
       </select>
@@ -76,7 +76,7 @@
         <p v-if="!canStart" class="mt-1 text-center text-xs text-rose-300/80">{{ t('landing.nameRequired') }}</p>
       </div>
 
-      <!-- 按鈕：主 CTA 整排，其餘 4 顆手機 2×2、桌機回堆疊 -->
+      <!-- 按鈕：主 CTA 整排，其餘 2 顆手機並排、桌機回堆疊 -->
       <div class="flex w-full max-w-xs flex-col gap-3">
         <button
           class="portal-btn portal-btn--play"
@@ -89,8 +89,6 @@
         <div class="grid grid-cols-2 gap-3 sm:grid-cols-1">
           <button class="portal-btn portal-btn--sub" @click="emit('leaderboard')">{{ t('landing.leaderboard') }}</button>
           <button class="portal-btn portal-btn--sub" @click="emit('bestiary')">{{ t('landing.bestiary') }}</button>
-          <button class="portal-btn portal-btn--sub" @click="emit('messages')">{{ t('landing.messages') }}</button>
-          <button class="portal-btn portal-btn--sub" @click="emit('onlineHistory')">{{ t('landing.onlineHistory') }}</button>
         </div>
       </div>
 
@@ -155,8 +153,6 @@ const emit = defineEmits<{
   (e: 'start'): void;
   (e: 'leaderboard'): void;
   (e: 'bestiary'): void;
-  (e: 'messages'): void;
-  (e: 'onlineHistory'): void;
 }>();
 
 const name = ref(getPlayerName());
@@ -238,7 +234,7 @@ const timeText = computed(() => {
 .portal-btn:active {
   transform: scale(0.97);
 }
-/** 次要按鈕（排行榜/圖鑑/留言板/線上人數）：手機縮小（2×2），桌機回到原本大小堆疊 */
+/** 次要按鈕（排行榜/圖鑑/語言選擇）：手機縮小並排，桌機回到原本大小堆疊 */
 .portal-btn--sub {
   padding: 0.6rem 0.5rem;
   font-size: 1.05rem;

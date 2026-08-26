@@ -95,69 +95,6 @@ export async function fetchOnline(): Promise<{ online: number; peak: number } | 
   }
 }
 
-/** 留言板留言 */
-export interface Message {
-  id: number;
-  name: string;
-  text: string;
-  /** 回覆對象的留言 id；0 為主留言 */
-  parentId: number;
-  at: number;
-}
-
-/** 取最新留言；失敗回傳 null */
-export async function fetchMessages(): Promise<Message[] | null> {
-  try {
-    const res = await fetch(`${BASE}/messages`);
-    if (!res.ok) return null;
-    return (await res.json()) as Message[];
-  } catch {
-    return null;
-  }
-}
-
-/** 送出一則留言或回覆（parentId>0 為回覆）；成功回傳 true */
-export async function postMessage(name: string, text: string, parentId = 0): Promise<boolean> {
-  try {
-    const res = await fetch(`${BASE}/messages`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ name, text, parentId, deviceId: deviceId() }),
-    });
-    return res.ok;
-  } catch {
-    return false;
-  }
-}
-
-/** 刪除留言（需作者生日 key）；連同回覆一併刪除。成功回傳 true */
-export async function deleteMessage(id: number, key: string): Promise<boolean> {
-  try {
-    const res = await fetch(`${BASE}/messages?id=${id}&key=${encodeURIComponent(key)}`, { method: 'DELETE' });
-    return res.ok;
-  } catch {
-    return false;
-  }
-}
-
-/** 每小時最高同時在線（時序）一筆 */
-export interface OnlineHourPoint {
-  /** floor(epochMs/3600000)，UTC 整點 bucket */
-  hour: number;
-  peak: number;
-}
-
-/** 取每小時線上人數歷史（最多 30 天）；失敗回傳 null */
-export async function fetchOnlineHistory(days = 7): Promise<OnlineHourPoint[] | null> {
-  try {
-    const res = await fetch(`${BASE}/online-history?days=${days}`);
-    if (!res.ok) return null;
-    return (await res.json()) as OnlineHourPoint[];
-  } catch {
-    return null;
-  }
-}
-
 /** 取全球累計統計；失敗回傳 null */
 export async function fetchStats(): Promise<GlobalStats | null> {
   try {
