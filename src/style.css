@@ -11,7 +11,7 @@ body,
 }
 
 body {
-  font-family: system-ui, 'Segoe UI', sans-serif;
+  font-family: 'Courier New', Courier, monospace;
   background: #c9e0a8;
   user-select: none;
   -webkit-user-select: none;
