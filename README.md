@@ -1,41 +1,7 @@
 # 撐到最後 Last Stand 🧟
 
-> 🍴 本專案 fork 自 [craig7351/zombie-survivors](https://github.com/craig7351/zombie-survivors)（原作者尚未於上游標註 license，本 fork 目前僅供個人開發／學習用途，公開上架前會另行確認授權）。在原版基礎上新增：
-> - **VIVERSE 平台登入與全球排行榜整合**（`src/viverse/`）——詳見〈[VIVERSE 上架](#viverse-上架另一條發布路徑與-cloudflare-pages-並存)〉。
-> - **升級羈絆**與**角色熟練度**兩套新的養成系統（見下方「🔗 升級羈絆」「🎖️ 角色熟練度」章節）。
-> - 6 個角色模型＋3 種武器道具換成來源明確的 **CC0 免費素材**（原版模型來源不明，見下方「🎨 素材」章節）。
->
-> 原有玩法保持不變；留言板功能已移除，全球排行榜已由 Cloudflare D1 改為 **VIVERSE Leaderboard**（僅在 VIVERSE World App 內可用，見下方「VIVERSE 上架」）。
-
-3D 倖存者類（Vampire Survivors-like）roguelite。操控一名倖存者（或狗狗、海盜），在無盡殭屍潮中自動開火、撿經驗升級、三選一強化武器。兩種模式：**劇情模式**依序擊敗 8 隻殭屍王破關、**死鬥模式**無盡波數比誰撐最高。低面數美術、跨平台（桌機鍵鼠 + 手機觸控），含 **即時在線人數**（Cloudflare D1 後端，離線自動回退本機）與 **VIVERSE 全球排行榜**（僅 VIVERSE World App 內可用，本機／GitHub Pages／Cloudflare Pages 皆回退成本機排行）。
-
 > 線上試玩（GitHub Pages，隨 main 分支自動部署，無全球排行榜）：**https://chien521.github.io/zombie-survivors/**
-> 線上試玩（Cloudflare Pages，含統計／即時在線後端，⚠️ 目前為手動部署，版本可能落後）：**https://zombie-survivors-e4y.pages.dev**
 > 介紹網站（上游原作）：**https://craig7351.github.io/zombie-survivors/**
-
-![撐到最後 遊戲畫面](docs/assets/shot1.png)
-
-### 📺 遊玩影片
-[![撐到最後 遊玩影片](https://img.youtube.com/vi/w_0QVCkW9rU/hqdefault.jpg)](https://www.youtube.com/watch?v=w_0QVCkW9rU)
-
-### 🖼️ 遊戲畫面
-<p>
-  <img src="docs/assets/shot2.png" width="32%" />
-  <img src="docs/assets/shot3.png" width="32%" />
-  <img src="docs/assets/shot4.png" width="32%" />
-</p>
-
-### 📱 手機畫面
-<p>
-  <img src="docs/assets/phone1.jpg" width="19%" />
-  <img src="docs/assets/phone2.jpg" width="19%" />
-  <img src="docs/assets/phone3.jpg" width="19%" />
-  <img src="docs/assets/phone4.jpg" width="19%" />
-  <img src="docs/assets/phone5.jpg" width="19%" />
-  <img src="docs/assets/phone6.jpg" width="19%" />
-  <img src="docs/assets/phone7.jpg" width="19%" />
-</p>
-
 ---
 
 ## 🎮 玩法
