@@ -1,22 +1,22 @@
 <template>
   <div class="absolute inset-0 z-20 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-    <div class="w-[min(90vw,22rem)] rounded-xl bg-[#1a1d29] p-8 text-center text-white shadow-2xl ring-1 ring-[#2a2f45]">
+    <div class="w-[min(90vw,22rem)] rounded-md bg-[#d4e8b8] p-8 text-center text-[#14210f] shadow-2xl ring-[3px] ring-[#14210f]">
       <div class="mb-6 text-3xl font-black">{{ t('pause.title') }}</div>
       <div class="flex flex-col gap-3">
         <button
-          class="rounded-xl bg-[#2a2f45] py-3 text-lg font-black text-[#ffe066] ring-2 ring-[#ffe066] transition hover:bg-[#394162] active:scale-95"
+          class="rounded-md bg-white/40 py-3 text-lg font-black text-[#8a2020] ring-[3px] ring-[#8a2020] transition hover:bg-white/65 active:scale-95"
           @click="emit('resume')"
         >
           {{ t('pause.resume') }}
         </button>
         <button
-          class="rounded-xl bg-[#2a2f45] py-3 text-lg font-black ring-2 ring-[#5a6cad] transition hover:bg-[#394162] active:scale-95"
+          class="rounded-md bg-white/40 py-3 text-lg font-black ring-2 ring-[#14210f] transition hover:bg-white/65 active:scale-95"
           @click="emit('restart')"
         >
           {{ t('pause.restart') }}
         </button>
         <button
-          class="rounded-xl bg-[#2a2f45] py-3 text-lg font-black ring-2 ring-[#5a6cad] transition hover:bg-[#394162] active:scale-95"
+          class="rounded-md bg-white/40 py-3 text-lg font-black ring-2 ring-[#14210f] transition hover:bg-white/65 active:scale-95"
           @click="emit('menu')"
         >
           {{ t('pause.menu') }}

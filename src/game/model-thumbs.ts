@@ -29,7 +29,7 @@ export async function renderModelThumbnails(
 
   for (const model of unique) {
     const scene = new Scene(engine);
-    scene.clearColor = new Color4(0.09, 0.11, 0.18, 1);
+    scene.clearColor = new Color4(0.831, 0.91, 0.722, 1);
     const cam = new ArcRotateCamera('c', Math.PI / 2, Math.PI / 2.5, 4, new Vector3(0, 1, 0), scene);
     const hemi = new HemisphericLight('h', new Vector3(0.3, 1, 0.5), scene);
     hemi.intensity = 1.05;

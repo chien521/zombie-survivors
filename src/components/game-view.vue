@@ -30,18 +30,18 @@
     >
       <div
         :key="stats.synergyToastId"
-        class="synergy-toast flex items-center gap-2 whitespace-nowrap rounded-xl bg-[#1a1d29] px-4 py-2 text-sm font-bold text-[#ffe066] shadow-2xl ring-2 ring-[#ffe066] sm:text-base"
+        class="synergy-toast flex items-center gap-2 whitespace-nowrap rounded-md bg-[#d4e8b8] px-4 py-2 text-sm font-bold text-[#a67c00] shadow-2xl ring-[3px] ring-[#a67c00] sm:text-base"
       >
         <span class="text-lg sm:text-xl">{{ synergyToast.emoji }}</span>
         <span>{{ t('gameview.synergyUnlocked') }} {{ synergyToast.name }}</span>
-        <span class="font-normal text-white/70">— {{ synergyToast.desc }}</span>
+        <span class="font-normal text-[#14210f]/70">— {{ synergyToast.desc }}</span>
       </div>
     </div>
 
     <!-- 右上控制：靜音／暫停／技能等級／Debug -->
     <div v-show="stats.state === 'running'" class="absolute right-3 top-3 z-10 flex items-center gap-1.5 sm:right-4 sm:top-4 sm:gap-2">
       <button
-        class="flex h-9 w-9 items-center justify-center rounded-full sm:h-11 sm:w-11 bg-black/40 text-base text-white backdrop-blur-md sm:text-xl transition hover:bg-black/60 active:scale-95"
+        class="flex h-9 w-9 items-center justify-center rounded-full sm:h-11 sm:w-11 bg-white/55 text-base text-[#14210f] backdrop-blur-md sm:text-xl transition hover:bg-white/75 active:scale-95"
         @click="onToggleMute"
       >
         {{ muted ? '🔇' : '🔊' }}
@@ -50,26 +50,26 @@
         v-model="quality"
         @change="onQuality"
         :title="t('gameview.quality')"
-        class="h-9 rounded-full border-0 bg-black/40 px-2 text-xs text-white outline-none backdrop-blur-md transition hover:bg-black/60 sm:h-11 sm:px-3 sm:text-sm"
+        class="h-9 rounded-full border-0 bg-white/55 px-2 text-xs text-[#14210f] outline-none backdrop-blur-md transition hover:bg-white/75 sm:h-11 sm:px-3 sm:text-sm"
       >
-        <option v-for="q in qualities" :key="q.id" :value="q.id" class="bg-zinc-900 text-white">🎚 {{ t(q.nameKey) }} {{ t('gameview.qualitySuffix') }}</option>
+        <option v-for="q in qualities" :key="q.id" :value="q.id" class="bg-white text-[#14210f]">🎚 {{ t(q.nameKey) }} {{ t('gameview.qualitySuffix') }}</option>
       </select>
       <button
-        class="flex h-9 w-9 items-center justify-center rounded-full sm:h-11 sm:w-11 bg-black/40 text-base text-white backdrop-blur-md sm:text-xl transition hover:bg-black/60 active:scale-95"
+        class="flex h-9 w-9 items-center justify-center rounded-full sm:h-11 sm:w-11 bg-white/55 text-base text-[#14210f] backdrop-blur-md sm:text-xl transition hover:bg-white/75 active:scale-95"
         @click="onTogglePause"
       >
         ⏸
       </button>
       <button
-        class="flex h-9 w-9 items-center justify-center rounded-full sm:h-11 sm:w-11 text-base text-white backdrop-blur-md sm:text-xl transition active:scale-95"
-        :class="showStats ? 'bg-cyan-500' : 'bg-black/40 hover:bg-black/60'"
+        class="flex h-9 w-9 items-center justify-center rounded-full sm:h-11 sm:w-11 text-base backdrop-blur-md sm:text-xl transition active:scale-95"
+        :class="showStats ? 'bg-[#4a7a2e] text-white' : 'bg-white/55 text-[#14210f] hover:bg-white/75'"
         @click="onToggleStats"
       >
         📊
       </button>
       <button
-        class="flex h-9 w-9 items-center justify-center rounded-full sm:h-11 sm:w-11 text-base text-white backdrop-blur-md sm:text-xl transition active:scale-95"
-        :class="showDebug ? 'bg-fuchsia-500' : 'bg-black/40 hover:bg-black/60'"
+        class="flex h-9 w-9 items-center justify-center rounded-full sm:h-11 sm:w-11 text-base backdrop-blur-md sm:text-xl transition active:scale-95"
+        :class="showDebug ? 'bg-[#8a2a7a] text-white' : 'bg-white/55 text-[#14210f] hover:bg-white/75'"
         @click="onToggleDebug"
       >
         🛠️
@@ -79,24 +79,24 @@
     <!-- 技能等級面板 -->
     <div
       v-if="showStats && stats.state === 'running'"
-      class="absolute right-4 top-20 z-20 max-h-[78vh] w-60 overflow-y-auto rounded-xl bg-[#1a1d29] p-3 text-xs text-white shadow-2xl ring-1 ring-[#2a2f45]"
+      class="absolute right-4 top-20 z-20 max-h-[78vh] w-60 overflow-y-auto rounded-md bg-[#d4e8b8]/95 p-3 text-xs text-[#14210f] shadow-2xl ring-2 ring-[#14210f]"
     >
-      <div v-if="activeSynergies.length" class="mb-3 rounded-lg bg-[#2a2f45] p-2">
-        <div class="mb-1 text-sm font-black text-[#ffe066]">{{ t('gameview.synergy') }}</div>
-        <div v-for="(syn, i) in activeSynergies" :key="i" class="mb-1 text-white/90">
+      <div v-if="activeSynergies.length" class="mb-3 rounded-md bg-white/40 p-2">
+        <div class="mb-1 text-sm font-black text-[#a67c00]">{{ t('gameview.synergy') }}</div>
+        <div v-for="(syn, i) in activeSynergies" :key="i" class="mb-1 text-[#14210f]/90">
           <span>{{ syn.emoji }} {{ t(syn.nameKey) }}</span>
-          <span class="ml-1 text-white/50">— {{ t(syn.descKey) }}</span>
+          <span class="ml-1 text-[#14210f]/55">— {{ t(syn.descKey) }}</span>
         </div>
       </div>
-      <div class="mb-2 text-sm font-black text-cyan-300">{{ t('gameview.skillLevels') }}</div>
+      <div class="mb-2 text-sm font-black text-[#2f6b8a]">{{ t('gameview.skillLevels') }}</div>
       <div
         v-for="(u, i) in upgradeStatus"
         :key="i"
         class="mb-1 flex items-center justify-between"
-        :class="u.level === 0 ? 'text-white/40' : ''"
+        :class="u.level === 0 ? 'text-[#14210f]/40' : ''"
       >
         <span>{{ u.emoji }} {{ u.nameKey ? t(u.nameKey) : u.name }}</span>
-        <span class="font-bold" :class="u.level >= u.maxLevel ? 'text-amber-300' : 'text-white/80'">
+        <span class="font-bold" :class="u.level >= u.maxLevel ? 'text-[#a67c00]' : 'text-[#14210f]/80'">
           Lv {{ u.level }}/{{ u.maxLevel }}
         </span>
       </div>
@@ -105,27 +105,27 @@
     <!-- Debug 參數面板 -->
     <div
       v-if="showDebug && stats.state === 'running'"
-      class="absolute right-4 top-20 z-20 max-h-[78vh] w-72 overflow-y-auto rounded-xl bg-[#1a1d29] p-3 text-xs text-white shadow-2xl ring-1 ring-[#2a2f45]"
+      class="absolute right-4 top-20 z-20 max-h-[78vh] w-72 overflow-y-auto rounded-md bg-[#d4e8b8]/95 p-3 text-xs text-[#14210f] shadow-2xl ring-2 ring-[#14210f]"
     >
       <!-- 召喚王 -->
-      <div class="mb-3 rounded-lg bg-[#2a2f45] p-2">
-        <div class="mb-1 text-sm font-black text-fuchsia-300">召喚王</div>
+      <div class="mb-3 rounded-md bg-white/40 p-2">
+        <div class="mb-1 text-sm font-black text-[#8a2a7a]">召喚王</div>
         <div class="flex gap-2">
-          <select v-model.number="summonIndex" class="min-w-0 flex-1 rounded bg-black/50 px-2 py-1 text-white outline-none">
+          <select v-model.number="summonIndex" class="min-w-0 flex-1 rounded bg-white/60 px-2 py-1 text-[#14210f] outline-none">
             <option v-for="(n, i) in bossNames" :key="i" :value="i" class="text-black">{{ i + 1 }}. {{ n }}</option>
           </select>
-          <button class="rounded bg-fuchsia-500 px-3 py-1 font-black active:scale-95" @click="onSummonBoss">召喚</button>
+          <button class="rounded bg-[#8a2a7a] px-3 py-1 font-black text-white active:scale-95" @click="onSummonBoss">召喚</button>
         </div>
       </div>
 
       <template v-for="g in debugGroups" :key="g.group">
-        <div class="mb-1 mt-2 text-sm font-black text-fuchsia-300">{{ g.group }}</div>
+        <div class="mb-1 mt-2 text-sm font-black text-[#8a2a7a]">{{ g.group }}</div>
         <div v-for="item in g.items" :key="item.index" class="mb-2">
           <label v-if="item.type === 'bool'" class="flex cursor-pointer items-center justify-between">
             <span>{{ item.label }}</span>
             <input
               type="checkbox"
-              class="h-4 w-4 accent-fuchsia-400"
+              class="h-4 w-4 accent-[#8a2a7a]"
               :checked="item.value > 0.5"
               @change="onDebugToggle(item.index, $event)"
             />
@@ -133,11 +133,11 @@
           <template v-else>
             <div class="flex justify-between">
               <span>{{ item.label }}</span>
-              <span class="font-bold text-white/70">{{ fmt(item.value) }}</span>
+              <span class="font-bold text-[#14210f]/70">{{ fmt(item.value) }}</span>
             </div>
             <input
               type="range"
-              class="w-full accent-fuchsia-400"
+              class="w-full accent-[#8a2a7a]"
               :min="item.min"
               :max="item.max"
               :step="item.step"

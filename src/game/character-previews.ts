@@ -22,7 +22,7 @@ export interface PreviewHandle {
 export async function setupCharacterPreview(canvas: HTMLCanvasElement, modelPath: string): Promise<PreviewHandle | null> {
   const engine = new Engine(canvas, true, { preserveDrawingBuffer: false });
   const scene = new Scene(engine);
-  scene.clearColor = new Color4(0.1, 0.13, 0.22, 1);
+  scene.clearColor = new Color4(0.831, 0.91, 0.722, 1);
   /** 起始角度面向鏡頭（會持續旋轉） */
   const cam = new ArcRotateCamera('c', Math.PI / 2, Math.PI / 2.5, 4, new Vector3(0, 1, 0), scene);
   const hemi = new HemisphericLight('h', new Vector3(0.3, 1, 0.5), scene);

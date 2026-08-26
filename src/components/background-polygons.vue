@@ -6,8 +6,8 @@
       class="absolute shape"
       :style="s.style"
     />
-    <!-- 暗角，聚焦中央 -->
-    <div class="absolute inset-0" style="background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%)" />
+    <!-- 邊緣淡淡加深，聚焦中央（淺色主題，柔和不用黑色暗角） -->
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse at center, transparent 45%, rgba(20,33,15,0.18) 100%)" />
   </div>
 </template>
 
@@ -17,8 +17,8 @@ interface ShapeData {
   style: Record<string, string>;
 }
 
-/** 末日色盤：殭屍綠、暗綠、血紅、鏽棕、深藍灰 */
-const COLORS = ['#3f7a3a', '#5b8c3a', '#7a2b2b', '#9c5a2b', '#2b3a44', '#4a6b2e'];
+/** 末日色盤（淺色主題）：偏深的殭屍綠、血紅、鏽棕，在淡綠底色上形成斑駁感 */
+const COLORS = ['#5b8c3a', '#4a6b2e', '#7a2b2b', '#9c5a2b', '#3f6b45', '#8a9c4a'];
 const SHAPES = ['circle', 'square', 'triangle'] as const;
 
 function rand(min: number, max: number) {
@@ -26,7 +26,7 @@ function rand(min: number, max: number) {
 }
 
 const bgStyle = {
-  background: 'linear-gradient(160deg, #0a0f0a 0%, #142016 45%, #0c1118 100%)',
+  background: 'linear-gradient(160deg, #d4e8b8 0%, #c9e0a8 45%, #bcd89a 100%)',
 };
 
 const shapes: ShapeData[] = Array.from({ length: 22 }, (_, i) => {
@@ -38,7 +38,7 @@ const shapes: ShapeData[] = Array.from({ length: 22 }, (_, i) => {
     top: `${rand(-5, 100)}%`,
     width: `${size}rem`,
     height: `${size}rem`,
-    opacity: `${rand(0.12, 0.3)}`,
+    opacity: `${rand(0.15, 0.35)}`,
     background: shape === 'triangle' ? 'transparent' : color,
     transform: `rotate(${rand(0, 360)}deg)`,
     animationDuration: `${rand(14, 34)}s`,

@@ -1,5 +1,5 @@
 <template>
-  <div class="absolute inset-0 flex flex-col items-center justify-center overflow-hidden text-white">
+  <div class="absolute inset-0 flex flex-col items-center justify-center overflow-hidden text-[#14210f]">
     <background-polygons />
     <whats-new-modal v-if="showWhatsNew" :release="latestRelease" @close="closeWhatsNew" />
 
@@ -8,24 +8,24 @@
       <div class="text-center">
         <h1
           class="text-5xl font-black tracking-widest sm:text-7xl"
-          style="color: #c6ff7a; paint-order: stroke fill; -webkit-text-stroke: 6px #14210f; text-shadow: 0 6px 0 rgba(0,0,0,0.35)"
+          style="color: #7a2020; paint-order: stroke fill; -webkit-text-stroke: 6px #14210f; text-shadow: 0 6px 0 rgba(20,33,15,0.25)"
         >
           {{ t('landing.title') }}
         </h1>
-        <p class="mt-2 text-xs font-bold tracking-wide text-white/70 sm:mt-3 sm:text-lg">
+        <p class="mt-2 text-xs font-bold tracking-wide text-[#14210f]/70 sm:mt-3 sm:text-lg">
           {{ t('landing.subtitle') }}
         </p>
         <!-- 即時在線人數 -->
         <div
           v-if="online !== null"
-          class="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#1a1d29] px-4 py-1.5 text-sm font-bold ring-1 ring-[#2a2f45]"
+          class="mt-4 inline-flex items-center gap-2 rounded-md bg-white/40 px-4 py-1.5 text-sm font-bold ring-2 ring-[#14210f]"
         >
           <span class="relative flex h-2.5 w-2.5">
-            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-lime-400 opacity-75"></span>
-            <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-lime-400"></span>
+            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#3f7a3a] opacity-75"></span>
+            <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#3f7a3a]"></span>
           </span>
-          <span class="text-lime-300">{{ online }}</span>
-          <span class="text-white/60">{{ t('landing.onlineSuffix') }}</span>
+          <span class="text-[#3f7a3a]">{{ online }}</span>
+          <span class="text-[#14210f]/60">{{ t('landing.onlineSuffix') }}</span>
         </div>
       </div>
 
@@ -60,12 +60,12 @@
           v-model="name"
           maxlength="16"
           :placeholder="t('landing.namePlaceholder')"
-          class="w-full rounded-xl bg-[#1a1d29] px-5 py-2 text-center font-bold text-white outline-none ring-1 placeholder:text-white/40"
-          :class="canStart ? 'ring-[#2a2f45]' : 'ring-rose-400/50'"
+          class="w-full rounded-md bg-white/40 px-5 py-2 text-center font-bold text-[#14210f] outline-none ring-2 placeholder:text-[#14210f]/40"
+          :class="canStart ? 'ring-[#14210f]' : 'ring-[#8a2020]'"
           @change="saveName"
           @blur="saveName"
         />
-        <p v-if="!canStart" class="mt-1 text-center text-xs text-rose-300/80">{{ t('landing.nameRequired') }}</p>
+        <p v-if="!canStart" class="mt-1 text-center text-xs font-bold text-[#8a2020]">{{ t('landing.nameRequired') }}</p>
       </div>
 
       <!-- 按鈕：主 CTA 整排，其餘 2 顆手機並排、桌機回堆疊 -->
@@ -83,7 +83,7 @@
           v-model="localeModel"
           class="portal-btn portal-btn--sub w-full text-center"
         >
-          <option v-for="l in localeList" :key="l" :value="l" class="bg-zinc-900 text-white">{{ localeNames[l] }}</option>
+          <option v-for="l in localeList" :key="l" :value="l" class="bg-white text-[#14210f]">{{ localeNames[l] }}</option>
         </select>
         <div class="grid grid-cols-2 gap-3 sm:grid-cols-1">
           <button class="portal-btn portal-btn--sub" @click="emit('leaderboard')">{{ t('landing.leaderboard') }}</button>
@@ -93,17 +93,17 @@
 
       <!-- 累積統計：手機 2×2、桌機橫排 -->
       <div class="grid w-full max-w-xs grid-cols-2 gap-2 sm:flex sm:w-auto sm:max-w-none sm:gap-6">
-        <div class="rounded-xl bg-[#1a1d29] px-3 py-2 text-center ring-1 ring-[#2a2f45] sm:px-6">
-          <div class="text-xl font-black text-lime-300 sm:text-3xl">{{ stats.plays }}</div>
-          <div class="text-xs text-white/55">{{ t('landing.statsPlays') }}</div>
+        <div class="rounded-md bg-white/40 px-3 py-2 text-center ring-2 ring-[#14210f] sm:px-6">
+          <div class="text-xl font-black text-[#3f7a3a] sm:text-3xl">{{ stats.plays }}</div>
+          <div class="text-xs text-[#14210f]/60">{{ t('landing.statsPlays') }}</div>
         </div>
-        <div class="rounded-xl bg-[#1a1d29] px-3 py-2 text-center ring-1 ring-[#2a2f45] sm:px-6">
-          <div class="text-xl font-black text-lime-300 sm:text-3xl">{{ timeText }}</div>
-          <div class="text-xs text-white/55">{{ t('landing.statsTime') }}</div>
+        <div class="rounded-md bg-white/40 px-3 py-2 text-center ring-2 ring-[#14210f] sm:px-6">
+          <div class="text-xl font-black text-[#3f7a3a] sm:text-3xl">{{ timeText }}</div>
+          <div class="text-xs text-[#14210f]/60">{{ t('landing.statsTime') }}</div>
         </div>
-        <div class="rounded-xl bg-[#1a1d29] px-3 py-2 text-center ring-1 ring-[#2a2f45] sm:px-6">
-          <div class="text-xl font-black text-lime-300 sm:text-3xl">{{ stats.totalKills }}</div>
-          <div class="text-xs text-white/55">{{ t('landing.statsKills') }}</div>
+        <div class="rounded-md bg-white/40 px-3 py-2 text-center ring-2 ring-[#14210f] sm:px-6">
+          <div class="text-xl font-black text-[#3f7a3a] sm:text-3xl">{{ stats.totalKills }}</div>
+          <div class="text-xs text-[#14210f]/60">{{ t('landing.statsKills') }}</div>
         </div>
       </div>
     </div>
@@ -187,19 +187,18 @@ const timeText = computed(() => {
 <style scoped>
 .portal-btn {
   padding: 1rem 1.5rem;
-  border-radius: 0.875rem;
+  border-radius: 0.5rem;
   font-size: 1.5rem;
   font-weight: 900;
   letter-spacing: 0.06em;
-  color: #eaf3ee;
-  background: #2a2f45;
-  border: 2px solid #5a6cad;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  color: #14210f;
+  background: rgba(255, 255, 255, 0.35);
+  border: 3px solid #14210f;
   cursor: pointer;
   transition: transform 0.16s, background 0.16s, border-color 0.16s;
 }
 .portal-btn:hover {
-  background: #394162;
+  background: rgba(255, 255, 255, 0.6);
   transform: scale(1.03);
 }
 .portal-btn:active {
@@ -218,13 +217,14 @@ const timeText = computed(() => {
     letter-spacing: 0.06em;
   }
 }
-/** 主 CTA：沿用同一套卡片語彙，用金色邊框/文字強調（同 match-three 稀有/強調色） */
+/** 主 CTA：暖色（血紅）邊框與文字強調，跟其餘冷色調底色形成對比 */
 .portal-btn--play {
-  border-color: #ffe066;
-  color: #ffe066;
+  border-color: #8a2020;
+  color: #8a2020;
+  background: rgba(255, 255, 255, 0.5);
 }
 .portal-btn--play:hover {
-  background: #394162;
+  background: rgba(255, 255, 255, 0.75);
 }
 .portal-btn--disabled {
   opacity: 0.45;
@@ -233,18 +233,18 @@ const timeText = computed(() => {
 }
 .portal-btn--disabled:hover {
   transform: none;
-  background: #2a2f45;
+  background: rgba(255, 255, 255, 0.5);
 }
 .viverse-chip {
   margin-top: 0.25rem;
   padding: 0.4rem 1rem;
-  border-radius: 0.875rem;
+  border-radius: 0.5rem;
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: #eaf3ee;
-  background: #1a1d29;
-  border: 1px solid #2a2f45;
+  color: #14210f;
+  background: rgba(255, 255, 255, 0.3);
+  border: 2px solid #14210f;
   cursor: pointer;
 }
 .viverse-chip:disabled {
@@ -252,8 +252,8 @@ const timeText = computed(() => {
   opacity: 0.6;
 }
 .viverse-chip--connected {
-  color: #ffe066;
-  border-color: rgba(255, 224, 102, 0.4);
+  color: #3f7a3a;
+  border-color: #3f7a3a;
   opacity: 1;
 }
 </style>
