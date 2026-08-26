@@ -30,7 +30,7 @@
     >
       <div
         :key="stats.synergyToastId"
-        class="synergy-toast flex items-center gap-2 whitespace-nowrap rounded-full bg-black/70 px-4 py-2 text-sm font-bold text-amber-300 shadow-2xl ring-1 ring-amber-300/40 backdrop-blur-md sm:text-base"
+        class="synergy-toast flex items-center gap-2 whitespace-nowrap rounded-xl bg-[#1a1d29] px-4 py-2 text-sm font-bold text-[#ffe066] shadow-2xl ring-2 ring-[#ffe066] sm:text-base"
       >
         <span class="text-lg sm:text-xl">{{ synergyToast.emoji }}</span>
         <span>{{ t('gameview.synergyUnlocked') }} {{ synergyToast.name }}</span>
@@ -79,10 +79,10 @@
     <!-- 技能等級面板 -->
     <div
       v-if="showStats && stats.state === 'running'"
-      class="absolute right-4 top-20 z-20 max-h-[78vh] w-60 overflow-y-auto rounded-2xl bg-black/75 p-3 text-xs text-white shadow-2xl ring-1 ring-white/10 backdrop-blur-md"
+      class="absolute right-4 top-20 z-20 max-h-[78vh] w-60 overflow-y-auto rounded-xl bg-[#1a1d29] p-3 text-xs text-white shadow-2xl ring-1 ring-[#2a2f45]"
     >
-      <div v-if="activeSynergies.length" class="mb-3 rounded-lg bg-white/5 p-2">
-        <div class="mb-1 text-sm font-black text-amber-300">{{ t('gameview.synergy') }}</div>
+      <div v-if="activeSynergies.length" class="mb-3 rounded-lg bg-[#2a2f45] p-2">
+        <div class="mb-1 text-sm font-black text-[#ffe066]">{{ t('gameview.synergy') }}</div>
         <div v-for="(syn, i) in activeSynergies" :key="i" class="mb-1 text-white/90">
           <span>{{ syn.emoji }} {{ t(syn.nameKey) }}</span>
           <span class="ml-1 text-white/50">— {{ t(syn.descKey) }}</span>
@@ -105,10 +105,10 @@
     <!-- Debug 參數面板 -->
     <div
       v-if="showDebug && stats.state === 'running'"
-      class="absolute right-4 top-20 z-20 max-h-[78vh] w-72 overflow-y-auto rounded-2xl bg-black/75 p-3 text-xs text-white shadow-2xl ring-1 ring-white/10 backdrop-blur-md"
+      class="absolute right-4 top-20 z-20 max-h-[78vh] w-72 overflow-y-auto rounded-xl bg-[#1a1d29] p-3 text-xs text-white shadow-2xl ring-1 ring-[#2a2f45]"
     >
       <!-- 召喚王 -->
-      <div class="mb-3 rounded-lg bg-white/5 p-2">
+      <div class="mb-3 rounded-lg bg-[#2a2f45] p-2">
         <div class="mb-1 text-sm font-black text-fuchsia-300">召喚王</div>
         <div class="flex gap-2">
           <select v-model.number="summonIndex" class="min-w-0 flex-1 rounded bg-black/50 px-2 py-1 text-white outline-none">

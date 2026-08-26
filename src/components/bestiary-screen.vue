@@ -5,7 +5,7 @@
     <div class="relative mx-auto flex max-w-3xl flex-col gap-6 p-6">
       <div class="flex items-center gap-3 pt-4">
         <button
-          class="rounded-full bg-white/10 px-4 py-2 font-black backdrop-blur-md transition hover:bg-white/20 active:scale-95"
+          class="rounded-xl bg-[#2a2f45] px-4 py-2 font-black ring-2 ring-[#5a6cad] transition hover:bg-[#394162] active:scale-95"
           @click="emit('back')"
         >
           {{ t('common.back') }}
@@ -20,7 +20,7 @@
           <div
             v-for="z in zombieInfo"
             :key="z.name"
-            class="flex flex-col items-center gap-1 rounded-2xl bg-white/5 p-3 text-center ring-1 ring-white/10"
+            class="flex flex-col items-center gap-1 rounded-xl bg-[#2a2f45] p-3 text-center ring-1 ring-[#2a2f45]"
           >
             <img v-if="modelThumbs[z.model]" :src="modelThumbs[z.model]" class="h-24 w-24 rounded-xl" :alt="t(z.nameKey)" />
             <span v-else class="flex h-24 w-24 items-center justify-center text-5xl">🧟</span>
@@ -38,7 +38,7 @@
           <div
             v-for="(b, i) in bossInfo"
             :key="b.name"
-            class="flex items-center gap-3 rounded-2xl bg-white/5 p-3 ring-1 ring-white/10"
+            class="flex items-center gap-3 rounded-xl bg-[#2a2f45] p-3 ring-1 ring-[#2a2f45]"
           >
             <img v-if="modelThumbs[b.model]" :src="modelThumbs[b.model]" class="h-20 w-20 shrink-0 rounded-xl" :alt="t(b.nameKey)" />
             <span v-else class="flex h-20 w-20 shrink-0 items-center justify-center text-4xl">🧟‍♂️</span>
@@ -58,7 +58,7 @@
           <div
             v-for="c in comboInfo"
             :key="c.id"
-            class="rounded-2xl bg-white/5 p-3 ring-1 ring-white/10"
+            class="rounded-xl bg-[#2a2f45] p-3 ring-1 ring-[#2a2f45]"
           >
             <div class="flex items-center gap-2">
               <span class="text-2xl">{{ c.emoji }}</span>

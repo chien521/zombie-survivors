@@ -5,7 +5,7 @@
     <div class="relative mx-auto flex max-w-2xl flex-col gap-4 p-6">
       <div class="flex items-center gap-3 pt-4">
         <button
-          class="rounded-full bg-white/10 px-4 py-2 font-black backdrop-blur-md transition hover:bg-white/20 active:scale-95"
+          class="rounded-xl bg-[#2a2f45] px-4 py-2 font-black ring-2 ring-[#5a6cad] transition hover:bg-[#394162] active:scale-95"
           @click="emit('back')"
         >
           {{ t('common.back') }}
@@ -24,8 +24,8 @@
         <button
           v-for="g in gameModes"
           :key="g.id"
-          class="flex-1 rounded-full px-3 py-2 text-sm font-black backdrop-blur-md transition active:scale-95"
-          :class="gameMode === g.id ? 'bg-rose-400 text-black' : 'bg-black/40 text-white/70 hover:bg-black/60'"
+          class="flex-1 rounded-xl px-3 py-2 text-sm font-black transition active:scale-95"
+          :class="gameMode === g.id ? 'bg-[#2a2f45] text-rose-300 ring-2 ring-rose-400' : 'bg-[#1a1d29] text-white/60 ring-1 ring-[#2a2f45] hover:bg-[#2a2f45]'"
           @click="selectGameMode(g.id)"
         >
           {{ g.label }}
@@ -37,8 +37,8 @@
         <button
           v-for="m in boards"
           :key="m.id"
-          class="flex-1 rounded-full px-3 py-2 text-sm font-black backdrop-blur-md transition active:scale-95"
-          :class="board === m.id ? 'bg-lime-400 text-black' : 'bg-black/40 text-white/70 hover:bg-black/60'"
+          class="flex-1 rounded-xl px-3 py-2 text-sm font-black transition active:scale-95"
+          :class="board === m.id ? 'bg-[#2a2f45] text-lime-300 ring-2 ring-lime-400' : 'bg-[#1a1d29] text-white/60 ring-1 ring-[#2a2f45] hover:bg-[#2a2f45]'"
           @click="selectBoard(m.id)"
         >
           {{ m.label }}
@@ -52,20 +52,20 @@
         <button
           v-for="t in tabs"
           :key="t.id"
-          class="rounded-full px-3 py-1 text-sm font-black backdrop-blur-md transition active:scale-95"
-          :class="selected === t.id ? 'bg-amber-400 text-black' : 'bg-black/40 text-white/70 hover:bg-black/60'"
+          class="rounded-xl px-3 py-1 text-sm font-black transition active:scale-95"
+          :class="selected === t.id ? 'bg-[#2a2f45] text-[#ffe066] ring-2 ring-[#ffe066]' : 'bg-[#1a1d29] text-white/60 ring-1 ring-[#2a2f45] hover:bg-[#2a2f45]'"
           @click="selectTab(t.id)"
         >
           {{ t.label }}
         </button>
       </div>
 
-      <div v-if="records.length === 0" class="rounded-2xl bg-white/5 p-8 text-center text-white/60">
+      <div v-if="records.length === 0" class="rounded-xl bg-[#1a1d29] p-8 text-center text-white/60 ring-1 ring-[#2a2f45]">
         {{ emptyHint }}
       </div>
 
       <!-- 死鬥榜 -->
-      <div v-else-if="gameMode === 'deathmatch'" class="overflow-hidden rounded-2xl bg-black/40 backdrop-blur-md ring-1 ring-white/10">
+      <div v-else-if="gameMode === 'deathmatch'" class="overflow-hidden rounded-xl bg-[#1a1d29] ring-1 ring-[#2a2f45]">
         <div class="grid grid-cols-[2.5rem_1fr_3rem_3.5rem_4.5rem] gap-2 border-b border-white/10 px-4 py-2 text-xs font-black text-white/50">
           <span>#</span>
           <span>{{ t('leaderboard.colPlayer') }}</span>
@@ -94,7 +94,7 @@
       </div>
 
       <!-- 劇情榜（破關/生存） -->
-      <div v-else class="overflow-hidden rounded-2xl bg-black/40 backdrop-blur-md ring-1 ring-white/10">
+      <div v-else class="overflow-hidden rounded-xl bg-[#1a1d29] ring-1 ring-[#2a2f45]">
         <div class="grid grid-cols-[2.5rem_1fr_4.5rem_3.5rem_3rem] gap-2 border-b border-white/10 px-4 py-2 text-xs font-black text-white/50">
           <span>#</span>
           <span>{{ t('leaderboard.colPlayer') }}</span>

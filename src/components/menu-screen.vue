@@ -1,8 +1,8 @@
 <template>
-  <div class="absolute inset-0 overflow-auto bg-gradient-to-b from-[#0b1020] to-[#161f38] text-white">
+  <div class="absolute inset-0 overflow-auto bg-gradient-to-b from-[#10131d] to-[#151827] text-white">
     <!-- 返回首頁 -->
     <button
-      class="absolute left-3 top-3 z-10 rounded-full bg-white/10 px-4 py-1 text-sm font-black backdrop-blur-md transition hover:bg-white/20 active:scale-95"
+      class="absolute left-3 top-3 z-10 rounded-xl bg-[#2a2f45] px-4 py-1 text-sm font-black ring-2 ring-[#5a6cad] transition hover:bg-[#394162] active:scale-95"
       @click="emit('home')"
     >
       {{ t('menu.home') }}
@@ -11,15 +11,15 @@
     <!-- Debug 開關 -->
     <div class="absolute right-3 top-3 z-10 flex items-center gap-2">
       <button
-        class="rounded-full px-3 py-1 text-xs font-black transition"
-        :class="debug ? 'bg-lime-400 text-black' : 'bg-white/10 text-white/60'"
+        class="rounded-xl px-3 py-1 text-xs font-black transition"
+        :class="debug ? 'bg-lime-400 text-black' : 'bg-[#2a2f45] text-white/60 ring-1 ring-[#5a6cad]'"
         @click="toggleDebug"
       >
         {{ debug ? t('menu.debugOn') : t('menu.debugOff') }}
       </button>
       <button
         v-if="debug"
-        class="rounded-full bg-amber-400 px-3 py-1 text-xs font-black text-black"
+        class="rounded-xl bg-[#2a2f45] px-3 py-1 text-xs font-black text-[#ffe066] ring-2 ring-[#ffe066]"
         @click="emit('add-gold', 1000)"
       >
         {{ t('menu.debugGold') }}
@@ -31,7 +31,7 @@
       <div class="pt-4 text-center">
         <div class="text-5xl font-black tracking-wider">{{ t('landing.title') }}</div>
         <div class="mt-1 text-sm text-white/60">{{ t('landing.subtitle') }}</div>
-        <div class="mt-3 inline-block rounded-full bg-amber-400/90 px-5 py-1 text-lg font-black text-black">
+        <div class="mt-3 inline-block rounded-xl bg-[#2a2f45] px-5 py-1 text-lg font-black text-[#ffe066] ring-2 ring-[#ffe066]/60">
           💰 {{ meta.gold }}
         </div>
       </div>
@@ -43,14 +43,14 @@
           <div
             v-for="c in characters"
             :key="c.id"
-            class="flex cursor-pointer flex-col items-center gap-1 rounded-2xl p-3 text-center ring-2 transition"
+            class="flex cursor-pointer flex-col items-center gap-1 rounded-xl p-3 text-center transition"
             :class="cardClass(c.id)"
             @click="onCard(c)"
           >
             <div class="relative h-36 w-36">
               <canvas
                 :ref="(el) => setCanvas(c.id, el)"
-                class="h-36 w-36 rounded-xl ring-1 ring-white/10"
+                class="h-36 w-36 rounded-lg ring-1 ring-[#2a2f45]"
                 width="384"
                 height="384"
               />
@@ -91,7 +91,7 @@
           <div
             v-for="p in perma"
             :key="p.id"
-            class="flex items-center gap-3 rounded-2xl bg-white/5 p-3"
+            class="flex items-center gap-3 rounded-xl bg-[#2a2f45] p-3 ring-1 ring-[#2a2f45]"
           >
             <span class="text-2xl">{{ p.emoji }}</span>
             <div class="flex-1">
@@ -99,7 +99,7 @@
               <div class="text-xs text-white/60">{{ t(p.descKey) }}</div>
             </div>
             <button
-              class="rounded-full px-4 py-2 text-sm font-black transition"
+              class="rounded-xl px-4 py-2 text-sm font-black transition"
               :class="buyClass(p)"
               :disabled="!canBuy(p)"
               @click="emit('buy', p.id)"
@@ -117,7 +117,7 @@
           <div
             v-for="l in legacy"
             :key="l.id"
-            class="flex items-center gap-3 rounded-2xl bg-white/5 p-3"
+            class="flex items-center gap-3 rounded-xl bg-[#2a2f45] p-3 ring-1 ring-[#2a2f45]"
           >
             <span class="text-2xl">{{ l.emoji }}</span>
             <div class="flex-1">
@@ -125,8 +125,8 @@
               <div class="text-xs text-white/60">{{ t(l.descKey) }}</div>
             </div>
             <button
-              class="rounded-full px-4 py-2 text-sm font-black transition"
-              :class="legacyOwned(l.id) ? 'bg-white/10 text-white/40' : buyClassLegacy(l)"
+              class="rounded-xl px-4 py-2 text-sm font-black transition"
+              :class="legacyOwned(l.id) ? 'bg-[#1a1d29] text-white/40' : buyClassLegacy(l)"
               :disabled="legacyOwned(l.id) || !canBuyLegacy(l)"
               @click="emit('buy-legacy', l.id)"
             >
@@ -138,7 +138,7 @@
 
       <!-- 開始 -->
       <button
-        class="sticky bottom-4 mt-2 w-full rounded-full bg-amber-400 py-4 text-2xl font-black text-black shadow-lg transition hover:bg-amber-300 active:scale-95"
+        class="sticky bottom-4 mt-2 w-full rounded-xl bg-[#2a2f45] py-4 text-2xl font-black text-[#ffe066] shadow-lg ring-2 ring-[#ffe066] transition hover:bg-[#394162] active:scale-95"
         @click="emit('start', selectedId)"
       >
         {{ t('menu.start', { name: selectedName }) }}
@@ -230,7 +230,7 @@ function canBuy(p: PermaUpgrade) {
   return level(p.id) < p.maxLevel && props.meta.gold >= cost(p);
 }
 function buyClass(p: PermaUpgrade) {
-  return canBuy(p) ? 'bg-amber-400 text-black hover:bg-amber-300' : 'bg-white/10 text-white/40';
+  return canBuy(p) ? 'bg-[#2a2f45] text-[#ffe066] ring-2 ring-[#ffe066] hover:bg-[#394162]' : 'bg-[#1a1d29] text-white/40';
 }
 function legacyOwned(id: string) {
   return props.meta.legacy[id] ?? false;
@@ -239,12 +239,12 @@ function canBuyLegacy(l: SynergyLegacy) {
   return !legacyOwned(l.id) && props.meta.gold >= l.cost;
 }
 function buyClassLegacy(l: SynergyLegacy) {
-  return canBuyLegacy(l) ? 'bg-amber-400 text-black hover:bg-amber-300' : 'bg-white/10 text-white/40';
+  return canBuyLegacy(l) ? 'bg-[#2a2f45] text-[#ffe066] ring-2 ring-[#ffe066] hover:bg-[#394162]' : 'bg-[#1a1d29] text-white/40';
 }
 function cardClass(id: string) {
-  if (selectedId.value === id) return 'bg-amber-400/20 ring-amber-300';
-  if (isUnlocked(id)) return 'bg-white/5 ring-white/10 hover:ring-white/30';
-  return 'bg-black/30 ring-white/5 opacity-80';
+  if (selectedId.value === id) return 'bg-[#2a2f45] ring-2 ring-[#ffe066]';
+  if (isUnlocked(id)) return 'bg-[#2a2f45] ring-2 ring-[#5a6cad] hover:bg-[#394162]';
+  return 'bg-[#1a1d29] ring-2 ring-[#2a2f45] opacity-80';
 }
 function onCard(c: Character) {
   if (isUnlocked(c.id)) {

@@ -5,7 +5,7 @@
     <div class="relative mx-auto flex max-w-2xl flex-col gap-4 p-6">
       <div class="flex items-center gap-3 pt-4">
         <button
-          class="rounded-full bg-white/10 px-4 py-2 font-black backdrop-blur-md transition hover:bg-white/20 active:scale-95"
+          class="rounded-xl bg-[#2a2f45] px-4 py-2 font-black ring-2 ring-[#5a6cad] transition hover:bg-[#394162] active:scale-95"
           @click="emit('back')"
         >
           {{ t('common.back') }}
@@ -18,15 +18,15 @@
         <button
           v-for="r in ranges"
           :key="r.id"
-          class="flex-1 rounded-full px-3 py-2 text-sm font-black backdrop-blur-md transition active:scale-95"
-          :class="range === r.id ? 'bg-lime-400 text-black' : 'bg-black/40 text-white/70 hover:bg-black/60'"
+          class="flex-1 rounded-xl px-3 py-2 text-sm font-black transition active:scale-95"
+          :class="range === r.id ? 'bg-[#2a2f45] text-lime-300 ring-2 ring-lime-400' : 'bg-[#1a1d29] text-white/60 ring-1 ring-[#2a2f45] hover:bg-[#2a2f45]'"
           @click="selectRange(r.id)"
         >
           {{ r.label }}
         </button>
       </div>
 
-      <div class="rounded-2xl bg-black/40 p-4 backdrop-blur-md ring-1 ring-white/10">
+      <div class="rounded-xl bg-[#1a1d29] p-4 ring-1 ring-[#2a2f45]">
         <div class="mb-2 flex items-baseline justify-between">
           <span class="text-sm text-white/60">{{ t('onlinehistory.hourlyPeak') }}</span>
           <span class="text-sm font-black text-lime-300">{{ t('onlinehistory.rangePeak', { n: maxPeak }) }}</span>

@@ -5,7 +5,7 @@
     <div class="relative flex w-full max-w-md flex-col gap-5 px-6">
       <div class="flex items-center gap-3">
         <button
-          class="rounded-full bg-white/10 px-4 py-2 font-black backdrop-blur-md transition hover:bg-white/20 active:scale-95"
+          class="rounded-xl bg-[#2a2f45] px-4 py-2 font-black ring-2 ring-[#5a6cad] transition hover:bg-[#394162] active:scale-95"
           @click="emit('back')"
         >
           {{ t('common.back') }}
@@ -43,28 +43,27 @@ const emit = defineEmits<{ (e: 'select', mode: GameMode): void; (e: 'back'): voi
 
 <style scoped>
 .mode-card {
-  border-radius: 1.25rem;
+  border-radius: 0.875rem;
   padding: 1.25rem 1.5rem;
   text-align: left;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(6px);
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  background: #2a2f45;
+  border: 2px solid #5a6cad;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
   cursor: pointer;
   transition: transform 0.16s, background 0.16s;
 }
 .mode-card:hover {
-  background: rgba(255, 255, 255, 0.18);
-  transform: scale(1.03);
+  background: #394162;
+  transform: scale(1.02);
 }
 .mode-card:active {
   transform: scale(0.98);
 }
+/** 死鬥模式：同一套卡片語彙，用紅色邊框標示「較硬核」 */
 .mode-card--dm {
-  background: linear-gradient(180deg, rgba(220, 60, 60, 0.28), rgba(120, 20, 20, 0.28));
-  border-color: rgba(255, 120, 120, 0.5);
+  border-color: #ff6b6b;
 }
 .mode-card--dm:hover {
-  background: linear-gradient(180deg, rgba(240, 80, 80, 0.4), rgba(140, 30, 30, 0.4));
+  background: #3a2f38;
 }
 </style>

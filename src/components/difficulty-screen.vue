@@ -5,7 +5,7 @@
     <div class="relative flex w-full max-w-3xl flex-col gap-5 p-6">
       <div class="flex items-center gap-3">
         <button
-          class="rounded-full bg-white/10 px-4 py-2 font-black backdrop-blur-md transition hover:bg-white/20 active:scale-95"
+          class="rounded-xl bg-[#2a2f45] px-4 py-2 font-black ring-2 ring-[#5a6cad] transition hover:bg-[#394162] active:scale-95"
           @click="emit('back')"
         >
           {{ t('common.back') }}
@@ -17,8 +17,8 @@
         <button
           v-for="d in difficulties"
           :key="d.id"
-          class="flex items-center gap-4 rounded-2xl p-4 text-left ring-1 ring-white/10 transition hover:scale-[1.02]"
-          :style="{ background: `linear-gradient(90deg, ${d.color}22, rgba(255,255,255,0.05))` }"
+          class="flex items-center gap-4 rounded-xl bg-[#2a2f45] p-4 text-left transition hover:scale-[1.02] hover:bg-[#394162]"
+          :style="{ border: `2px solid ${d.color}` }"
           @click="emit('select', d.id)"
         >
           <span class="text-4xl">{{ d.emoji }}</span>

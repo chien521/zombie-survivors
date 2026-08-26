@@ -5,7 +5,7 @@
     <div class="relative mx-auto flex max-w-2xl flex-col gap-4 p-6">
       <div class="flex items-center gap-3 pt-4">
         <button
-          class="rounded-full bg-white/10 px-4 py-2 font-black backdrop-blur-md transition hover:bg-white/20 active:scale-95"
+          class="rounded-xl bg-[#2a2f45] px-4 py-2 font-black ring-2 ring-[#5a6cad] transition hover:bg-[#394162] active:scale-95"
           @click="emit('back')"
         >
           {{ t('common.back') }}
@@ -14,7 +14,7 @@
       </div>
 
       <!-- 發表留言 / 回覆 -->
-      <div class="flex flex-col gap-2 rounded-2xl bg-black/40 p-4 backdrop-blur-md ring-1 ring-white/10">
+      <div class="flex flex-col gap-2 rounded-xl bg-[#1a1d29] p-4 ring-1 ring-[#2a2f45]">
         <div v-if="replyTo" class="flex items-center justify-between rounded-lg bg-lime-400/15 px-3 py-1 text-xs">
           <span class="text-lime-300">{{ t('messageboard.replyingTo', { name: replyTo.name || t('messageboard.anonymous') }) }}</span>
           <button class="text-white/60 hover:text-white" @click="replyTo = null">{{ t('messageboard.cancelReply') }}</button>
@@ -23,19 +23,19 @@
           v-model="name"
           maxlength="16"
           :placeholder="t('messageboard.namePlaceholder')"
-          class="rounded-full bg-black/40 px-4 py-2 text-sm font-bold text-white outline-none ring-1 ring-white/10 placeholder:text-white/40"
+          class="rounded-xl bg-[#2a2f45] px-4 py-2 text-sm font-bold text-white outline-none ring-1 ring-[#2a2f45] placeholder:text-white/40"
         />
         <textarea
           v-model="text"
           maxlength="200"
           rows="2"
           :placeholder="replyTo ? t('messageboard.replyPlaceholder', { name: replyTo.name || t('messageboard.anonymous') }) : t('messageboard.textPlaceholder')"
-          class="resize-none rounded-2xl bg-black/40 px-4 py-2 text-sm text-white outline-none ring-1 ring-white/10 placeholder:text-white/40"
+          class="resize-none rounded-xl bg-[#2a2f45] px-4 py-2 text-sm text-white outline-none ring-1 ring-[#2a2f45] placeholder:text-white/40"
         ></textarea>
         <div class="flex items-center justify-between">
           <span class="text-xs text-white/40">{{ text.length }}/200</span>
           <button
-            class="rounded-full bg-lime-500 px-5 py-1.5 text-sm font-black text-black transition hover:bg-lime-400 active:scale-95 disabled:opacity-40"
+            class="rounded-xl bg-[#2a2f45] px-5 py-1.5 text-sm font-black text-lime-300 ring-2 ring-lime-400 transition hover:bg-[#394162] active:scale-95 disabled:opacity-40"
             :disabled="!canSend || sending"
             @click="onSend"
           >
@@ -45,13 +45,13 @@
         <p v-if="error" class="text-xs text-rose-300/80">{{ error }}</p>
       </div>
 
-      <div v-if="loading" class="rounded-2xl bg-white/5 p-8 text-center text-white/50">{{ t('messageboard.loading') }}</div>
-      <div v-else-if="threads.length === 0" class="rounded-2xl bg-white/5 p-8 text-center text-white/60">
+      <div v-if="loading" class="rounded-xl bg-[#1a1d29] p-8 text-center text-white/50 ring-1 ring-[#2a2f45]">{{ t('messageboard.loading') }}</div>
+      <div v-else-if="threads.length === 0" class="rounded-xl bg-[#1a1d29] p-8 text-center text-white/60 ring-1 ring-[#2a2f45]">
         {{ t('messageboard.empty') }}
       </div>
 
       <div v-else class="flex flex-col gap-2">
-        <div v-for="th in threads" :key="th.msg.id" class="rounded-2xl bg-black/40 p-3 backdrop-blur-md ring-1 ring-white/10">
+        <div v-for="th in threads" :key="th.msg.id" class="rounded-xl bg-[#1a1d29] p-3 ring-1 ring-[#2a2f45]">
           <!-- 主留言 -->
           <div class="flex items-baseline justify-between gap-2">
             <span class="truncate font-black text-lime-300">{{ th.msg.name || t('messageboard.anonymous') }}</span>

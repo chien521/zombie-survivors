@@ -18,7 +18,7 @@
         <!-- 即時在線人數 -->
         <div
           v-if="online !== null"
-          class="mt-4 inline-flex items-center gap-2 rounded-full bg-black/30 px-4 py-1.5 text-sm font-bold backdrop-blur-md ring-1 ring-lime-400/20"
+          class="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#1a1d29] px-4 py-1.5 text-sm font-bold ring-1 ring-[#2a2f45]"
         >
           <span class="relative flex h-2.5 w-2.5">
             <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-lime-400 opacity-75"></span>
@@ -32,7 +32,7 @@
       <!-- 語言選擇 -->
       <select
         v-model="localeModel"
-        class="rounded-full border-0 bg-black/30 px-3 py-1 text-xs text-white outline-none backdrop-blur-md ring-1 ring-white/15"
+        class="rounded-xl border-0 bg-[#1a1d29] px-3 py-1 text-xs text-white outline-none ring-1 ring-[#2a2f45]"
       >
         <option v-for="l in localeList" :key="l" :value="l" class="bg-zinc-900 text-white">{{ localeNames[l] }}</option>
       </select>
@@ -68,8 +68,8 @@
           v-model="name"
           maxlength="16"
           :placeholder="t('landing.namePlaceholder')"
-          class="w-full rounded-full bg-black/30 px-5 py-2 text-center font-bold text-white outline-none ring-1 backdrop-blur-md placeholder:text-white/40"
-          :class="canStart ? 'ring-white/15' : 'ring-rose-400/50'"
+          class="w-full rounded-xl bg-[#1a1d29] px-5 py-2 text-center font-bold text-white outline-none ring-1 placeholder:text-white/40"
+          :class="canStart ? 'ring-[#2a2f45]' : 'ring-rose-400/50'"
           @change="saveName"
           @blur="saveName"
         />
@@ -96,19 +96,19 @@
 
       <!-- 累積統計：手機 2×2、桌機橫排 -->
       <div class="grid w-full max-w-xs grid-cols-2 gap-2 sm:flex sm:w-auto sm:max-w-none sm:gap-6">
-        <div class="rounded-2xl bg-black/30 px-3 py-2 text-center backdrop-blur-md sm:px-6">
+        <div class="rounded-xl bg-[#1a1d29] px-3 py-2 text-center ring-1 ring-[#2a2f45] sm:px-6">
           <div class="text-xl font-black text-lime-300 sm:text-3xl">{{ stats.plays }}</div>
           <div class="text-xs text-white/55">{{ t('landing.statsPlays') }}</div>
         </div>
-        <div class="rounded-2xl bg-black/30 px-3 py-2 text-center backdrop-blur-md sm:px-6">
+        <div class="rounded-xl bg-[#1a1d29] px-3 py-2 text-center ring-1 ring-[#2a2f45] sm:px-6">
           <div class="text-xl font-black text-lime-300 sm:text-3xl">{{ timeText }}</div>
           <div class="text-xs text-white/55">{{ t('landing.statsTime') }}</div>
         </div>
-        <div class="rounded-2xl bg-black/30 px-3 py-2 text-center backdrop-blur-md sm:px-6">
+        <div class="rounded-xl bg-[#1a1d29] px-3 py-2 text-center ring-1 ring-[#2a2f45] sm:px-6">
           <div class="text-xl font-black text-lime-300 sm:text-3xl">{{ stats.totalKills }}</div>
           <div class="text-xs text-white/55">{{ t('landing.statsKills') }}</div>
         </div>
-        <div class="rounded-2xl bg-black/30 px-3 py-2 text-center backdrop-blur-md sm:px-6">
+        <div class="rounded-xl bg-[#1a1d29] px-3 py-2 text-center ring-1 ring-[#2a2f45] sm:px-6">
           <div class="text-xl font-black text-lime-300 sm:text-3xl">{{ peak }}</div>
           <div class="text-xs text-white/55">{{ t('landing.statsPeak') }}</div>
         </div>
@@ -220,45 +220,44 @@ const timeText = computed(() => {
 }
 .portal-btn {
   padding: 1rem 1.5rem;
-  border-radius: 9999px;
+  border-radius: 0.875rem;
   font-size: 1.5rem;
   font-weight: 900;
-  letter-spacing: 0.1em;
-  color: white;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(6px);
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  letter-spacing: 0.06em;
+  color: #eaf3ee;
+  background: #2a2f45;
+  border: 2px solid #5a6cad;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
   cursor: pointer;
-  transition: transform 0.18s cubic-bezier(0, 1.65, 1, 1.65), background 0.18s;
+  transition: transform 0.16s, background 0.16s, border-color 0.16s;
 }
 .portal-btn:hover {
-  background: rgba(255, 255, 255, 0.22);
-  transform: scale(1.04);
+  background: #394162;
+  transform: scale(1.03);
 }
 .portal-btn:active {
-  transform: scale(0.97) rotate(-1deg);
+  transform: scale(0.97);
 }
 /** 次要按鈕（排行榜/圖鑑/留言板/線上人數）：手機縮小（2×2），桌機回到原本大小堆疊 */
 .portal-btn--sub {
   padding: 0.6rem 0.5rem;
   font-size: 1.05rem;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
 }
 @media (min-width: 640px) {
   .portal-btn--sub {
     padding: 0.7rem 1.5rem;
     font-size: 1.35rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
   }
 }
+/** 主 CTA：沿用同一套卡片語彙，用金色邊框/文字強調（同 match-three 稀有/強調色） */
 .portal-btn--play {
-  background: linear-gradient(180deg, #7ec850, #4a9c2e);
-  border-color: rgba(198, 255, 122, 0.5);
-  color: #08210a;
+  border-color: #ffe066;
+  color: #ffe066;
 }
 .portal-btn--play:hover {
-  background: linear-gradient(180deg, #8fdc5e, #58b237);
+  background: #394162;
 }
 .portal-btn--disabled {
   opacity: 0.45;
@@ -267,19 +266,18 @@ const timeText = computed(() => {
 }
 .portal-btn--disabled:hover {
   transform: none;
-  background: linear-gradient(180deg, #7ec850, #4a9c2e);
+  background: #2a2f45;
 }
 .viverse-chip {
   margin-top: 0.25rem;
   padding: 0.4rem 1rem;
-  border-radius: 9999px;
+  border-radius: 0.875rem;
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: white;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #eaf3ee;
+  background: #1a1d29;
+  border: 1px solid #2a2f45;
   cursor: pointer;
 }
 .viverse-chip:disabled {
@@ -287,8 +285,8 @@ const timeText = computed(() => {
   opacity: 0.6;
 }
 .viverse-chip--connected {
-  color: #c6ff7a;
-  border-color: rgba(198, 255, 122, 0.4);
+  color: #ffe066;
+  border-color: rgba(255, 224, 102, 0.4);
   opacity: 1;
 }
 </style>

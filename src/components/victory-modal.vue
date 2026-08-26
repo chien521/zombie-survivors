@@ -1,6 +1,6 @@
 <template>
   <div class="absolute inset-0 z-20 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-    <div class="w-[min(90vw,28rem)] rounded-3xl bg-gradient-to-b from-[#241a36] to-[#1a2236] p-8 text-center text-white shadow-2xl ring-1 ring-amber-300/30">
+    <div class="w-[min(90vw,28rem)] rounded-xl bg-[#1a1d29] p-8 text-center text-white shadow-2xl ring-2 ring-[#ffe066]">
       <div class="text-2xl">🏆</div>
       <div class="text-4xl font-black text-amber-300">{{ stats.mode === 'deathmatch' ? t('victory.titleDeathmatch') : t('victory.titleStory') }}</div>
       <div class="mt-1 text-sm text-white/70">
@@ -8,33 +8,33 @@
       </div>
 
       <div class="my-5 grid grid-cols-3 gap-3">
-        <div class="rounded-2xl bg-white/5 p-3">
+        <div class="rounded-xl bg-[#2a2f45] p-3">
           <div class="text-xs text-white/60">{{ t('victory.clearTime') }}</div>
           <div class="text-2xl font-black">{{ timeText }}</div>
         </div>
-        <div class="rounded-2xl bg-white/5 p-3">
+        <div class="rounded-xl bg-[#2a2f45] p-3">
           <div class="text-xs text-white/60">{{ t('gameover.kills') }}</div>
           <div class="text-2xl font-black">{{ stats.kills }}</div>
         </div>
-        <div class="rounded-2xl bg-white/5 p-3">
+        <div class="rounded-xl bg-[#2a2f45] p-3">
           <div class="text-xs text-white/60">{{ t('gameover.level') }}</div>
           <div class="text-2xl font-black">{{ stats.level }}</div>
         </div>
       </div>
 
-      <div class="mb-6 rounded-2xl bg-amber-400/15 py-2 text-xl font-black text-amber-300">
+      <div class="mb-6 rounded-xl bg-[#2a2f45] py-2 text-xl font-black text-[#ffe066] ring-2 ring-[#ffe066]/60">
         {{ t('victory.goldBonus', { n: stats.goldEarned }) }}
       </div>
 
       <div class="flex gap-3">
         <button
-          class="flex-1 rounded-full bg-white/10 px-4 py-3 text-lg font-black transition hover:bg-white/20 active:scale-95"
+          class="flex-1 rounded-xl bg-[#2a2f45] px-4 py-3 text-lg font-black ring-2 ring-[#5a6cad] transition hover:bg-[#394162] active:scale-95"
           @click="emit('menu')"
         >
           {{ t('gameover.menu') }}
         </button>
         <button
-          class="flex-1 rounded-full bg-amber-400 px-4 py-3 text-lg font-black text-black transition hover:bg-amber-300 active:scale-95"
+          class="flex-1 rounded-xl bg-[#2a2f45] px-4 py-3 text-lg font-black text-[#ffe066] ring-2 ring-[#ffe066] transition hover:bg-[#394162] active:scale-95"
           @click="emit('restart')"
         >
           {{ t('gameover.restart') }}
@@ -45,7 +45,7 @@
         href="https://www.facebook.com/people/Book-Ai/61584339789020/"
         target="_blank"
         rel="noopener"
-        class="mt-3 block rounded-full bg-[#1877f2] px-4 py-2.5 text-center text-sm font-black text-white transition hover:bg-[#3b8bf5] active:scale-95"
+        class="mt-3 block rounded-xl bg-[#1877f2] px-4 py-2.5 text-center text-sm font-black text-white transition hover:bg-[#3b8bf5] active:scale-95"
       >
         {{ t('gameover.facebook') }}
       </a>
