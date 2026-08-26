@@ -16,6 +16,4 @@ body {
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
-  box-sizing: border-box;
-  border: 3px solid #14210f;
 }
