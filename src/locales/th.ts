@@ -2,7 +2,7 @@
 export const th: Record<string, string> = {
   'common.back': '← กลับ',
 
-  'landing.title': 'Zombie Survivors',
+  'landing.title': 'ยืนหยัดครั้งสุดท้าย',
   'landing.subtitle': 'เอาชีวิตรอดจากฝูงซอมบี้ไม่มีที่สิ้นสุด · roguelite 3D สไตล์ survivors',
   'landing.onlineSuffix': 'คนกำลังเล่นอยู่',
   'landing.namePlaceholder': 'ใส่ชื่อเล่นเพื่อเริ่ม',
@@ -13,7 +13,6 @@ export const th: Record<string, string> = {
   'landing.statsPlays': 'จำนวนครั้งที่เล่น',
   'landing.statsTime': 'เวลาสะสม',
   'landing.statsKills': 'ยอดสังหารสะสม',
-  'landing.statsPeak': 'ผู้เล่นออนไลน์สูงสุด',
   'landing.viverseUnavailable': 'VIVERSE: ใช้ได้บนแพลตฟอร์มเท่านั้น',
   'landing.viverseConnecting': 'กำลังเชื่อมต่อ…',
   'landing.viverseConnect': '🔗 เชื่อมต่อ VIVERSE',
@@ -49,7 +48,7 @@ export const th: Record<string, string> = {
   'hud.wave': 'คลื่นที่ {n}',
   'hud.combo': 'คอมโบ',
   'hud.controlsHint': 'WASD/ลูกศรเพื่อเคลื่อนที่ · จอยสติ๊กมุมล่างซ้าย (สัมผัส) · อาวุธยิงอัตโนมัติ',
-  'hud.title': 'Zombie Survivors',
+  'hud.title': 'ยืนหยัดครั้งสุดท้าย',
 
   'gameview.quality': 'คุณภาพ',
   'gameview.qualitySuffix': 'คุณภาพ',

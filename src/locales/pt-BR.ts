@@ -2,7 +2,7 @@
 export const ptBR: Record<string, string> = {
   'common.back': '← Voltar',
 
-  'landing.title': 'Zombie Survivors',
+  'landing.title': 'Última Resistência',
   'landing.subtitle': 'Sobreviva à horda infinita de zumbis · roguelite 3D estilo survivors',
   'landing.onlineSuffix': 'jogando agora',
   'landing.namePlaceholder': 'Digite um apelido para começar',
@@ -13,7 +13,6 @@ export const ptBR: Record<string, string> = {
   'landing.statsPlays': 'Partidas jogadas',
   'landing.statsTime': 'Tempo total',
   'landing.statsKills': 'Abates totais',
-  'landing.statsPeak': 'Pico de jogadores',
   'landing.viverseUnavailable': 'VIVERSE: apenas na plataforma',
   'landing.viverseConnecting': 'Conectando…',
   'landing.viverseConnect': '🔗 Conectar VIVERSE',
@@ -49,7 +48,7 @@ export const ptBR: Record<string, string> = {
   'hud.wave': 'Onda {n}',
   'hud.combo': 'sequência',
   'hud.controlsHint': 'WASD/setas para mover · joystick embaixo à esquerda (toque) · arma dispara automaticamente',
-  'hud.title': 'Zombie Survivors',
+  'hud.title': 'Última Resistência',
 
   'gameview.quality': 'Qualidade',
   'gameview.qualitySuffix': 'qualidade',

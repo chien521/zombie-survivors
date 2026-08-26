@@ -2,7 +2,7 @@
 export const ar: Record<string, string> = {
   'common.back': '← رجوع',
 
-  'landing.title': 'زومبي سرفايفورز',
+  'landing.title': 'الموقف الأخير',
   'landing.subtitle': 'انجُ من حشد الزومبي اللانهائي · لعبة روغلايت ثلاثية الأبعاد على طراز survivors',
   'landing.onlineSuffix': 'يلعبون الآن',
   'landing.namePlaceholder': 'أدخل لقبًا للبدء',
@@ -13,7 +13,6 @@ export const ar: Record<string, string> = {
   'landing.statsPlays': 'عدد الجولات',
   'landing.statsTime': 'الوقت الإجمالي',
   'landing.statsKills': 'إجمالي القتلى',
-  'landing.statsPeak': 'أعلى عدد متصل',
   'landing.viverseUnavailable': 'VIVERSE: متاح على المنصة فقط',
   'landing.viverseConnecting': 'جارٍ الاتصال…',
   'landing.viverseConnect': '🔗 ربط حساب VIVERSE',
@@ -49,7 +48,7 @@ export const ar: Record<string, string> = {
   'hud.wave': 'الموجة {n}',
   'hud.combo': 'سلسلة',
   'hud.controlsHint': 'WASD/الأسهم للتحرك · عصا التحكم أسفل اليسار (لمس) · السلاح يطلق تلقائيًا',
-  'hud.title': 'زومبي سرفايفورز',
+  'hud.title': 'الموقف الأخير',
 
   'gameview.quality': 'الجودة',
   'gameview.qualitySuffix': 'الجودة',

@@ -2,7 +2,7 @@
 export const de: Record<string, string> = {
   'common.back': '← Zurück',
 
-  'landing.title': 'Zombie Survivors',
+  'landing.title': 'Letztes Gefecht',
   'landing.subtitle': 'Überlebe die endlose Zombiehorde · 3D-Survivors-Roguelite',
   'landing.onlineSuffix': 'spielen gerade',
   'landing.namePlaceholder': 'Spitzname eingeben zum Starten',
@@ -13,7 +13,6 @@ export const de: Record<string, string> = {
   'landing.statsPlays': 'Gespielte Runden',
   'landing.statsTime': 'Gesamtzeit',
   'landing.statsKills': 'Gesamte Kills',
-  'landing.statsPeak': 'Höchststand online',
   'landing.viverseUnavailable': 'VIVERSE: nur auf der Plattform',
   'landing.viverseConnecting': 'Verbinde…',
   'landing.viverseConnect': '🔗 VIVERSE verbinden',
@@ -49,7 +48,7 @@ export const de: Record<string, string> = {
   'hud.wave': 'Welle {n}',
   'hud.combo': 'Serie',
   'hud.controlsHint': 'WASD/Pfeiltasten zum Bewegen · Joystick unten links (Touch) · Waffe feuert automatisch',
-  'hud.title': 'Zombie Survivors',
+  'hud.title': 'Letztes Gefecht',
 
   'gameview.quality': 'Qualität',
   'gameview.qualitySuffix': 'Qualität',

@@ -2,7 +2,7 @@
 export const zhHans: Record<string, string> = {
   'common.back': '← 返回',
 
-  'landing.title': '僵尸大逃杀',
+  'landing.title': '撑到最后',
   'landing.subtitle': '在无尽僵尸潮中幸存・3D 幸存者类 roguelite',
   'landing.onlineSuffix': '人正在游玩',
   'landing.namePlaceholder': '输入昵称后开始',
@@ -13,7 +13,6 @@ export const zhHans: Record<string, string> = {
   'landing.statsPlays': '游玩场次',
   'landing.statsTime': '累计时间',
   'landing.statsKills': '累计击杀',
-  'landing.statsPeak': '同时在线最高',
   'landing.viverseUnavailable': 'VIVERSE：仅平台内可用',
   'landing.viverseConnecting': '连接中…',
   'landing.viverseConnect': '🔗 连接 VIVERSE 账号',
@@ -49,7 +48,7 @@ export const zhHans: Record<string, string> = {
   'hud.wave': '第 {n} 波',
   'hud.combo': '连杀',
   'hud.controlsHint': 'WASD／方向键移动・左下摇杆（触控）・武器自动攻击',
-  'hud.title': '僵尸大逃杀',
+  'hud.title': '撑到最后',
 
   'gameview.quality': '画质',
   'gameview.qualitySuffix': '画质',

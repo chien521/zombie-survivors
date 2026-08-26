@@ -2,7 +2,7 @@
 export const ko: Record<string, string> = {
   'common.back': '← 뒤로',
 
-  'landing.title': '좀비 서바이버즈',
+  'landing.title': '라스트 스탠드',
   'landing.subtitle': '끝없는 좀비 무리 속에서 생존하라・3D 서바이버 로그라이트',
   'landing.onlineSuffix': '명 플레이 중',
   'landing.namePlaceholder': '닉네임을 입력하고 시작하세요',
@@ -13,7 +13,6 @@ export const ko: Record<string, string> = {
   'landing.statsPlays': '플레이 횟수',
   'landing.statsTime': '누적 시간',
   'landing.statsKills': '누적 처치 수',
-  'landing.statsPeak': '최대 동시 접속자',
   'landing.viverseUnavailable': 'VIVERSE: 플랫폼 내에서만 가능',
   'landing.viverseConnecting': '연결 중…',
   'landing.viverseConnect': '🔗 VIVERSE 계정 연결',
@@ -49,7 +48,7 @@ export const ko: Record<string, string> = {
   'hud.wave': '{n} 웨이브',
   'hud.combo': '연속처치',
   'hud.controlsHint': 'WASD/방향키로 이동・좌측 하단 조이스틱(터치)・무기 자동 공격',
-  'hud.title': '좀비 서바이버즈',
+  'hud.title': '라스트 스탠드',
 
   'gameview.quality': '화질',
   'gameview.qualitySuffix': '화질',

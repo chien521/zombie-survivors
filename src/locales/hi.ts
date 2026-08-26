@@ -2,7 +2,7 @@
 export const hi: Record<string, string> = {
   'common.back': '← वापस',
 
-  'landing.title': 'ज़ॉम्बी सर्वाइवर्स',
+  'landing.title': 'आख़िरी मोर्चा',
   'landing.subtitle': 'अंतहीन ज़ॉम्बी भीड़ में जीवित रहें · 3D सर्वाइवर्स-शैली रोगलाइट',
   'landing.onlineSuffix': 'लोग अभी खेल रहे हैं',
   'landing.namePlaceholder': 'शुरू करने के लिए उपनाम दर्ज करें',
@@ -13,7 +13,6 @@ export const hi: Record<string, string> = {
   'landing.statsPlays': 'खेले गए राउंड',
   'landing.statsTime': 'कुल समय',
   'landing.statsKills': 'कुल हत्याएं',
-  'landing.statsPeak': 'अधिकतम ऑनलाइन',
   'landing.viverseUnavailable': 'VIVERSE: केवल प्लेटफ़ॉर्म पर',
   'landing.viverseConnecting': 'कनेक्ट हो रहा है…',
   'landing.viverseConnect': '🔗 VIVERSE कनेक्ट करें',
@@ -49,7 +48,7 @@ export const hi: Record<string, string> = {
   'hud.wave': 'लहर {n}',
   'hud.combo': 'स्ट्रीक',
   'hud.controlsHint': 'चलने के लिए WASD/तीर कुंजी · नीचे-बाएं जॉयस्टिक (टच) · हथियार स्वतः फायर करता है',
-  'hud.title': 'ज़ॉम्बी सर्वाइवर्स',
+  'hud.title': 'आख़िरी मोर्चा',
 
   'gameview.quality': 'गुणवत्ता',
   'gameview.qualitySuffix': 'गुणवत्ता',

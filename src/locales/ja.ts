@@ -2,7 +2,7 @@
 export const ja: Record<string, string> = {
   'common.back': '← 戻る',
 
-  'landing.title': 'ゾンビサバイバーズ',
+  'landing.title': 'ラストスタンド',
   'landing.subtitle': '無限に押し寄せるゾンビの中で生き延びろ・3Dサバイバーライク roguelite',
   'landing.onlineSuffix': '人がプレイ中',
   'landing.namePlaceholder': 'ニックネームを入力して開始',
@@ -13,7 +13,6 @@ export const ja: Record<string, string> = {
   'landing.statsPlays': 'プレイ回数',
   'landing.statsTime': '累計時間',
   'landing.statsKills': '累計撃破数',
-  'landing.statsPeak': '最大同時接続数',
   'landing.viverseUnavailable': 'VIVERSE：プラットフォーム内のみ',
   'landing.viverseConnecting': '接続中…',
   'landing.viverseConnect': '🔗 VIVERSEアカウント連携',
@@ -49,7 +48,7 @@ export const ja: Record<string, string> = {
   'hud.wave': 'ウェーブ {n}',
   'hud.combo': 'コンボ',
   'hud.controlsHint': 'WASD／矢印キーで移動・左下ジョイスティック（タッチ）・武器は自動攻撃',
-  'hud.title': 'ゾンビサバイバーズ',
+  'hud.title': 'ラストスタンド',
 
   'gameview.quality': '画質',
   'gameview.qualitySuffix': '画質',

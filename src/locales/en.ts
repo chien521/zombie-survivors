@@ -1,7 +1,7 @@
 export const en: Record<string, string> = {
   'common.back': '← Back',
 
-  'landing.title': 'Zombie Survivors',
+  'landing.title': 'Last Stand',
   'landing.subtitle': 'Survive the endless zombie horde · 3D survivors-like roguelite',
   'landing.onlineSuffix': 'playing now',
   'landing.namePlaceholder': 'Enter a nickname to start',
@@ -12,7 +12,6 @@ export const en: Record<string, string> = {
   'landing.statsPlays': 'Runs Played',
   'landing.statsTime': 'Total Time',
   'landing.statsKills': 'Total Kills',
-  'landing.statsPeak': 'Peak Online',
   'landing.viverseUnavailable': 'VIVERSE: platform only',
   'landing.viverseConnecting': 'Connecting…',
   'landing.viverseConnect': '🔗 Connect VIVERSE',
@@ -55,7 +54,7 @@ export const en: Record<string, string> = {
   'hud.wave': 'Wave {n}',
   'hud.combo': 'streak',
   'hud.controlsHint': 'WASD/Arrows to move · joystick bottom-left (touch) · weapon auto-fires',
-  'hud.title': 'Zombie Survivors',
+  'hud.title': 'Last Stand',
 
   'gameview.quality': 'Quality',
   'gameview.qualitySuffix': 'quality',

@@ -2,7 +2,7 @@
 export const zhHant: Record<string, string> = {
   'common.back': '← 返回',
 
-  'landing.title': '殭屍大逃殺',
+  'landing.title': '撐到最後',
   'landing.subtitle': '在無盡殭屍潮中倖存・3D 倖存者類 roguelite',
   'landing.onlineSuffix': '人正在遊玩',
   'landing.namePlaceholder': '輸入暱稱後開始',
@@ -13,7 +13,6 @@ export const zhHant: Record<string, string> = {
   'landing.statsPlays': '遊玩場次',
   'landing.statsTime': '累積時間',
   'landing.statsKills': '累積擊殺',
-  'landing.statsPeak': '同時在線最高',
   'landing.viverseUnavailable': 'VIVERSE：僅平台內可用',
   'landing.viverseConnecting': '連線中…',
   'landing.viverseConnect': '🔗 連結 VIVERSE 帳號',
@@ -56,7 +55,7 @@ export const zhHant: Record<string, string> = {
   'hud.wave': '第 {n} 波',
   'hud.combo': '連殺',
   'hud.controlsHint': 'WASD／方向鍵移動・左下搖桿（觸控）・武器自動攻擊',
-  'hud.title': '殭屍大逃殺',
+  'hud.title': '撐到最後',
 
   'gameview.quality': '畫質',
   'gameview.qualitySuffix': '畫質',

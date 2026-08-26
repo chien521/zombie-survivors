@@ -10,7 +10,7 @@
           class="text-5xl font-black tracking-widest sm:text-7xl"
           style="color: #c6ff7a; paint-order: stroke fill; -webkit-text-stroke: 6px #14210f; text-shadow: 0 6px 0 rgba(0,0,0,0.35)"
         >
-          {{ t('landing.title') }}<span class="ver" title="查看更新紀錄" @click="openWhatsNew">{{ version }}</span>
+          {{ t('landing.title') }}
         </h1>
         <p class="mt-2 text-xs font-bold tracking-wide text-white/70 sm:mt-3 sm:text-lg">
           {{ t('landing.subtitle') }}
@@ -28,14 +28,6 @@
           <span class="text-white/60">{{ t('landing.onlineSuffix') }}</span>
         </div>
       </div>
-
-      <!-- 語言選擇 -->
-      <select
-        v-model="localeModel"
-        class="portal-btn portal-btn--sub w-full max-w-xs text-center"
-      >
-        <option v-for="l in localeList" :key="l" :value="l" class="bg-zinc-900 text-white">{{ localeNames[l] }}</option>
-      </select>
 
       <!-- VIVERSE 連線狀態（附加功能，不影響原本匿名排行榜流程） -->
       <button
@@ -86,6 +78,13 @@
         >
           {{ t('landing.play') }}
         </button>
+        <!-- 語言選擇 -->
+        <select
+          v-model="localeModel"
+          class="portal-btn portal-btn--sub w-full text-center"
+        >
+          <option v-for="l in localeList" :key="l" :value="l" class="bg-zinc-900 text-white">{{ localeNames[l] }}</option>
+        </select>
         <div class="grid grid-cols-2 gap-3 sm:grid-cols-1">
           <button class="portal-btn portal-btn--sub" @click="emit('leaderboard')">{{ t('landing.leaderboard') }}</button>
           <button class="portal-btn portal-btn--sub" @click="emit('bestiary')">{{ t('landing.bestiary') }}</button>
@@ -106,10 +105,6 @@
           <div class="text-xl font-black text-lime-300 sm:text-3xl">{{ stats.totalKills }}</div>
           <div class="text-xs text-white/55">{{ t('landing.statsKills') }}</div>
         </div>
-        <div class="rounded-xl bg-[#1a1d29] px-3 py-2 text-center ring-1 ring-[#2a2f45] sm:px-6">
-          <div class="text-xl font-black text-lime-300 sm:text-3xl">{{ peak }}</div>
-          <div class="text-xs text-white/55">{{ t('landing.statsPeak') }}</div>
-        </div>
       </div>
     </div>
   </div>
@@ -121,7 +116,6 @@ import BackgroundPolygons from './background-polygons.vue';
 import WhatsNewModal from './whats-new-modal.vue';
 import { loadStats, getPlayerName, setPlayerName, type GlobalStats } from '../game/leaderboard';
 import { fetchStats, enterOnline } from '../game/api';
-import { APP_VERSION as version } from '../version';
 import { CHANGELOG, LATEST_VERSION } from '../changelog';
 import { useViverse } from '../viverse/useViverse';
 import { useI18n, type Locale } from '../i18n';
@@ -137,9 +131,6 @@ const localeModel = computed<Locale>({
 const CHANGELOG_KEY = 'animal-survivors:changelogSeen';
 const showWhatsNew = ref(false);
 const latestRelease = CHANGELOG[0];
-function openWhatsNew() {
-  showWhatsNew.value = true;
-}
 function closeWhatsNew() {
   showWhatsNew.value = false;
   try {
@@ -170,14 +161,10 @@ function onStart() {
 /** 先顯示本機統計，抓到全球就覆蓋 */
 const stats = reactive<GlobalStats>(loadStats());
 
-/** 目前遊玩人數 + 同時在線最高（近 3 小時活躍；進場記錄一次，不再輪詢） */
+/** 目前遊玩人數（近 3 小時活躍；進場記錄一次，不再輪詢） */
 const online = ref<number | null>(null);
-const peak = ref(0);
 async function applyOnline(data: { online: number; peak: number } | null) {
-  if (data !== null) {
-    online.value = data.online;
-    peak.value = data.peak;
-  }
+  if (data !== null) online.value = data.online;
 }
 
 onMounted(async () => {
@@ -198,22 +185,6 @@ const timeText = computed(() => {
 </script>
 
 <style scoped>
-/** 標題後的版本徽章：小、無描邊、淡綠 */
-.ver {
-  font-size: 0.26em;
-  vertical-align: super;
-  margin-left: 0.2em;
-  font-weight: 800;
-  letter-spacing: 0;
-  -webkit-text-stroke: 0;
-  color: #c6ff7a;
-  opacity: 0.75;
-  text-shadow: none;
-  cursor: pointer;
-}
-.ver:hover {
-  opacity: 1;
-}
 .portal-btn {
   padding: 1rem 1.5rem;
   border-radius: 0.875rem;

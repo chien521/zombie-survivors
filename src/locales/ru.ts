@@ -2,7 +2,7 @@
 export const ru: Record<string, string> = {
   'common.back': '← Назад',
 
-  'landing.title': 'Zombie Survivors',
+  'landing.title': 'Последний Рубеж',
   'landing.subtitle': 'Выживите в бесконечной орде зомби · 3D-рогалик в стиле survivors',
   'landing.onlineSuffix': 'играют сейчас',
   'landing.namePlaceholder': 'Введите никнейм, чтобы начать',
@@ -13,7 +13,6 @@ export const ru: Record<string, string> = {
   'landing.statsPlays': 'Сыграно раз',
   'landing.statsTime': 'Общее время',
   'landing.statsKills': 'Всего убийств',
-  'landing.statsPeak': 'Пик онлайна',
   'landing.viverseUnavailable': 'VIVERSE: только на платформе',
   'landing.viverseConnecting': 'Подключение…',
   'landing.viverseConnect': '🔗 Подключить VIVERSE',
@@ -49,7 +48,7 @@ export const ru: Record<string, string> = {
   'hud.wave': 'Волна {n}',
   'hud.combo': 'серия',
   'hud.controlsHint': 'WASD/стрелки для движения · джойстик внизу слева (тач) · оружие стреляет автоматически',
-  'hud.title': 'Zombie Survivors',
+  'hud.title': 'Последний Рубеж',
 
   'gameview.quality': 'Качество',
   'gameview.qualitySuffix': 'качество',
