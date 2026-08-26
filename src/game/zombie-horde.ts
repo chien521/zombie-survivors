@@ -35,13 +35,13 @@ const ZOMBIE_TYPES: ZombieType[] = [
 
 /** 怪物圖鑑資訊（供選單顯示） */
 export const ZOMBIE_INFO = [
-  { name: '基本殭屍', role: '雜兵', desc: '數量最多、血量普通的基本殭屍，靠數量淹沒你。', model: '/models/zombie/zombie_basic.glb' },
-  { name: '肋骨怪', role: '快速', desc: '移動速度極快、血量低，會迅速貼近，優先處理。', model: '/models/zombie/zombie_ribcage.glb' },
-  { name: '胖殭屍', role: '坦克', desc: '血量厚、移動慢的肉盾，需要較多火力才打得倒。', model: '/models/zombie/zombie_chubby.glb' },
-  { name: '斷臂殭屍', role: '一般', desc: '中規中矩的近戰殭屍，速度與血量都中等。', model: '/models/zombie/zombie_arm.glb' },
-  { name: '骷髏兵', role: '不死', desc: '海盜骷髏，移動偏快、血量普通，成群出現。', model: '/models/zombie/zombie_skeleton.glb' },
-  { name: '無頭骷髏', role: '遠程', desc: '保持距離朝你發射彈丸的不死射手，會被逼近時後退。', model: '/models/zombie/zombie_skeleton_headless.glb' },
-  { name: '爬行殭屍', role: '爬行', desc: '趴在地上爬行逼近，速度偏慢但姿態低、混在屍群中不易察覺。', model: '/models/zombie/zombie_basic.glb' },
+  { name: '基本殭屍', nameKey: 'zombie.basic.name', role: '雜兵', roleKey: 'zombie.basic.role', desc: '數量最多、血量普通的基本殭屍，靠數量淹沒你。', descKey: 'zombie.basic.desc', model: '/models/zombie/zombie_basic.glb' },
+  { name: '肋骨怪', nameKey: 'zombie.ribcage.name', role: '快速', roleKey: 'zombie.ribcage.role', desc: '移動速度極快、血量低，會迅速貼近，優先處理。', descKey: 'zombie.ribcage.desc', model: '/models/zombie/zombie_ribcage.glb' },
+  { name: '胖殭屍', nameKey: 'zombie.chubby.name', role: '坦克', roleKey: 'zombie.chubby.role', desc: '血量厚、移動慢的肉盾，需要較多火力才打得倒。', descKey: 'zombie.chubby.desc', model: '/models/zombie/zombie_chubby.glb' },
+  { name: '斷臂殭屍', nameKey: 'zombie.arm.name', role: '一般', roleKey: 'zombie.arm.role', desc: '中規中矩的近戰殭屍，速度與血量都中等。', descKey: 'zombie.arm.desc', model: '/models/zombie/zombie_arm.glb' },
+  { name: '骷髏兵', nameKey: 'zombie.skeleton.name', role: '不死', roleKey: 'zombie.skeleton.role', desc: '海盜骷髏，移動偏快、血量普通，成群出現。', descKey: 'zombie.skeleton.desc', model: '/models/zombie/zombie_skeleton.glb' },
+  { name: '無頭骷髏', nameKey: 'zombie.skeletonHeadless.name', role: '遠程', roleKey: 'zombie.skeletonHeadless.role', desc: '保持距離朝你發射彈丸的不死射手，會被逼近時後退。', descKey: 'zombie.skeletonHeadless.desc', model: '/models/zombie/zombie_skeleton_headless.glb' },
+  { name: '爬行殭屍', nameKey: 'zombie.crawl.name', role: '爬行', roleKey: 'zombie.crawl.role', desc: '趴在地上爬行逼近，速度偏慢但姿態低、混在屍群中不易察覺。', descKey: 'zombie.crawl.desc', model: '/models/zombie/zombie_basic.glb' },
 ];
 
 const BASE_HEIGHT = 2.4;

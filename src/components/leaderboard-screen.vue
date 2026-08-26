@@ -8,14 +8,14 @@
           class="rounded-full bg-white/10 px-4 py-2 font-black backdrop-blur-md transition hover:bg-white/20 active:scale-95"
           @click="emit('back')"
         >
-          ← 返回
+          {{ t('common.back') }}
         </button>
-        <h1 class="text-3xl font-black tracking-wider">🏆 排行榜</h1>
+        <h1 class="text-3xl font-black tracking-wider">{{ t('leaderboard.title') }}</h1>
         <span
           class="rounded-full px-2 py-0.5 text-xs font-black"
           :class="isGlobal ? 'bg-lime-400 text-black' : 'bg-white/15 text-white/70'"
         >
-          {{ isGlobal ? '全球' : '本機' }}
+          {{ isGlobal ? t('leaderboard.global') : t('leaderboard.local') }}
         </span>
       </div>
 
@@ -68,10 +68,10 @@
       <div v-else-if="gameMode === 'deathmatch'" class="overflow-hidden rounded-2xl bg-black/40 backdrop-blur-md ring-1 ring-white/10">
         <div class="grid grid-cols-[2.5rem_1fr_3rem_3.5rem_4.5rem] gap-2 border-b border-white/10 px-4 py-2 text-xs font-black text-white/50">
           <span>#</span>
-          <span>玩家</span>
-          <span class="text-right">波</span>
-          <span class="text-right">擊殺</span>
-          <span class="text-right">分數</span>
+          <span>{{ t('leaderboard.colPlayer') }}</span>
+          <span class="text-right">{{ t('leaderboard.colWave') }}</span>
+          <span class="text-right">{{ t('leaderboard.colKills') }}</span>
+          <span class="text-right">{{ t('leaderboard.colScore') }}</span>
         </div>
         <div
           v-for="(r, i) in records"
@@ -81,7 +81,7 @@
         >
           <span class="font-black" :class="rankClass(i)">{{ i + 1 }}</span>
           <span class="min-w-0 truncate font-bold">
-            {{ r.name || '玩家' }}
+            {{ r.name || t('leaderboard.defaultName') }}
             <span class="text-[0.66rem] font-normal text-white/45">{{ r.character }}</span>
             <span v-if="selected === ''" class="ml-1 text-[0.62rem]" :style="{ color: diffColor(r.difficulty) }">
               {{ diffLabel(r.difficulty) }}
@@ -97,10 +97,10 @@
       <div v-else class="overflow-hidden rounded-2xl bg-black/40 backdrop-blur-md ring-1 ring-white/10">
         <div class="grid grid-cols-[2.5rem_1fr_4.5rem_3.5rem_3rem] gap-2 border-b border-white/10 px-4 py-2 text-xs font-black text-white/50">
           <span>#</span>
-          <span>玩家</span>
-          <span class="text-right">{{ board === 'cleared' ? '破關' : '存活' }}</span>
-          <span class="text-right">擊殺</span>
-          <span class="text-right">等級</span>
+          <span>{{ t('leaderboard.colPlayer') }}</span>
+          <span class="text-right">{{ board === 'cleared' ? t('leaderboard.colCleared') : t('leaderboard.colSurvived') }}</span>
+          <span class="text-right">{{ t('leaderboard.colKills') }}</span>
+          <span class="text-right">{{ t('leaderboard.colLevel') }}</span>
         </div>
         <div
           v-for="(r, i) in records"
@@ -110,7 +110,7 @@
         >
           <span class="font-black" :class="rankClass(i)">{{ i + 1 }}</span>
           <span class="min-w-0 truncate font-bold">
-            {{ r.name || '玩家' }}
+            {{ r.name || t('leaderboard.defaultName') }}
             <span class="text-[0.66rem] font-normal text-white/45">{{ r.character }}</span>
             <span v-if="selected === ''" class="ml-1 text-[0.62rem]" :style="{ color: diffColor(r.difficulty) }">
               {{ diffLabel(r.difficulty) }}
@@ -131,20 +131,25 @@ import BackgroundPolygons from './background-polygons.vue';
 import { loadRecords, type RunRecord } from '../game/leaderboard';
 import { fetchLeaderboard } from '../game/api';
 import { DIFFICULTIES, getDifficulty } from '../game/difficulty';
+import { useI18n } from '../i18n';
 
+const { t } = useI18n();
 const emit = defineEmits<{ (e: 'back'): void }>();
 
 type GameMode = 'story' | 'deathmatch';
 type Board = 'cleared' | 'survival';
-const gameModes: { id: GameMode; label: string }[] = [
-  { id: 'story', label: '🧟 劇情模式' },
-  { id: 'deathmatch', label: '💀 死鬥模式' },
-];
-const boards: { id: Board; label: string }[] = [
-  { id: 'cleared', label: '🏆 破關榜' },
-  { id: 'survival', label: '🛡️ 生存榜' },
-];
-const tabs = [{ id: '', label: '全部' }, ...DIFFICULTIES.map((d) => ({ id: d.id, label: `${d.emoji} ${d.name}` }))];
+const gameModes = computed<{ id: GameMode; label: string }[]>(() => [
+  { id: 'story', label: t('leaderboard.modeStory') },
+  { id: 'deathmatch', label: t('leaderboard.modeDeathmatch') },
+]);
+const boards = computed<{ id: Board; label: string }[]>(() => [
+  { id: 'cleared', label: t('leaderboard.boardCleared') },
+  { id: 'survival', label: t('leaderboard.boardSurvival') },
+]);
+const tabs = computed(() => [
+  { id: '', label: t('leaderboard.tabAll') },
+  ...DIFFICULTIES.map((d) => ({ id: d.id, label: `${d.emoji} ${t(d.nameKey)}` })),
+]);
 
 const gameMode = ref<GameMode>('story');
 const board = ref<Board>('cleared');
@@ -153,12 +158,12 @@ const records = ref<RunRecord[]>([]);
 const isGlobal = ref(false);
 
 const hint = computed(() => {
-  if (gameMode.value === 'deathmatch') return '無盡死鬥，比誰撐到最高波（分數 = 波數×1000 + 擊殺 + 秒數）';
-  return board.value === 'cleared' ? '擊敗全部 7 王者，比誰破關最快' : '未破關者，比誰活得最久';
+  if (gameMode.value === 'deathmatch') return t('leaderboard.hintDeathmatch');
+  return board.value === 'cleared' ? t('leaderboard.hintCleared') : t('leaderboard.hintSurvival');
 });
 const emptyHint = computed(() => {
-  if (gameMode.value === 'deathmatch') return '此難度尚無死鬥紀錄，來開一場！';
-  return board.value === 'cleared' ? '此難度尚無人破關，來搶頭香！' : '此難度尚無紀錄，快去拚一場！';
+  if (gameMode.value === 'deathmatch') return t('leaderboard.emptyDeathmatch');
+  return board.value === 'cleared' ? t('leaderboard.emptyCleared') : t('leaderboard.emptySurvival');
 });
 
 async function refresh() {
@@ -206,7 +211,7 @@ function rankClass(i: number) {
 }
 function diffLabel(id: string) {
   const d = getDifficulty(id || 'easy');
-  return `${d.emoji}${d.name}`;
+  return `${d.emoji}${t(d.nameKey)}`;
 }
 function diffColor(id: string) {
   return getDifficulty(id || 'easy').color;

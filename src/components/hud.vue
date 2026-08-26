@@ -22,10 +22,10 @@
           {{ t('hud.wave', { n: stats.wave }) }}
         </span>
         <span
-          v-if="stats.mutator"
+          v-if="mutatorBadge"
           class="rounded-xl bg-fuchsia-500/80 px-2 py-1 font-black backdrop-blur-md sm:px-3"
         >
-          {{ stats.mutator }}
+          {{ mutatorBadge }}
         </span>
       </div>
 
@@ -82,10 +82,17 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { GameStats } from '../game/game';
+import { MUTATORS } from '../game/deathmatch';
 import { useI18n } from '../i18n';
 
 const { t } = useI18n();
 const props = defineProps<{ stats: GameStats }>();
+
+const mutatorBadge = computed(() => {
+  if (props.stats.bloodTide) return t('deathmatch.bloodTide');
+  const m = MUTATORS.find((x) => x.id === props.stats.mutatorId);
+  return m ? `${m.emoji} ${t(m.nameKey)}` : '';
+});
 
 const bossPercent = computed(() =>
   props.stats.bossMaxHp > 0 ? (props.stats.bossHp / props.stats.bossMaxHp) * 100 : 0,

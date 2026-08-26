@@ -90,10 +90,12 @@ export interface GameStats {
   wave: number;
   /** 連殺數（死鬥；受擊歸零） */
   combo: number;
-  /** 波數字卡文字（非空時 HUD 大字顯示） */
-  waveCard: string;
-  /** 目前突變子／血潮標籤（死鬥 HUD 顯示，空字串為無） */
-  mutator: string;
+  /** 波數字卡種類（非空時 HUD 大字顯示，由畫面端組字串） */
+  waveCardKind: 'boss' | 'milestone' | 'tide' | 'mutator' | 'normal' | '';
+  /** 目前突變子 id（死鬥 HUD 顯示，空字串為無） */
+  mutatorId: string;
+  /** 是否處於血潮時段（死鬥 HUD 顯示） */
+  bloodTide: boolean;
   /** 待選升級次數（≥1 時顯示不暫停的升級選項列） */
   pendingLevels: number;
 }
@@ -353,7 +355,7 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
   let bossRush = 0;
   /** 待選升級次數（不暫停升級：累積後玩家用選項列逐一挑） */
   let pendingLevelUps = 0;
-  let waveCardText = '';
+  let waveCardKind: GameStats['waveCardKind'] = '';
   let waveCardUntil = 0;
   let curMutator: Mutator | null = null;
   let bloodTideUntil = 0;
@@ -520,8 +522,9 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
     mode,
     wave: 0,
     combo: 0,
-    waveCard: '',
-    mutator: '',
+    waveCardKind: '',
+    mutatorId: '',
+    bloodTide: false,
     pendingLevels: 0,
   };
 
@@ -549,15 +552,10 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
     stats.musicTrack = musicTrackIdx;
     stats.wave = wave;
     stats.combo = combo;
-    stats.waveCard = time < waveCardUntil ? waveCardText : '';
+    stats.waveCardKind = time < waveCardUntil ? waveCardKind : '';
     stats.pendingLevels = pendingLevelUps;
-    stats.mutator = isDM
-      ? time < bloodTideUntil
-        ? '🩸 血潮來襲'
-        : curMutator
-          ? `${curMutator.emoji} ${curMutator.name}`
-          : ''
-      : '';
+    stats.mutatorId = isDM && curMutator ? curMutator.id : '';
+    stats.bloodTide = isDM && time < bloodTideUntil;
     options.onStats?.(stats);
   }
 
@@ -695,15 +693,15 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
         const milestone = wave % 10 === 0;
         const isBossWave = wave % DEATHMATCH.bossEveryWaves === 0;
         const isTideWave = wave >= 4 && wave % 5 === 4;
-        waveCardText = isBossWave
-          ? `第 ${wave} 波・王來了！`
+        waveCardKind = isBossWave
+          ? 'boss'
           : isTideWave
-            ? '🩸 血潮來襲！'
+            ? 'tide'
             : curMutator
-              ? `突變：${curMutator.emoji}${curMutator.name}`
+              ? 'mutator'
               : milestone
-                ? `第 ${wave} 波！！`
-                : `第 ${wave} 波`;
+                ? 'milestone'
+                : 'normal';
         waveCardUntil = time + (milestone || isBossWave || isTideWave ? 2.6 : 1.6);
         sound.buff();
         /** Boss Rush：每 bossEveryWaves 波一隻王（循環，血量隨波數加成） */
@@ -1174,7 +1172,7 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
       combo = 0;
       bossRush = 0;
       curMutator = null;
-      waveCardText = '';
+      waveCardKind = '';
       waveCardUntil = 0;
       bloodTideUntil = 0;
       bloodTideActive = false;

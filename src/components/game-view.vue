@@ -15,11 +15,11 @@
 
     <!-- 死鬥：波數字卡（進新波時短暫顯示） -->
     <div
-      v-if="stats.waveCard && stats.state === 'running'"
+      v-if="waveCardText && stats.state === 'running'"
       class="pointer-events-none absolute inset-0 z-20 flex items-center justify-center"
     >
       <div class="wave-card text-5xl font-black tracking-widest text-lime-300 sm:text-7xl" style="-webkit-text-stroke: 4px #14210f; paint-order: stroke fill">
-        {{ stats.waveCard }}
+        {{ waveCardText }}
       </div>
     </div>
 
@@ -202,6 +202,7 @@ import {
   type GameMode,
 } from '../game/game';
 import { QUALITIES, type QualityId } from '../game/quality';
+import { MUTATORS } from '../game/deathmatch';
 import type { RunState } from '../game/upgrades';
 import type { Difficulty } from '../game/difficulty';
 import Hud from './hud.vue';
@@ -254,9 +255,29 @@ const stats = reactive<GameStats>({
   mode: 'story',
   wave: 0,
   combo: 0,
-  waveCard: '',
-  mutator: '',
+  waveCardKind: '',
+  mutatorId: '',
+  bloodTide: false,
   pendingLevels: 0,
+});
+
+const waveCardText = computed(() => {
+  switch (stats.waveCardKind) {
+    case 'boss':
+      return t('deathmatch.waveCard.boss', { wave: stats.wave });
+    case 'tide':
+      return t('deathmatch.waveCardBloodTide');
+    case 'mutator': {
+      const m = MUTATORS.find((x) => x.id === stats.mutatorId);
+      return m ? t('deathmatch.waveCard.mutator', { emoji: m.emoji, name: t(m.nameKey) }) : '';
+    }
+    case 'milestone':
+      return t('deathmatch.waveCard.milestone', { wave: stats.wave });
+    case 'normal':
+      return t('deathmatch.waveCard.normal', { wave: stats.wave });
+    default:
+      return '';
+  }
 });
 
 let game: GameHandle | undefined;

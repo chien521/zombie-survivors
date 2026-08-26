@@ -6,13 +6,16 @@
 export interface Release {
   version: string;
   title: string;
+  titleKey: string;
   items: string[];
+  itemKeys: string[];
 }
 
 export const CHANGELOG: Release[] = [
   {
     version: 'v2.0',
     title: '死鬥模式登場',
+    titleKey: 'changelog.v2.title',
     items: [
       '💀 全新「死鬥模式」：無盡波數，怪物越來越強，撐到死為止，比誰能撐到最高波！',
       '🌊 每 30 秒一波；每 5 波插入一隻王（Boss Rush）。',
@@ -20,6 +23,14 @@ export const CHANGELOG: Release[] = [
       '🩸 血潮狂暴時段、⚖️ 祝福/詛咒二選一、🔥 連殺 Combo 加成、升級不設上限。',
       '🏆 死鬥獨立排行榜（比波數分數），與劇情榜分開。',
       '✨ 另外：新增爬行殭屍、怪群動作更多樣、首頁線上人數圖表、模型壓縮載入更快。',
+    ],
+    itemKeys: [
+      'changelog.v2.item1',
+      'changelog.v2.item2',
+      'changelog.v2.item3',
+      'changelog.v2.item4',
+      'changelog.v2.item5',
+      'changelog.v2.item6',
     ],
   },
 ];

@@ -29,17 +29,19 @@ export const DEATHMATCH = {
 export interface Mutator {
   id: 'rage' | 'frail' | 'giant' | 'explode' | 'split' | 'elite' | 'crawl';
   name: string;
+  nameKey: string;
   emoji: string;
   desc: string;
+  descKey: string;
 }
 export const MUTATORS: Mutator[] = [
-  { id: 'rage', name: '狂暴', emoji: '⚡', desc: '怪物移動更快' },
-  { id: 'frail', name: '脆皮潮', emoji: '🥚', desc: '怪物血薄但數量更多' },
-  { id: 'giant', name: '巨人化', emoji: '🗿', desc: '怪物變大變壯' },
-  { id: 'explode', name: '爆裂', emoji: '🔥', desc: '怪物死亡會在原地小爆炸' },
-  { id: 'split', name: '分裂潮', emoji: '🧫', desc: '怪物變多，死掉在原地補上' },
-  { id: 'elite', name: '菁英潮', emoji: '💀', desc: '大量菁英怪出沒' },
-  { id: 'crawl', name: '爬行潮', emoji: '🧟', desc: '全部殭屍趴地爬行（慢但難察覺）' },
+  { id: 'rage', name: '狂暴', nameKey: 'deathmatch.mutator.rage.name', emoji: '⚡', desc: '怪物移動更快', descKey: 'deathmatch.mutator.rage.desc' },
+  { id: 'frail', name: '脆皮潮', nameKey: 'deathmatch.mutator.frail.name', emoji: '🥚', desc: '怪物血薄但數量更多', descKey: 'deathmatch.mutator.frail.desc' },
+  { id: 'giant', name: '巨人化', nameKey: 'deathmatch.mutator.giant.name', emoji: '🗿', desc: '怪物變大變壯', descKey: 'deathmatch.mutator.giant.desc' },
+  { id: 'explode', name: '爆裂', nameKey: 'deathmatch.mutator.explode.name', emoji: '🔥', desc: '怪物死亡會在原地小爆炸', descKey: 'deathmatch.mutator.explode.desc' },
+  { id: 'split', name: '分裂潮', nameKey: 'deathmatch.mutator.split.name', emoji: '🧫', desc: '怪物變多，死掉在原地補上', descKey: 'deathmatch.mutator.split.desc' },
+  { id: 'elite', name: '菁英潮', nameKey: 'deathmatch.mutator.elite.name', emoji: '💀', desc: '大量菁英怪出沒', descKey: 'deathmatch.mutator.elite.desc' },
+  { id: 'crawl', name: '爬行潮', nameKey: 'deathmatch.mutator.crawl.name', emoji: '🧟', desc: '全部殭屍趴地爬行（慢但難察覺）', descKey: 'deathmatch.mutator.crawl.desc' },
 ];
 
 /** 死鬥分數：波數主導，擊殺與存活當細分 */

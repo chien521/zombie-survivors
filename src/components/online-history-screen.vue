@@ -8,9 +8,9 @@
           class="rounded-full bg-white/10 px-4 py-2 font-black backdrop-blur-md transition hover:bg-white/20 active:scale-95"
           @click="emit('back')"
         >
-          ← 返回
+          {{ t('common.back') }}
         </button>
-        <h1 class="text-2xl font-black tracking-wider sm:text-3xl">📈 線上人數</h1>
+        <h1 class="text-2xl font-black tracking-wider sm:text-3xl">{{ t('onlinehistory.title') }}</h1>
       </div>
 
       <!-- 區間切換 -->
@@ -28,13 +28,13 @@
 
       <div class="rounded-2xl bg-black/40 p-4 backdrop-blur-md ring-1 ring-white/10">
         <div class="mb-2 flex items-baseline justify-between">
-          <span class="text-sm text-white/60">每小時最高同時在線</span>
-          <span class="text-sm font-black text-lime-300">區間尖峰 {{ maxPeak }} 人</span>
+          <span class="text-sm text-white/60">{{ t('onlinehistory.hourlyPeak') }}</span>
+          <span class="text-sm font-black text-lime-300">{{ t('onlinehistory.rangePeak', { n: maxPeak }) }}</span>
         </div>
 
-        <div v-if="loading" class="py-16 text-center text-white/50">載入中…</div>
+        <div v-if="loading" class="py-16 text-center text-white/50">{{ t('onlinehistory.loading') }}</div>
         <div v-else-if="!hasData" class="py-16 text-center text-white/55">
-          資料剛開始累積，過幾天再回來看趨勢～
+          {{ t('onlinehistory.noData') }}
         </div>
         <svg v-else viewBox="0 0 720 260" class="w-full" preserveAspectRatio="none" style="height: 260px">
           <!-- Y 軸格線與標籤 -->
@@ -68,7 +68,7 @@
         </svg>
       </div>
 
-      <p class="text-center text-xs text-white/35">時間為當地時區・縱軸為人數・每根 = 1 小時內最高同時在線</p>
+      <p class="text-center text-xs text-white/35">{{ t('onlinehistory.footer') }}</p>
     </div>
   </div>
 </template>
@@ -77,15 +77,18 @@
 import { computed, onMounted, ref } from 'vue';
 import BackgroundPolygons from './background-polygons.vue';
 import { fetchOnlineHistory, type OnlineHourPoint } from '../game/api';
+import { useI18n } from '../i18n';
 
+const { t } = useI18n();
 const emit = defineEmits<{ (e: 'back'): void }>();
 
 type RangeId = '24h' | '7d' | '30d';
-const ranges: { id: RangeId; label: string; days: number; hours: number }[] = [
-  { id: '24h', label: '24 小時', days: 1, hours: 24 },
-  { id: '7d', label: '7 天', days: 7, hours: 168 },
-  { id: '30d', label: '30 天', days: 30, hours: 720 },
+const RANGE_CONFIG: { id: RangeId; labelKey: string; days: number; hours: number }[] = [
+  { id: '24h', labelKey: 'onlinehistory.range24h', days: 1, hours: 24 },
+  { id: '7d', labelKey: 'onlinehistory.range7d', days: 7, hours: 168 },
+  { id: '30d', labelKey: 'onlinehistory.range30d', days: 30, hours: 720 },
 ];
+const ranges = computed(() => RANGE_CONFIG.map((r) => ({ ...r, label: t(r.labelKey) })));
 
 const range = ref<RangeId>('7d');
 const points = ref<OnlineHourPoint[]>([]);
@@ -98,7 +101,7 @@ const padB = 26;
 
 async function refresh() {
   loading.value = true;
-  const cfg = ranges.find((r) => r.id === range.value)!;
+  const cfg = RANGE_CONFIG.find((r) => r.id === range.value)!;
   const data = await fetchOnlineHistory(cfg.days);
   if (data) points.value = data;
   loading.value = false;
@@ -111,7 +114,7 @@ onMounted(refresh);
 
 /** 把稀疏資料補成連續的整點 bucket（缺的小時補 0） */
 const buckets = computed(() => {
-  const cfg = ranges.find((r) => r.id === range.value)!;
+  const cfg = RANGE_CONFIG.find((r) => r.id === range.value)!;
   const nowHour = Math.floor(Date.now() / 3600000);
   const start = nowHour - (cfg.hours - 1);
   const map = new Map(points.value.map((p) => [p.hour, p.peak]));
