@@ -50,6 +50,12 @@ export const hi: Record<string, string> = {
   'hud.controlsHint': 'चलने के लिए WASD/तीर कुंजी · नीचे-बाएं जॉयस्टिक (टच) · हथियार स्वतः फायर करता है',
   'hud.title': 'आख़िरी मोर्चा',
 
+  'buff.rapid.name': 'तेज़ फायर',
+  'buff.power.name': 'शक्ति वृद्धि',
+  'buff.speed.name': 'गति वृद्धि',
+  'buff.magnet.name': 'चुंबक',
+  'buff.multishot.name': 'मल्टीशॉट',
+
   'gameview.quality': 'गुणवत्ता',
   'gameview.qualitySuffix': 'गुणवत्ता',
   'gameview.jump': 'कूदें',
@@ -212,6 +218,9 @@ export const hi: Record<string, string> = {
   'boss.shark.name': 'मेगा शार्क',
   'boss.shark.skillName': 'चार्ज बाइट',
   'boss.shark.desc': 'ज़मीन पर फिसलती एक विशाल शार्क — चार्ज करके तेज़ गति से काटती है; अपना बचाव सही समय पर करें।',
+  'boss.boneking.name': 'हड्डी राजा',
+  'boss.boneking.skillName': 'श्राप ट्रैकिंग गोला',
+  'boss.boneking.desc': 'एक सिरविहीन कंकाल जादूगर जो दूरी बनाए रखता है और हरे श्राप गोले फेंकता है जो धीरे-धीरे आपकी ओर मुड़ते हैं — इनसे भागना, वार सहने से बेहतर है।',
   'boss.tentacle.name': 'गहरे समुद्र का टेंटेकल',
   'boss.tentacle.skillName': 'गहरी बौछार',
   'boss.tentacle.desc': 'अंतिम बॉस। क्रैकेन की भुजा धीरे-धीरे पास आती है, चारों दिशाओं में गोलाकार बौछार छोड़ती है — इसे हराकर गेम पूरा करें।',
@@ -286,6 +295,9 @@ export const hi: Record<string, string> = {
   'zombie.ghost.name': 'दुष्ट आत्मा',
   'zombie.ghost.role': 'उड़ने वाला',
   'zombie.ghost.desc': 'एक तैरती हुई आत्मा जो बाधाओं को पूरी तरह अनदेखा करती है और तेज़ी से पास आती है।',
+  'zombie.exploder.name': 'विस्फोटक ज़ॉम्बी',
+  'zombie.exploder.role': 'आत्म-विस्फोट',
+  'zombie.exploder.desc': 'नारंगी चेतावनी रोशनी से चमकता फूला हुआ ज़ॉम्बी। मरते समय पास खड़े व्यक्ति को क्षेत्र क्षति पहुँचाता है।',
 
 
 

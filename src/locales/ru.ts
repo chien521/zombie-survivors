@@ -50,6 +50,12 @@ export const ru: Record<string, string> = {
   'hud.controlsHint': 'WASD/стрелки для движения · джойстик внизу слева (тач) · оружие стреляет автоматически',
   'hud.title': 'Последний Рубеж',
 
+  'buff.rapid.name': 'Скорострельность',
+  'buff.power.name': 'Усиление Урона',
+  'buff.speed.name': 'Ускорение',
+  'buff.magnet.name': 'Магнит',
+  'buff.multishot.name': 'Мультивыстрел',
+
   'gameview.quality': 'Качество',
   'gameview.qualitySuffix': 'качество',
   'gameview.jump': 'Прыжок',
@@ -212,6 +218,9 @@ export const ru: Record<string, string> = {
   'boss.shark.name': 'Мегаакула',
   'boss.shark.skillName': 'Таранный укус',
   'boss.shark.desc': 'Акула, скользящая по суше — заряжается, а затем кусает на высокой скорости; точно рассчитайте уклонение.',
+  'boss.boneking.name': 'Костяной Король',
+  'boss.boneking.skillName': 'Проклятый Снаряд-Наводчик',
+  'boss.boneking.desc': 'Безголовый скелет-колдун держится на расстоянии и метает зелёные проклятые шары, медленно разворачивающиеся к вам — убегать эффективнее, чем терпеть удары.',
   'boss.tentacle.name': 'Глубоководное щупальце',
   'boss.tentacle.skillName': 'Бездонный залп',
   'boss.tentacle.desc': 'Финальный босс. Рука кракена медленно приближается, выпуская круговой залп во все стороны — победите её, чтобы завершить игру.',
@@ -286,6 +295,9 @@ export const ru: Record<string, string> = {
   'zombie.ghost.name': 'Злой Дух',
   'zombie.ghost.role': 'Летающий',
   'zombie.ghost.desc': 'Парящий дух, полностью игнорирующий препятствия и быстро приближающийся.',
+  'zombie.exploder.name': 'Взрывной Зомби',
+  'zombie.exploder.role': 'Самоподрыв',
+  'zombie.exploder.desc': 'Раздутый зомби, светящийся оранжевым предупреждающим светом. Взрывается при смерти, нанося урон по площади тем, кто рядом.',
 
 
 

@@ -50,6 +50,12 @@ export const th: Record<string, string> = {
   'hud.controlsHint': 'WASD/ลูกศรเพื่อเคลื่อนที่ · จอยสติ๊กมุมล่างซ้าย (สัมผัส) · อาวุธยิงอัตโนมัติ',
   'hud.title': 'ยืนหยัดครั้งสุดท้าย',
 
+  'buff.rapid.name': 'ยิงเร็ว',
+  'buff.power.name': 'พลังโจมตีเพิ่ม',
+  'buff.speed.name': 'เร่งความเร็ว',
+  'buff.magnet.name': 'แม่เหล็ก',
+  'buff.multishot.name': 'ยิงกระสุนหลายนัด',
+
   'gameview.quality': 'คุณภาพ',
   'gameview.qualitySuffix': 'คุณภาพ',
   'gameview.jump': 'กระโดด',
@@ -212,6 +218,9 @@ export const th: Record<string, string> = {
   'boss.shark.name': 'ฉลามยักษ์',
   'boss.shark.skillName': 'กัดพุ่งชาร์จ',
   'boss.shark.desc': 'ฉลามที่เลื่อนไถลบนบก — ชาร์จแล้วกัดด้วยความเร็วสูง; จับจังหวะการหลบให้แม่นยำ',
+  'boss.boneking.name': 'ราชันกระดูก',
+  'boss.boneking.skillName': 'ลูกแก้วคำสาปติดตาม',
+  'boss.boneking.desc': 'จอมเวทโครงกระดูกไร้หัวที่รักษาระยะห่างและปล่อยลูกแก้วคำสาปสีเขียวที่ค่อยๆ หันเข้าหาคุณ การวิ่งหนีได้ผลดีกว่าการฝ่าฝืนรับความเสียหาย',
   'boss.tentacle.name': 'หนวดใต้ทะเลลึก',
   'boss.tentacle.skillName': 'สาดกระสุนใต้สมุทร',
   'boss.tentacle.desc': 'บอสสุดท้าย แขนคราเคนเข้าใกล้อย่างช้าๆ ปล่อยกระสุนวงกลมรอบทิศทาง — เอาชนะเพื่อจบเกม',
@@ -286,6 +295,9 @@ export const th: Record<string, string> = {
   'zombie.ghost.name': 'วิญญาณร้าย',
   'zombie.ghost.role': 'บิน',
   'zombie.ghost.desc': 'วิญญาณลอยได้ที่เพิกเฉยต่อสิ่งกีดขวางและเข้าใกล้อย่างรวดเร็ว',
+  'zombie.exploder.name': 'ซอมบี้ระเบิด',
+  'zombie.exploder.role': 'ระเบิดตัวเอง',
+  'zombie.exploder.desc': 'ซอมบี้ตัวบวมที่เรืองแสงสีส้มเตือนภัย เมื่อตายจะระเบิดสร้างความเสียหายเป็นวงกว้างแก่ผู้ที่อยู่ใกล้เกินไป',
 
 
 

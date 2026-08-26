@@ -18,6 +18,8 @@ interface ZombieType {
   crawl?: boolean;
   /** 飛行：懸空、無視障礙物碰撞 */
   flying?: boolean;
+  /** 自爆：死亡時若玩家在爆炸半徑內會受到傷害，並帶有持續橘紅色警示光 */
+  exploder?: boolean;
 }
 
 /** 飛行怪懸空高度（相對地形） */
@@ -38,6 +40,7 @@ const ZOMBIE_TYPES: ZombieType[] = [
   { path: 'models/zombie/zombie_basic.glb', hp: 5, speed: 4, scale: 1, crawl: true }, // 爬行殭屍（趴地爬行）
   { path: 'models/zombie/zombie_half.glb', hp: 4, speed: 4.5, scale: 0.75, crawl: true }, // 半身殭屍（天生爬行，體型較矮）
   { path: 'models/zombie/ghost.glb', hp: 3, speed: 6.5, scale: 0.9, flying: true }, // 惡靈（懸空飛行、無視障礙物）
+  { path: 'models/zombie/zombie_arm.glb', hp: 5, speed: 3.6, scale: 1.15, exploder: true }, // 自爆殭屍（帶橘紅警示光，死亡時範圍傷害）
 ];
 
 /** 怪物圖鑑資訊（供選單顯示） */
@@ -51,16 +54,20 @@ export const ZOMBIE_INFO = [
   { name: '爬行殭屍', nameKey: 'zombie.crawl.name', role: '爬行', roleKey: 'zombie.crawl.role', desc: '趴在地上爬行逼近，速度偏慢但姿態低、混在屍群中不易察覺。', descKey: 'zombie.crawl.desc', model: 'models/zombie/zombie_basic.glb' },
   { name: '半身殭屍', nameKey: 'zombie.half.name', role: '爬行', roleKey: 'zombie.half.role', desc: '只剩上半身的殭屍，天生用雙手拖行前進，體型矮小不易瞄準。', descKey: 'zombie.half.desc', model: 'models/zombie/zombie_half.glb' },
   { name: '惡靈', nameKey: 'zombie.ghost.name', role: '飛行', roleKey: 'zombie.ghost.role', desc: '懸空飄浮的怨靈，無視障礙物直接穿越逼近，速度偏快。', descKey: 'zombie.ghost.desc', model: 'models/zombie/ghost.glb' },
+  { name: '自爆殭屍', nameKey: 'zombie.exploder.name', role: '自爆', roleKey: 'zombie.exploder.role', desc: '全身泛著橘紅警示光、體型腫脹，死亡時會在周圍炸出範圍傷害，別站太近打。', descKey: 'zombie.exploder.desc', model: 'models/zombie/zombie_arm.glb' },
 ];
 
 const BASE_HEIGHT = 2.4;
-/** 每種類型預先 instantiate 的數量（總和為怪海上限；9 類型 × 9 = 81 ≥ director.maxCount） */
+/** 每種類型預先 instantiate 的數量（總和為怪海上限；10 類型 × 9 = 90 ≥ director.maxCount） */
 const PER_TYPE = 9;
 /** 怪物血量全域倍率 */
 const HP_SCALE = 0.75;
 /** 受擊白光持續時間（秒） */
 const FLASH_DUR = 0.16;
 const WHITE = new Color3(1, 1, 1);
+/** 自爆殭屍持續警示光顏色與透明度 */
+const EXPLODER_TINT = new Color3(1, 0.4, 0.1);
+const EXPLODER_ALPHA = 0.35;
 
 interface Entry {
   root: TransformNode;
@@ -75,6 +82,8 @@ interface Entry {
   crawling: boolean;
   /** 飛行：懸空、無視障礙物碰撞 */
   isFlying: boolean;
+  /** 自爆：死亡時範圍傷害玩家 */
+  isExploder: boolean;
   /** 實際渲染的網格，用於受擊白光 overlay */
   meshes: AbstractMesh[];
 }
@@ -96,6 +105,8 @@ export class ZombieHorde {
   forceCrawl = false;
   /** 最近一次擊殺是否為菁英（供呼叫端在 onKill 給額外獎勵；於 damage() 內、respawn 前設定） */
   lastKillWasElite = false;
+  /** 最近一次擊殺是否為自爆殭屍（供呼叫端判斷是否對玩家造成範圍傷害；於 damage() 內、respawn 前設定） */
+  lastKillWasExploder = false;
 
   private scene: Scene;
   private ready = false;
@@ -162,15 +173,21 @@ export class ZombieHorde {
           inst.animationGroups[0];
         const crawlAnim = inst.animationGroups.find((a) => /crawl/i.test(a.name));
 
-        /** 取出實際網格，預設關閉白光 overlay */
+        /** 取出實際網格：一般預設關閉白光 overlay；自爆殭屍改為持續橘紅警示光 */
         const meshes = modelRoot.getChildMeshes(false);
         for (const m of meshes) {
-          m.overlayColor = WHITE;
-          m.overlayAlpha = 0;
-          m.renderOverlay = false;
+          if (t.exploder) {
+            m.overlayColor = EXPLODER_TINT;
+            m.overlayAlpha = EXPLODER_ALPHA;
+            m.renderOverlay = true;
+          } else {
+            m.overlayColor = WHITE;
+            m.overlayAlpha = 0;
+            m.renderOverlay = false;
+          }
         }
 
-        this.pool.push({ root: holder, walkAnim, crawlAnim, baseSpeed: t.speed, isCrawl: !!t.crawl, crawling: false, isFlying: !!t.flying, meshes });
+        this.pool.push({ root: holder, walkAnim, crawlAnim, baseSpeed: t.speed, isCrawl: !!t.crawl, crawling: false, isFlying: !!t.flying, isExploder: !!t.exploder, meshes });
       }
     }
 
@@ -300,6 +317,7 @@ export class ZombieHorde {
     this.hitFlash[i] = FLASH_DUR;
     if (this.hp[i] <= 0) {
       this.lastKillWasElite = this.elite[i] === 1;
+      this.lastKillWasExploder = this.pool[i].isExploder;
       /** 分裂潮：在原地附近復活；否則回外圈 */
       if (this.respawnAtDeath) this.spawn(i, playerX, playerZ, this.posX[i], this.posZ[i]);
       else this.spawn(i, playerX, playerZ);
@@ -410,14 +428,22 @@ export class ZombieHorde {
         (wantCrawl ? entry.crawlAnim : entry.walkAnim)?.start(true, 0.8 + Math.random() * 0.4);
       }
 
-      /** 受擊白光回饋：整隻殭屍閃白（per-mesh overlay，不影響其他殭屍） */
-      const meshes = this.pool[i].meshes;
+      /** 受擊白光回饋：整隻殭屍閃白（per-mesh overlay，不影響其他殭屍）
+       *  自爆殭屍平時維持橘紅警示光，受擊瞬間蓋一層白光，結束後還原橘紅 */
+      const meshes = entry.meshes;
       if (this.hitFlash[i] > 0) {
         this.hitFlash[i] = Math.max(0, this.hitFlash[i] - dt);
         const a = (this.hitFlash[i] / FLASH_DUR) * 0.9;
         for (let m = 0; m < meshes.length; m++) {
+          meshes[m].overlayColor = WHITE;
           meshes[m].renderOverlay = true;
           meshes[m].overlayAlpha = a;
+        }
+      } else if (entry.isExploder) {
+        for (let m = 0; m < meshes.length; m++) {
+          meshes[m].overlayColor = EXPLODER_TINT;
+          meshes[m].renderOverlay = true;
+          meshes[m].overlayAlpha = EXPLODER_ALPHA;
         }
       } else if (meshes.length > 0 && meshes[0].renderOverlay) {
         for (let m = 0; m < meshes.length; m++) meshes[m].renderOverlay = false;

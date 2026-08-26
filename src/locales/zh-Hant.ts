@@ -57,6 +57,12 @@ export const zhHant: Record<string, string> = {
   'hud.controlsHint': 'WASD／方向鍵移動・左下搖桿（觸控）・武器自動攻擊',
   'hud.title': '撐到最後',
 
+  'buff.rapid.name': '急速射擊',
+  'buff.power.name': '威力提升',
+  'buff.speed.name': '加速',
+  'buff.magnet.name': '磁吸',
+  'buff.multishot.name': '多重彈',
+
   'gameview.quality': '畫質',
   'gameview.qualitySuffix': '畫質',
   'gameview.jump': '跳躍',
@@ -240,6 +246,9 @@ export const zhHant: Record<string, string> = {
   'boss.shark.name': '巨鯊',
   'boss.shark.skillName': '高速衝咬',
   'boss.shark.desc': '從陸上滑行的巨鯊，蓄力後高速衝咬，閃避時機要抓準。',
+  'boss.boneking.name': '骷髏法王',
+  'boss.boneking.skillName': '詛咒追蹤彈',
+  'boss.boneking.desc': '無頭骷髏法王，會保持距離施放會緩慢轉向你的綠色詛咒彈，用移動甩開比硬扛更有效。',
   'boss.tentacle.name': '深海觸手',
   'boss.tentacle.skillName': '深海彈幕',
   'boss.tentacle.desc': '最終王。克拉肯之臂緩慢逼近，釋放全方位環形彈幕，擊敗即破關。',
@@ -317,6 +326,9 @@ export const zhHant: Record<string, string> = {
   'zombie.ghost.name': '惡靈',
   'zombie.ghost.role': '飛行',
   'zombie.ghost.desc': '懸空飄浮的怨靈，無視障礙物直接穿越逼近，速度偏快。',
+  'zombie.exploder.name': '自爆殭屍',
+  'zombie.exploder.role': '自爆',
+  'zombie.exploder.desc': '全身泛著橘紅警示光、體型腫脹，死亡時會在周圍炸出範圍傷害，別站太近打。',
 
 
 

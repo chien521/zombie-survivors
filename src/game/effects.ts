@@ -95,6 +95,12 @@ export function enemyDeathBurst(scene: Scene, pos: Vector3) {
   burst(scene, pos, new Color3(0.25, 0.5, 0.2), 8, 5, 0.4, 0.5);
 }
 
+/** 自爆殭屍死亡時的橘紅色爆炸 */
+export function explosionBurst(scene: Scene, pos: Vector3) {
+  burst(scene, pos, new Color3(1, 0.55, 0.15), 34, 12, 0.85, 0.6);
+  burst(scene, pos, new Color3(1, 0.85, 0.3), 18, 8, 0.5, 0.5);
+}
+
 /** 飄字（增益名稱、回血量）：billboard 文字向上飄並淡出 */
 export function spawnText(scene: Scene, pos: Vector3, text: string, colorHex: string, scale = 1) {
   const width = 512;

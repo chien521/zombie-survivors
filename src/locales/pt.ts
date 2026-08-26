@@ -50,6 +50,12 @@ export const pt: Record<string, string> = {
   'hud.controlsHint': 'WASD/setas para mover · joystick em baixo à esquerda (toque) · arma dispara automaticamente',
   'hud.title': 'Última Resistência',
 
+  'buff.rapid.name': 'Tiro Rápido',
+  'buff.power.name': 'Aumento de Poder',
+  'buff.speed.name': 'Aumento de Velocidade',
+  'buff.magnet.name': 'Ímã',
+  'buff.multishot.name': 'Tiro Múltiplo',
+
   'gameview.quality': 'Qualidade',
   'gameview.qualitySuffix': 'qualidade',
   'gameview.jump': 'Saltar',
@@ -212,6 +218,9 @@ export const pt: Record<string, string> = {
   'boss.shark.name': 'Mega Tubarão',
   'boss.shark.skillName': 'Mordida em investida',
   'boss.shark.desc': 'Um tubarão a deslizar em terra — carrega e depois morde a alta velocidade; calcula bem a esquiva.',
+  'boss.boneking.name': 'Rei dos Ossos',
+  'boss.boneking.skillName': 'Orbe de Maldição',
+  'boss.boneking.desc': 'Um feiticeiro esqueleto sem cabeça que mantém a distância e lança orbes de maldição verdes que viram lentamente para te seguir; fugir funciona melhor do que aguentar os golpes.',
   'boss.tentacle.name': 'Tentáculo das Profundezas',
   'boss.tentacle.skillName': 'Rajada abissal',
   'boss.tentacle.desc': 'Chefe final. Um braço de kraken aproxima-se lentamente, libertando uma rajada circular omnidirecional — derrota-o para completar o jogo.',
@@ -286,6 +295,9 @@ export const pt: Record<string, string> = {
   'zombie.ghost.name': 'Espírito Maligno',
   'zombie.ghost.role': 'Voador',
   'zombie.ghost.desc': 'Um espírito flutuante que ignora completamente os obstáculos e se aproxima rapidamente.',
+  'zombie.exploder.name': 'Zumbi Explosivo',
+  'zombie.exploder.role': 'Autodestruição',
+  'zombie.exploder.desc': 'Um zumbi inchado que emite uma luz laranja de aviso. Explode ao morrer, causando dano em área a quem estiver perto.',
 
 
 

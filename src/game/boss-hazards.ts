@@ -14,6 +14,9 @@ const SHOCK_BAND = 1.8;
 const POISON_DURATION = 5;
 const POISON_RADIUS = 4;
 
+/** 追蹤彈每秒轉向玩家的比例（0~1，越高轉向越快、越難甩開） */
+const HOMING_TURN_RATE = 1.4;
+
 interface Shock {
   mesh: Mesh;
   t: number;
@@ -39,13 +42,17 @@ export class BossHazards {
   private active = new Uint8Array(PROJ_CAP);
   /** 每發彈幕的傷害 */
   private projDmg = new Float32Array(PROJ_CAP);
+  /** 追蹤彈：1 表示每幀朝玩家當前位置轉向（骷髏王詛咒彈） */
+  private homing = new Uint8Array(PROJ_CAP);
   private projMesh: Mesh[] = [];
 
   private shocks: Shock[] = [];
   private poisons: Poison[] = [];
 
+  private projMat!: StandardMaterial;
   private shockMat: StandardMaterial;
   private poisonMat: StandardMaterial;
+  private homingMat: StandardMaterial;
   /** 玩家所在地形高度（招式貼地基準） */
   private baseY = 0;
   /** 招式傷害（debug 可調） */
@@ -56,14 +63,14 @@ export class BossHazards {
   constructor(scene: Scene) {
     this.scene = scene;
 
-    const projMat = new StandardMaterial('boss-proj-mat', scene);
-    projMat.diffuseColor = new Color3(0.8, 0.3, 0.9);
-    projMat.emissiveColor = new Color3(0.7, 0.2, 0.9);
-    projMat.specularColor = Color3.Black();
-    projMat.disableLighting = true;
+    this.projMat = new StandardMaterial('boss-proj-mat', scene);
+    this.projMat.diffuseColor = new Color3(0.8, 0.3, 0.9);
+    this.projMat.emissiveColor = new Color3(0.7, 0.2, 0.9);
+    this.projMat.specularColor = Color3.Black();
+    this.projMat.disableLighting = true;
     for (let i = 0; i < PROJ_CAP; i++) {
       const m = MeshBuilder.CreateSphere(`bproj-${i}`, { diameter: PROJ_RADIUS * 2, segments: 8 }, scene);
-      m.material = projMat;
+      m.material = this.projMat;
       m.isPickable = false;
       m.setEnabled(false);
       this.projMesh.push(m);
@@ -83,9 +90,15 @@ export class BossHazards {
     this.poisonMat.disableLighting = true;
     this.poisonMat.alpha = 0.4;
     this.poisonMat.backFaceCulling = false;
+
+    this.homingMat = new StandardMaterial('homing-mat', scene);
+    this.homingMat.diffuseColor = new Color3(0.35, 0.95, 0.55);
+    this.homingMat.emissiveColor = new Color3(0.25, 0.9, 0.45);
+    this.homingMat.specularColor = Color3.Black();
+    this.homingMat.disableLighting = true;
   }
 
-  private spawnProj(x: number, z: number, dirX: number, dirZ: number, speed: number, damage: number) {
+  private spawnProj(x: number, z: number, dirX: number, dirZ: number, speed: number, damage: number, homing = false) {
     for (let i = 0; i < PROJ_CAP; i++) {
       if (this.active[i]) continue;
       this.active[i] = 1;
@@ -95,6 +108,8 @@ export class BossHazards {
       this.vz[i] = dirZ * speed;
       this.life[i] = PROJ_LIFE;
       this.projDmg[i] = damage;
+      this.homing[i] = homing ? 1 : 0;
+      this.projMesh[i].material = homing ? this.homingMat : this.projMat;
       this.projMesh[i].position.set(x, this.baseY + PROJ_Y, z);
       this.projMesh[i].setEnabled(true);
       return;
@@ -115,6 +130,15 @@ export class BossHazards {
     for (let k = 0; k < count; k++) {
       const a = (k / count) * Math.PI * 2;
       this.spawnProj(x, z, Math.cos(a), Math.sin(a), 16, this.projDamage);
+    }
+  }
+
+  /** 詛咒追蹤彈：速度較慢但每幀朝玩家當前位置緩慢轉向（骷髏王） */
+  homingBarrage(x: number, z: number, targetX: number, targetZ: number, count: number) {
+    const base = Math.atan2(targetZ - z, targetX - x);
+    for (let k = 0; k < count; k++) {
+      const a = base + (k - (count - 1) / 2) * 0.5;
+      this.spawnProj(x, z, Math.cos(a), Math.sin(a), 9, this.projDamage, true);
     }
   }
 
@@ -153,6 +177,16 @@ export class BossHazards {
     const hitR2 = hitR * hitR;
     for (let i = 0; i < PROJ_CAP; i++) {
       if (!this.active[i]) continue;
+      /** 追蹤彈：緩慢將速度向量轉向玩家當前位置（可被甩開，非鎖死） */
+      if (this.homing[i]) {
+        const tdx = playerX - this.px[i];
+        const tdz = playerZ - this.pz[i];
+        const tlen = Math.hypot(tdx, tdz) || 1;
+        const speed = Math.hypot(this.vx[i], this.vz[i]) || 9;
+        const turn = HOMING_TURN_RATE * dt;
+        this.vx[i] += ((tdx / tlen) * speed - this.vx[i]) * turn;
+        this.vz[i] += ((tdz / tlen) * speed - this.vz[i]) * turn;
+      }
       this.px[i] += this.vx[i] * dt;
       this.pz[i] += this.vz[i] * dt;
       this.life[i] -= dt;
@@ -211,6 +245,7 @@ export class BossHazards {
 
   reset() {
     this.active.fill(0);
+    this.homing.fill(0);
     for (const m of this.projMesh) m.setEnabled(false);
     for (const s of this.shocks) s.mesh.dispose();
     for (const p of this.poisons) p.mesh.dispose();

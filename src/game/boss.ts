@@ -7,7 +7,7 @@ import { hitSpark } from './effects';
 import { sound } from './sound';
 
 /** 王的招式種類 */
-type BossSkill = 'charge' | 'aimed' | 'shockwave' | 'poison' | 'radial';
+type BossSkill = 'charge' | 'aimed' | 'shockwave' | 'poison' | 'radial' | 'homing';
 
 interface BossDef {
   name: string;
@@ -27,7 +27,7 @@ interface BossDef {
   descKey: string;
 }
 
-/** 依序登場的 5 隻王，打完第 5 隻即破關 */
+/** 依序登場的王，打完最後一隻即破關 */
 const BOSS_DEFS: BossDef[] = [
   {
     name: '巨胖殭屍',
@@ -118,6 +118,21 @@ const BOSS_DEFS: BossDef[] = [
     skillInterval: 4,
     desc: '從陸上滑行的巨鯊，蓄力後高速衝咬，閃避時機要抓準。',
     descKey: 'boss.shark.desc',
+  },
+  {
+    name: '骷髏法王',
+    nameKey: 'boss.boneking.name',
+    model: 'models/zombie/zombie_skeleton_headless.glb',
+    radius: 6.2,
+    speed: 5.5,
+    contactDps: 36,
+    hpMul: 1.6,
+    skill: 'homing',
+    skillName: '詛咒追蹤彈',
+    skillNameKey: 'boss.boneking.skillName',
+    skillInterval: 3.2,
+    desc: '無頭骷髏法王，會保持距離施放會緩慢轉向你的綠色詛咒彈，用移動甩開比硬扛更有效。',
+    descKey: 'boss.boneking.desc',
   },
   {
     name: '深海觸手',
@@ -386,6 +401,9 @@ export class Boss {
         break;
       case 'radial':
         hazards.radialBarrage(this.x, this.z, 14);
+        break;
+      case 'homing':
+        hazards.homingBarrage(this.x, this.z, px, pz, 3);
         break;
     }
   }

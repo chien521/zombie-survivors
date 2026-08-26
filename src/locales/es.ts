@@ -50,6 +50,12 @@ export const es: Record<string, string> = {
   'hud.controlsHint': 'WASD/flechas para moverte · joystick abajo-izquierda (táctil) · arma automática',
   'hud.title': 'Última Resistencia',
 
+  'buff.rapid.name': 'Disparo Rápido',
+  'buff.power.name': 'Potencia',
+  'buff.speed.name': 'Velocidad',
+  'buff.magnet.name': 'Imán',
+  'buff.multishot.name': 'Multidisparo',
+
   'gameview.quality': 'Calidad',
   'gameview.qualitySuffix': 'calidad',
   'gameview.jump': 'Saltar',
@@ -212,6 +218,9 @@ export const es: Record<string, string> = {
   'boss.shark.name': 'Megatiburón',
   'boss.shark.skillName': 'Mordisco de embestida',
   'boss.shark.desc': 'Un tiburón que se desliza por tierra — se carga y luego muerde a alta velocidad; calcula bien tu esquiva.',
+  'boss.boneking.name': 'Rey de Huesos',
+  'boss.boneking.skillName': 'Orbe de Maldición',
+  'boss.boneking.desc': 'Un hechicero esqueleto sin cabeza que mantiene la distancia y lanza orbes de maldición verdes que giran lentamente para seguirte; huir funciona mejor que aguantar los golpes.',
   'boss.tentacle.name': 'Tentáculo de las Profundidades',
   'boss.tentacle.skillName': 'Ráfaga abisal',
   'boss.tentacle.desc': 'Jefe final. Un brazo de kraken que se acerca lentamente, lanzando una ráfaga circular omnidireccional — derrótalo para completar el juego.',
@@ -286,6 +295,9 @@ export const es: Record<string, string> = {
   'zombie.ghost.name': 'Espíritu Maligno',
   'zombie.ghost.role': 'Volador',
   'zombie.ghost.desc': 'Un espíritu flotante que ignora los obstáculos por completo y se acerca rápido.',
+  'zombie.exploder.name': 'Zombi Explosivo',
+  'zombie.exploder.role': 'Autodestrucción',
+  'zombie.exploder.desc': 'Un zombi hinchado que brilla con una luz naranja de advertencia. Explota al morir, causando daño en área a quien esté cerca.',
 
 
 

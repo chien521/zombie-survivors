@@ -50,6 +50,12 @@ export const fr: Record<string, string> = {
   'hud.controlsHint': 'WASD/flèches pour se déplacer · joystick en bas à gauche (tactile) · arme automatique',
   'hud.title': 'Dernière Résistance',
 
+  'buff.rapid.name': 'Tir Rapide',
+  'buff.power.name': 'Puissance',
+  'buff.speed.name': 'Vitesse',
+  'buff.magnet.name': 'Aimant',
+  'buff.multishot.name': 'Tir Multiple',
+
   'gameview.quality': 'Qualité',
   'gameview.qualitySuffix': 'qualité',
   'gameview.jump': 'Sauter',
@@ -212,6 +218,9 @@ export const fr: Record<string, string> = {
   'boss.shark.name': 'Méga Requin',
   'boss.shark.skillName': 'Morsure chargée',
   'boss.shark.desc': "Un requin glissant sur terre — charge puis mord à grande vitesse ; calculez bien votre esquive.",
+  'boss.boneking.name': 'Roi des Ossements',
+  'boss.boneking.skillName': 'Orbe de Malédiction',
+  'boss.boneking.desc': "Un sorcier squelette sans tête qui garde ses distances et lance des orbes de malédiction verts qui virent lentement pour vous suivre — mieux vaut courir que encaisser.",
   'boss.tentacle.name': 'Tentacule des Profondeurs',
   'boss.tentacle.skillName': 'Rafale abyssale',
   'boss.tentacle.desc': "Boss final. Un bras de kraken s'approche lentement, libérant une rafale circulaire omnidirectionnelle — vainquez-le pour terminer le jeu.",
@@ -286,6 +295,9 @@ export const fr: Record<string, string> = {
   'zombie.ghost.name': 'Esprit Maléfique',
   'zombie.ghost.role': 'Volant',
   'zombie.ghost.desc': 'Un esprit flottant qui ignore complètement les obstacles et approche rapidement.',
+  'zombie.exploder.name': 'Zombie Explosif',
+  'zombie.exploder.role': 'Autodestruction',
+  'zombie.exploder.desc': "Un zombie boursouflé qui émet une lueur orange d'avertissement. Explose à sa mort, infligeant des dégâts de zone à proximité.",
 
 
 

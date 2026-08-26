@@ -50,6 +50,12 @@ export const ar: Record<string, string> = {
   'hud.controlsHint': 'WASD/الأسهم للتحرك · عصا التحكم أسفل اليسار (لمس) · السلاح يطلق تلقائيًا',
   'hud.title': 'الموقف الأخير',
 
+  'buff.rapid.name': 'إطلاق سريع',
+  'buff.power.name': 'تعزيز القوة',
+  'buff.speed.name': 'تعزيز السرعة',
+  'buff.magnet.name': 'مغناطيس',
+  'buff.multishot.name': 'طلقات متعددة',
+
   'gameview.quality': 'الجودة',
   'gameview.qualitySuffix': 'الجودة',
   'gameview.jump': 'قفز',
@@ -212,6 +218,9 @@ export const ar: Record<string, string> = {
   'boss.shark.name': 'القرش الضخم',
   'boss.shark.skillName': 'عضة اندفاع',
   'boss.shark.desc': 'قرش ينزلق على اليابسة — يشحن ثم يعض بسرعة عالية؛ احسب مراوغتك بدقة.',
+  'boss.boneking.name': 'ملك العظام',
+  'boss.boneking.skillName': 'كرة اللعنة الملاحقة',
+  'boss.boneking.desc': 'ساحر هيكل عظمي بلا رأس يبقى على مسافة ويقذف كرات لعنة خضراء تنعطف ببطء نحوك — الهرب أفضل من تحمل الضربات.',
   'boss.tentacle.name': 'مجس أعماق البحر',
   'boss.tentacle.skillName': 'رشقة الهاوية',
   'boss.tentacle.desc': 'الرئيس الأخير. ذراع كراكن تقترب ببطء، تطلق رشقة دائرية في كل الاتجاهات — اهزمه لإنهاء اللعبة.',
@@ -286,6 +295,9 @@ export const ar: Record<string, string> = {
   'zombie.ghost.name': 'روح شريرة',
   'zombie.ghost.role': 'طائر',
   'zombie.ghost.desc': 'روح طائرة تتجاهل العوائق تمامًا وتقترب بسرعة.',
+  'zombie.exploder.name': 'زومبي متفجر',
+  'zombie.exploder.role': 'انفجار ذاتي',
+  'zombie.exploder.desc': 'زومبي منتفخ يتوهج بضوء تحذيري برتقالي. ينفجر عند الموت مسبباً ضرراً في منطقة لمن يقف قريباً جداً.',
 
 
 

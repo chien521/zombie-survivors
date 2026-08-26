@@ -56,6 +56,12 @@ export const en: Record<string, string> = {
   'hud.controlsHint': 'WASD/Arrows to move · joystick bottom-left (touch) · weapon auto-fires',
   'hud.title': 'Last Stand',
 
+  'buff.rapid.name': 'Rapid Fire',
+  'buff.power.name': 'Power Up',
+  'buff.speed.name': 'Speed Boost',
+  'buff.magnet.name': 'Magnet',
+  'buff.multishot.name': 'Multishot',
+
   'gameview.quality': 'Quality',
   'gameview.qualitySuffix': 'quality',
   'gameview.jump': 'Jump',
@@ -239,6 +245,9 @@ export const en: Record<string, string> = {
   'boss.shark.name': 'Mega Shark',
   'boss.shark.skillName': 'Charge Bite',
   'boss.shark.desc': 'A shark gliding across land — charges up then bites at high speed; time your dodge carefully.',
+  'boss.boneking.name': 'Bone King',
+  'boss.boneking.skillName': 'Curse Homing Orb',
+  'boss.boneking.desc': 'A headless skeletal sorcerer that keeps its distance and hurls green curse orbs that slowly turn to track you — outrunning them works better than tanking hits.',
   'boss.tentacle.name': 'Deep Sea Tentacle',
   'boss.tentacle.skillName': 'Abyssal Barrage',
   'boss.tentacle.desc': 'Final boss. A kraken arm slowly closing in, unleashing an omnidirectional ring barrage — defeat it to clear the game.',
@@ -316,6 +325,9 @@ export const en: Record<string, string> = {
   'zombie.ghost.name': 'Ghoul Spirit',
   'zombie.ghost.role': 'Flyer',
   'zombie.ghost.desc': 'A hovering spirit that ignores obstacles entirely and closes in fast.',
+  'zombie.exploder.name': 'Bloater',
+  'zombie.exploder.role': 'Exploder',
+  'zombie.exploder.desc': 'A bloated zombie glowing with an orange warning light. Detonates on death, dealing area damage to anyone standing too close.',
 
 
 

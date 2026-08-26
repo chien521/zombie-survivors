@@ -50,6 +50,12 @@ export const ko: Record<string, string> = {
   'hud.controlsHint': 'WASD/방향키로 이동・좌측 하단 조이스틱(터치)・무기 자동 공격',
   'hud.title': '라스트 스탠드',
 
+  'buff.rapid.name': '연사 강화',
+  'buff.power.name': '위력 강화',
+  'buff.speed.name': '가속',
+  'buff.magnet.name': '자석',
+  'buff.multishot.name': '다중 발사',
+
   'gameview.quality': '화질',
   'gameview.qualitySuffix': '화질',
   'gameview.jump': '점프',
@@ -212,6 +218,9 @@ export const ko: Record<string, string> = {
   'boss.shark.name': '메가 샤크',
   'boss.shark.skillName': '돌진 물기',
   'boss.shark.desc': '육지를 미끄러지듯 이동하는 거대한 상어. 차지 후 고속으로 물어뜯습니다. 회피 타이밍을 잘 잡으세요.',
+  'boss.boneking.name': '해골 법왕',
+  'boss.boneking.skillName': '저주 추적탄',
+  'boss.boneking.desc': '거리를 유지하며 서서히 당신을 향해 방향을 트는 초록빛 저주탄을 날리는 머리 없는 해골 마법사. 버티기보다 움직여서 피하는 게 낫다.',
   'boss.tentacle.name': '심해 촉수',
   'boss.tentacle.skillName': '심해 탄막',
   'boss.tentacle.desc': '최종 보스. 크라켄의 팔이 천천히 접근하며 전방위 탄막을 발사합니다. 처치하면 클리어.',
@@ -286,6 +295,9 @@ export const ko: Record<string, string> = {
   'zombie.ghost.name': '악령',
   'zombie.ghost.role': '비행',
   'zombie.ghost.desc': '장애물을 무시하고 공중을 떠다니며 다가오는 악령. 속도가 빠르다.',
+  'zombie.exploder.name': '자폭 좀비',
+  'zombie.exploder.role': '자폭',
+  'zombie.exploder.desc': '주황빛 경고광을 내뿜는 부풀어 오른 좀비. 죽을 때 주변에 범위 피해를 입힌다. 너무 가까이서 처치하지 말 것.',
 
 
 

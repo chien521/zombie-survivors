@@ -50,6 +50,12 @@ export const de: Record<string, string> = {
   'hud.controlsHint': 'WASD/Pfeiltasten zum Bewegen · Joystick unten links (Touch) · Waffe feuert automatisch',
   'hud.title': 'Letztes Gefecht',
 
+  'buff.rapid.name': 'Schnellfeuer',
+  'buff.power.name': 'Kraftschub',
+  'buff.speed.name': 'Tempo-Boost',
+  'buff.magnet.name': 'Magnet',
+  'buff.multishot.name': 'Mehrfachschuss',
+
   'gameview.quality': 'Qualität',
   'gameview.qualitySuffix': 'Qualität',
   'gameview.jump': 'Springen',
@@ -212,6 +218,9 @@ export const de: Record<string, string> = {
   'boss.shark.name': 'Mega-Hai',
   'boss.shark.skillName': 'Sturmbiss',
   'boss.shark.desc': 'Ein an Land gleitender Hai — lädt auf und beißt dann mit hoher Geschwindigkeit zu; timing deiner Ausweichbewegung ist entscheidend.',
+  'boss.boneking.name': 'Knochenkönig',
+  'boss.boneking.skillName': 'Fluch-Suchkugel',
+  'boss.boneking.desc': 'Ein kopfloser Skelett-Zauberer, der auf Distanz bleibt und grüne Fluchkugeln schleudert, die sich langsam auf dich zudrehen — Wegrennen wirkt besser als Einstecken.',
   'boss.tentacle.name': 'Tiefsee-Tentakel',
   'boss.tentacle.skillName': 'Abgrundsalve',
   'boss.tentacle.desc': 'Endboss. Ein Krakenarm nähert sich langsam und setzt eine allseitige Kreissalve frei — besiege ihn, um das Spiel abzuschließen.',
@@ -286,6 +295,9 @@ export const de: Record<string, string> = {
   'zombie.ghost.name': 'Böser Geist',
   'zombie.ghost.role': 'Flieger',
   'zombie.ghost.desc': 'Ein schwebender Geist, der Hindernisse komplett ignoriert und schnell heranrückt.',
+  'zombie.exploder.name': 'Selbstmordzombie',
+  'zombie.exploder.role': 'Selbstzerstörung',
+  'zombie.exploder.desc': 'Ein aufgeblähter Zombie mit orangefarbenem Warnlicht. Explodiert beim Tod und verursacht Flächenschaden in der Nähe.',
 
 
 

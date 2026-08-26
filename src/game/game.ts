@@ -57,8 +57,9 @@ import {
   type RunState,
   type Upgrade,
 } from './upgrades';
-import { levelUpBurst, bossDeathBurst, hurtBurst, enemyDeathBurst, spawnText, setGlowLayer } from './effects';
+import { levelUpBurst, bossDeathBurst, hurtBurst, enemyDeathBurst, explosionBurst, spawnText, setGlowLayer } from './effects';
 import { sound } from './sound';
+import { t } from '../i18n';
 
 export type GameState = 'running' | 'levelup' | 'dead' | 'paused' | 'won';
 
@@ -441,12 +442,12 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
 
   /** ===== 增益（寶箱）與道具 ===== */
   type BuffType = 'rapid' | 'power' | 'speed' | 'magnet' | 'multishot';
-  const BUFFS: { type: BuffType; name: string; color: string }[] = [
-    { type: 'rapid', name: '急速射擊', color: '#fbbf24' },
-    { type: 'power', name: '威力提升', color: '#f87171' },
-    { type: 'speed', name: '加速', color: '#34d399' },
-    { type: 'magnet', name: '磁吸', color: '#22d3ee' },
-    { type: 'multishot', name: '多重彈', color: '#a78bfa' },
+  const BUFFS: { type: BuffType; nameKey: string; color: string }[] = [
+    { type: 'rapid', nameKey: 'buff.rapid.name', color: '#fbbf24' },
+    { type: 'power', nameKey: 'buff.power.name', color: '#f87171' },
+    { type: 'speed', nameKey: 'buff.speed.name', color: '#34d399' },
+    { type: 'magnet', nameKey: 'buff.magnet.name', color: '#22d3ee' },
+    { type: 'multishot', nameKey: 'buff.multishot.name', color: '#a78bfa' },
   ];
   /** until 以遊戲秒數計 */
   const activeBuffs: { type: BuffType; until: number }[] = [];
@@ -512,7 +513,7 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
       const existing = activeBuffs.find((b) => b.type === def.type);
       if (existing) existing.until = time + CONFIG.items.buffDuration / 1000;
       else activeBuffs.push({ type: def.type, until: time + CONFIG.items.buffDuration / 1000 });
-      spawnText(scene, pos, def.name, def.color, 5);
+      spawnText(scene, pos, t(def.nameKey), def.color, 5);
       sound.buff();
     } else {
       const amount = run.maxHp * item.healPct;
@@ -712,6 +713,8 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
     /** 死鬥本幀效果旗標：爆裂突變是否啟用、本幀玩家受到的爆裂傷害 */
     let explodeActive = false;
     let explodeAccrued = 0;
+    /** 本幀玩家因擊殺自爆殭屍受到的範圍傷害 */
+    let exploderAccrued = 0;
 
     /** 死鬥：波數推進（每 waveSec 秒一波），進新波時排程 Boss Rush／突變／血潮／祝福 */
     if (isDM) {
@@ -868,6 +871,13 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
         const ez = pz - z;
         if (ex * ex + ez * ez < 9) explodeAccrued += 5;
       }
+      /** 自爆殭屍：死亡時若玩家在爆炸半徑內則受到範圍傷害（稍後併入結算），並有橘紅爆炸特效 */
+      if (enemies.lastKillWasExploder) {
+        explosionBurst(scene, new Vector3(x, y + CONFIG.enemy.y, z));
+        const ex = px - x;
+        const ez = pz - z;
+        if (ex * ex + ez * ez < 25) exploderAccrued += 14;
+      }
       sound.hit();
     };
     /** 吸血光環羈絆：光環傷害的 30% 轉換為回血，直接結算（光環本身已有 0.5s 結算間隔，不需再額外封頂） */
@@ -997,6 +1007,7 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
     }
     incoming += hazardDmg * dmLethal;
     incoming += explodeAccrued; // 爆裂突變傷害
+    incoming += exploderAccrued; // 自爆殭屍範圍傷害
     if (invincible) incoming = 0;
     incoming *= 1 - eff.damageReduction;
     /** 裝甲衛星羈絆：環繞武器啟動時額外減傷 15% */

@@ -50,6 +50,12 @@ export const ja: Record<string, string> = {
   'hud.controlsHint': 'WASD／矢印キーで移動・左下ジョイスティック（タッチ）・武器は自動攻撃',
   'hud.title': 'ラストスタンド',
 
+  'buff.rapid.name': '連射強化',
+  'buff.power.name': '威力アップ',
+  'buff.speed.name': '加速',
+  'buff.magnet.name': '磁力',
+  'buff.multishot.name': '多重弾',
+
   'gameview.quality': '画質',
   'gameview.qualitySuffix': '画質',
   'gameview.jump': 'ジャンプ',
@@ -212,6 +218,9 @@ export const ja: Record<string, string> = {
   'boss.shark.name': 'メガシャーク',
   'boss.shark.skillName': 'チャージバイト',
   'boss.shark.desc': '陸を滑るように移動する巨大なサメ。チャージ後に高速で噛みついてくる。回避のタイミングを見極めよう。',
+  'boss.boneking.name': '骸骨法王',
+  'boss.boneking.skillName': '呪いの追尾弾',
+  'boss.boneking.desc': '距離を保ちながら緩やかに追尾する緑の呪いの弾を放つ首なし骸骨の魔術師。耐えるより逃げ回る方が有効。',
   'boss.tentacle.name': '深海の触手',
   'boss.tentacle.skillName': '深海弾幕',
   'boss.tentacle.desc': '最終ボス。クラーケンの腕がゆっくりと接近し、全方位の弾幕を放つ。倒せばクリア。',
@@ -286,6 +295,9 @@ export const ja: Record<string, string> = {
   'zombie.ghost.name': '悪霊',
   'zombie.ghost.role': '飛行',
   'zombie.ghost.desc': '障害物を無視して宙を漂いながら迫る悪霊。動きは速い。',
+  'zombie.exploder.name': '自爆ゾンビ',
+  'zombie.exploder.role': '自爆',
+  'zombie.exploder.desc': '橙色の警告光を放つ膨れたゾンビ。死亡時に周囲へ範囲ダメージを与える爆発を起こす。近づきすぎないこと。',
 
 
 
