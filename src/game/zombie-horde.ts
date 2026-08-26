@@ -16,7 +16,12 @@ interface ZombieType {
   ranged?: boolean;
   /** 在地上爬行（播 Crawl 動畫） */
   crawl?: boolean;
+  /** 飛行：懸空、無視障礙物碰撞 */
+  flying?: boolean;
 }
+
+/** 飛行怪懸空高度（相對地形） */
+const FLYING_HOVER = 1.6;
 
 /** 遠程怪：發射間隔、開火距離、保持距離、彈丸傷害 */
 const FIRE_INTERVAL = 2.2;
@@ -31,6 +36,8 @@ const ZOMBIE_TYPES: ZombieType[] = [
   { path: '/models/zombie/zombie_skeleton.glb', hp: 4, speed: 6, scale: 1 }, // 不死骷髏
   { path: '/models/zombie/zombie_skeleton_headless.glb', hp: 6, speed: 5, scale: 1, ranged: true }, // 無頭骷髏（遠程）
   { path: '/models/zombie/zombie_basic.glb', hp: 5, speed: 4, scale: 1, crawl: true }, // 爬行殭屍（趴地爬行）
+  { path: '/models/zombie/zombie_half.glb', hp: 4, speed: 4.5, scale: 0.75, crawl: true }, // 半身殭屍（天生爬行，體型較矮）
+  { path: '/models/zombie/ghost.glb', hp: 3, speed: 6.5, scale: 0.9, flying: true }, // 惡靈（懸空飛行、無視障礙物）
 ];
 
 /** 怪物圖鑑資訊（供選單顯示） */
@@ -42,10 +49,12 @@ export const ZOMBIE_INFO = [
   { name: '骷髏兵', nameKey: 'zombie.skeleton.name', role: '不死', roleKey: 'zombie.skeleton.role', desc: '海盜骷髏，移動偏快、血量普通，成群出現。', descKey: 'zombie.skeleton.desc', model: '/models/zombie/zombie_skeleton.glb' },
   { name: '無頭骷髏', nameKey: 'zombie.skeletonHeadless.name', role: '遠程', roleKey: 'zombie.skeletonHeadless.role', desc: '保持距離朝你發射彈丸的不死射手，會被逼近時後退。', descKey: 'zombie.skeletonHeadless.desc', model: '/models/zombie/zombie_skeleton_headless.glb' },
   { name: '爬行殭屍', nameKey: 'zombie.crawl.name', role: '爬行', roleKey: 'zombie.crawl.role', desc: '趴在地上爬行逼近，速度偏慢但姿態低、混在屍群中不易察覺。', descKey: 'zombie.crawl.desc', model: '/models/zombie/zombie_basic.glb' },
+  { name: '半身殭屍', nameKey: 'zombie.half.name', role: '爬行', roleKey: 'zombie.half.role', desc: '只剩上半身的殭屍，天生用雙手拖行前進，體型矮小不易瞄準。', descKey: 'zombie.half.desc', model: '/models/zombie/zombie_half.glb' },
+  { name: '惡靈', nameKey: 'zombie.ghost.name', role: '飛行', roleKey: 'zombie.ghost.role', desc: '懸空飄浮的怨靈，無視障礙物直接穿越逼近，速度偏快。', descKey: 'zombie.ghost.desc', model: '/models/zombie/ghost.glb' },
 ];
 
 const BASE_HEIGHT = 2.4;
-/** 每種類型預先 instantiate 的數量（總和為怪海上限；7 類型 × 9 = 63 ≥ director.maxCount） */
+/** 每種類型預先 instantiate 的數量（總和為怪海上限；9 類型 × 9 = 81 ≥ director.maxCount） */
 const PER_TYPE = 9;
 /** 怪物血量全域倍率 */
 const HP_SCALE = 0.75;
@@ -64,6 +73,8 @@ interface Entry {
   isCrawl: boolean;
   /** 目前是否播放爬行 */
   crawling: boolean;
+  /** 飛行：懸空、無視障礙物碰撞 */
+  isFlying: boolean;
   /** 實際渲染的網格，用於受擊白光 overlay */
   meshes: AbstractMesh[];
 }
@@ -142,8 +153,9 @@ export class ZombieHorde {
         holder.setEnabled(false);
 
         inst.animationGroups.forEach((a) => a.stop());
-        /** 移動動作多樣化：同類型的 9 隻輪流分配 Run / Run_Arms / Run_Attack / Walk，怪群不再整齊劃一 */
-        const moveClips = inst.animationGroups.filter((a) => /walk|run/i.test(a.name));
+        /** 移動動作多樣化：同類型的 9 隻輪流分配 Run / Run_Arms / Run_Attack / Walk，怪群不再整齊劃一
+         *  （排除含 idle 的名稱，避免飛行怪的 Flying_Idle 被 /fly/ 誤判為移動動畫） */
+        const moveClips = inst.animationGroups.filter((a) => /walk|run|fly/i.test(a.name) && !/idle/i.test(a.name));
         const walkAnim =
           (moveClips.length ? moveClips[k % moveClips.length] : undefined) ??
           inst.animationGroups.find((a) => /idle/i.test(a.name)) ??
@@ -158,7 +170,7 @@ export class ZombieHorde {
           m.renderOverlay = false;
         }
 
-        this.pool.push({ root: holder, walkAnim, crawlAnim, baseSpeed: t.speed, isCrawl: !!t.crawl, crawling: false, meshes });
+        this.pool.push({ root: holder, walkAnim, crawlAnim, baseSpeed: t.speed, isCrawl: !!t.crawl, crawling: false, isFlying: !!t.flying, meshes });
       }
     }
 
@@ -276,6 +288,11 @@ export class ZombieHorde {
     if (i < this.count) this.freezeTimer[i] = Math.max(this.freezeTimer[i], dur);
   }
 
+  /** 指定殭屍目前是否處於冰凍狀態 */
+  isFrozen(i: number): boolean {
+    return i < this.count && this.freezeTimer[i] > 0;
+  }
+
   damage(i: number, amount: number, playerX: number, playerZ: number): boolean {
     if (i >= this.count) return false;
     this.hp[i] -= amount;
@@ -365,8 +382,10 @@ export class ZombieHorde {
       if (nz > half) nz = half;
       else if (nz < -half) nz = -half;
 
-      /** 障礙物阻擋 */
-      if (obstacles.length > 0) {
+      const entry = this.pool[i];
+
+      /** 障礙物阻擋（飛行怪懸空穿越，無視障礙物） */
+      if (obstacles.length > 0 && !entry.isFlying) {
         resolveObstacles(obstacles, nx, nz, radius, scratch);
         nx = scratch.x;
         nz = scratch.z;
@@ -375,11 +394,10 @@ export class ZombieHorde {
       this.posX[i] = nx;
       this.posZ[i] = nz;
 
-      const entry = this.pool[i];
       const root = entry.root;
       root.position.x = nx;
       root.position.z = nz;
-      root.position.y = this.heightAt(nx, nz);
+      root.position.y = this.heightAt(nx, nz) + (entry.isFlying ? FLYING_HOVER : 0);
       /** 面向玩家（模型前方 +Z） */
       root.rotation.y = Math.atan2(dirX, dirZ);
 
