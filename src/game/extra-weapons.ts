@@ -178,6 +178,9 @@ export class ExtraWeapons {
         if (vis) {
           vis.parent = holder;
           vis.position.y = -0.3;
+          /** glTF 匯入的根節點會帶 rotationQuaternion，設定時會完全蓋掉 .rotation，
+           *  導致下面這行「橫躺旋轉」實際從未生效（長矛一直豎直站立）；須先清空才會吃 Euler 角 */
+          vis.rotationQuaternion = null;
           vis.rotation.z = Math.PI / 2; // 長矛橫躺旋轉
           vis.setEnabled(true);
         }

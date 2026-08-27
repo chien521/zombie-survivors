@@ -239,6 +239,9 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
   camera.wheelPrecision = 3; // 滾輪縮放靈敏度
   camera.pinchPrecision = 60; // 手機雙指縮放靈敏度
   camera.panningSensibility = 0; // 停用平移（鎖定跟隨玩家）
+  /** 停用相機內建鍵盤控制：方向鍵已綁定玩家移動（見 input.ts），
+   *  否則滑鼠調整過視角後，方向鍵會同時轉動相機、造成移動方向錯亂 */
+  camera.inputs.removeByType('ArcRotateCameraKeyboardMoveInput');
   const light = new HemisphericLight('light', new Vector3(0.4, 1, 0.3), scene);
   light.intensity = 0.95;
   light.groundColor = new Color3(0.55, 0.55, 0.42);
