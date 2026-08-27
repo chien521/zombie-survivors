@@ -19,6 +19,10 @@ export interface Character {
   bodyColor: [number, number, number];
   /** GLB 模型路徑（無則用程序化造型） */
   model?: string;
+  /** 模型額外縮放倍率（僅視覺，不影響碰撞箱；預設 1）。
+   *  注意：game.ts 會先套用全域 1.5x 放大，此處數值是相對「原始模型」，
+   *  例如要讓最終呈現為原始模型的 0.5x，要填 0.5 / 1.5。 */
+  modelScale?: number;
   /** 套用至起始 RunState 的角色差異 */
   apply: (s: RunState) => void;
   /** 該角色熟練度 Lv3（累積 10 勝）解鎖的專屬加成 */
@@ -111,6 +115,7 @@ export const CHARACTERS: Character[] = [
     desc: '移速 +15%、射程 +15%，機動風箏流。開局定期釋放連鎖閃電，自動電擊並跳躍清怪。',
     bodyColor: [0.5, 0.35, 0.2],
     model: 'models/zombie/char_shepherd.glb',
+    modelScale: 1 / 3,
     apply: (s) => {
       s.moveSpeed *= 1.15;
       s.range *= 1.15;
@@ -130,6 +135,7 @@ export const CHARACTERS: Character[] = [
     desc: '生命 +40、移速 −10%，超耐打。身上展開傷害光環，持續灼燒貼近的殭屍，適合衝進怪堆。',
     bodyColor: [0.8, 0.7, 0.5],
     model: 'models/zombie/char_pug.glb',
+    modelScale: 1 / 3,
     apply: (s) => {
       s.maxHp += 40;
       s.moveSpeed *= 0.9;

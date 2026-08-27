@@ -68,6 +68,9 @@ const WHITE = new Color3(1, 1, 1);
 /** 自爆殭屍持續警示光顏色與透明度 */
 const EXPLODER_TINT = new Color3(1, 0.4, 0.1);
 const EXPLODER_ALPHA = 0.35;
+/** 冰凍中持續藍光顏色與透明度（讓「冰凍彈」有視覺回饋，而不是只是靜止不動） */
+const FREEZE_TINT = new Color3(0.4, 0.85, 1);
+const FREEZE_ALPHA = 0.55;
 
 interface Entry {
   root: TransformNode;
@@ -429,7 +432,8 @@ export class ZombieHorde {
       }
 
       /** 受擊白光回饋：整隻殭屍閃白（per-mesh overlay，不影響其他殭屍）
-       *  自爆殭屍平時維持橘紅警示光，受擊瞬間蓋一層白光，結束後還原橘紅 */
+       *  自爆殭屍平時維持橘紅警示光，受擊瞬間蓋一層白光，結束後還原橘紅；
+       *  冰凍中的殭屍蓋一層藍光，讓「冰凍彈」有視覺回饋（不會只是悄悄停下） */
       const meshes = entry.meshes;
       if (this.hitFlash[i] > 0) {
         this.hitFlash[i] = Math.max(0, this.hitFlash[i] - dt);
@@ -438,6 +442,12 @@ export class ZombieHorde {
           meshes[m].overlayColor = WHITE;
           meshes[m].renderOverlay = true;
           meshes[m].overlayAlpha = a;
+        }
+      } else if (this.freezeTimer[i] > 0) {
+        for (let m = 0; m < meshes.length; m++) {
+          meshes[m].overlayColor = FREEZE_TINT;
+          meshes[m].renderOverlay = true;
+          meshes[m].overlayAlpha = FREEZE_ALPHA;
         }
       } else if (entry.isExploder) {
         for (let m = 0; m < meshes.length; m++) {

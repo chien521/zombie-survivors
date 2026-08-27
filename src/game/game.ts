@@ -57,7 +57,7 @@ import {
   type RunState,
   type Upgrade,
 } from './upgrades';
-import { levelUpBurst, bossDeathBurst, hurtBurst, enemyDeathBurst, explosionBurst, spawnText, setGlowLayer } from './effects';
+import { levelUpBurst, bossDeathBurst, hurtBurst, enemyDeathBurst, explosionBurst, spawnText, setGlowLayer, shockwaveRing } from './effects';
 import { sound } from './sound';
 import { t } from '../i18n';
 
@@ -142,6 +142,8 @@ export interface GameOptions {
   characterColor?: [number, number, number];
   /** 角色 GLB 模型路徑 */
   characterModel?: string;
+  /** 角色模型額外縮放倍率（不影響碰撞箱，僅視覺大小） */
+  characterModelScale?: number;
   /** 金幣加成倍率（貪婪） */
   goldMultiplier?: number;
   /** 難度設定 */
@@ -309,6 +311,7 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
     void loadCharacter(scene, options.characterModel, 2.4).then((m) => {
       if (m) {
         m.root.parent = player;
+        m.root.scaling.scaleInPlace(1.5 * (options.characterModelScale ?? 1));
         playerWalk = m.walk;
         playerIdle = m.idle;
         fallbackBody.setEnabled(false);
@@ -392,6 +395,8 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
   let xp = 0;
   let xpToNext = xpForLevel(level);
   let hp = run.maxHp;
+  /** 吸血：尚未結算的回血量（每幀累積、依每秒上限逐步釋放，不會因為單幀爆量擊殺而被丟棄） */
+  let lifestealBank = 0;
   let kills = 0;
   let time = 0;
   let goldEarned = 0;
@@ -823,7 +828,8 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
       ? Math.min(CONFIG.director.maxCount, CONFIG.director.baseCount + wave * DEATHMATCH.countPerWave + densityBoost)
       : Math.min(
           CONFIG.director.maxCount,
-          CONFIG.director.baseCount + Math.floor(time / CONFIG.director.stepIntervalSec) * CONFIG.director.addPerStep,
+          CONFIG.director.baseCount +
+            Math.floor((time * diff.spawnRamp) / CONFIG.director.stepIntervalSec) * CONFIG.director.addPerStep,
         );
     enemies.setCount(target, px, pz);
 
@@ -888,10 +894,16 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
     const onNovaPulse = (x: number, z: number, r: number) => gems.pulse(x, z, r);
     kills += weapon.update(dt, px, pz, enemies, boss, grid, eff, onKill, groundY);
     kills += extras.update(dt, px, pz, enemies, boss, eff, onKill, groundY, onAuraDamage, onNovaPulse);
-    /** 吸血結算：每秒回血上限 = 1 + 1.6 × 每殺回血（與擊殺率脫鉤，殺再快也封頂） */
-    if (lifestealAccrued > 0 && hp > 0) {
+    /** 吸血結算：擊殺回血先存入 bank，再依每秒上限逐幀釋放（爆量擊殺不會被直接丟棄，只是延後回滿）；
+     *  bank 上限封頂 3 秒份，避免滿血時囤積、之後受傷瞬間補一大包不自然的回血 */
+    if (hp < run.maxHp) {
       const capPerSec = 1 + 1.6 * eff.lifestealOnKill;
-      hp = Math.min(run.maxHp, hp + Math.min(lifestealAccrued, capPerSec * dt));
+      lifestealBank = Math.min(lifestealBank + lifestealAccrued, capPerSec * 3);
+      const heal = Math.min(lifestealBank, capPerSec * dt);
+      lifestealBank -= heal;
+      hp = Math.min(run.maxHp, hp + heal);
+    } else {
+      lifestealBank = 0;
     }
 
     /** 王被擊敗：噴出大量經驗 + 爆炸特效 */
@@ -1218,6 +1230,8 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
         }
         boss.hitTest(ux, uz, radius, dmg);
         levelUpBurst(scene, new Vector3(ux, player.position.y + 1, uz));
+        /** 衝擊波半徑達 10，原本只有跟一般升級同款的小型金光爆發，看不出實際波及範圍 */
+        shockwaveRing(scene, new Vector3(ux, player.position.y + 0.3, uz), radius);
         sound.levelUp();
       }
       if (state === 'levelup') {
@@ -1238,6 +1252,7 @@ export function createGame(canvas: HTMLCanvasElement, options: GameOptions = {})
       xp = 0;
       xpToNext = xpForLevel(level);
       hp = run.maxHp;
+      lifestealBank = 0;
       kills = 0;
       time = 0;
       goldEarned = 0;

@@ -144,7 +144,7 @@ export class ExtraWeapons {
 
   /** 以斧頭模型替換球體 orb（各自包 holder 以便旋轉） */
   private async loadOrbWeapon(scene: Scene) {
-    const tmpl = await loadModel(scene, 'models/zombie/weapon_axe.glb', 0.2);
+    const tmpl = await loadModel(scene, 'models/zombie/weapon_axe.glb', 1);
     if (!tmpl) return;
     tmpl.setEnabled(false);
     /** 套上自發光材質，讓 GlowLayer 泛光（橘紅） */
@@ -241,6 +241,13 @@ export class ExtraWeapons {
     }
   }
 
+  /** 暴擊判定（與主武器同規則：冰鍛羈絆對冰凍中敵人必定暴擊，否則依暴擊率骰），
+   *  讓環繞衛星／光環／閃電／新星／回力鏢等副武器也吃得到暴擊率與冰鍛羈絆 */
+  private rollDamage(run: RunState, base: number, forcedCrit: boolean): number {
+    const crit = forcedCrit || (run.critChance > 0 && Math.random() < run.critChance);
+    return crit ? base * run.critMult : base;
+  }
+
   /** 每幀更新；命中擊殺時以死亡座標呼叫 onKill。回傳本幀擊殺數。 */
   update(
     dt: number,
@@ -293,7 +300,8 @@ export class ExtraWeapons {
               const ex = enemies.getX(j);
               const ez = enemies.getZ(j);
               orbHit = true;
-              if (enemies.damage(j, run.orbitalDamage, px, pz)) {
+              const dmg = this.rollDamage(run, run.orbitalDamage, run.frostforge && enemies.isFrozen(j));
+              if (enemies.damage(j, dmg, px, pz)) {
                 kills++;
                 onKill(ex, ez);
               }
@@ -301,7 +309,7 @@ export class ExtraWeapons {
           }
           /** 每顆球每次結算最多噴一次火花，避免過量 */
           if (orbHit) hitSpark(this.scene, new Vector3(ox, baseY + ORB_Y, oz));
-          boss.hitTest(ox, oz, ORB_RADIUS, run.orbitalDamage);
+          boss.hitTest(ox, oz, ORB_RADIUS, this.rollDamage(run, run.orbitalDamage, false));
         }
       }
     }
@@ -328,14 +336,16 @@ export class ExtraWeapons {
           if (dx * dx + dz * dz <= r2) {
             const ex = enemies.getX(j);
             const ez = enemies.getZ(j);
-            auraDamageDealt += run.auraDamage;
-            if (enemies.damage(j, run.auraDamage, px, pz)) {
+            const dmg = this.rollDamage(run, run.auraDamage, run.frostforge && enemies.isFrozen(j));
+            auraDamageDealt += dmg;
+            if (enemies.damage(j, dmg, px, pz)) {
               kills++;
               onKill(ex, ez);
             }
           }
         }
-        if (boss.hitTest(px, pz, run.auraRadius, run.auraDamage)) auraDamageDealt += run.auraDamage;
+        const bossAuraDmg = this.rollDamage(run, run.auraDamage, false);
+        if (boss.hitTest(px, pz, run.auraRadius, bossAuraDmg)) auraDamageDealt += bossAuraDmg;
         /** 吸血光環羈絆：光環傷害轉換為回血（比例由呼叫端結算，見 game.ts） */
         if (run.vampiricAura && auraDamageDealt > 0) onAuraDamage?.(auraDamageDealt);
       }
@@ -365,13 +375,14 @@ export class ExtraWeapons {
           if (dx * dx + dz * dz <= r2) {
             const ex = enemies.getX(j);
             const ez = enemies.getZ(j);
-            if (enemies.damage(j, run.novaDamage, px, pz)) {
+            const dmg = this.rollDamage(run, run.novaDamage, run.frostforge && enemies.isFrozen(j));
+            if (enemies.damage(j, dmg, px, pz)) {
               kills++;
               onKill(ex, ez);
             }
           }
         }
-        boss.hitTest(px, pz, run.novaRadius, run.novaDamage);
+        boss.hitTest(px, pz, run.novaRadius, this.rollDamage(run, run.novaDamage, false));
         /** 磁力新星羈絆：爆炸範圍內的經驗寶石被吸向玩家 */
         if (run.magnetNova) onNovaPulse?.(px, pz, run.novaRadius);
         /** 視覺：擴張環 */
@@ -425,14 +436,15 @@ export class ExtraWeapons {
             any = true;
             const ex = enemies.getX(j);
             const ez = enemies.getZ(j);
-            if (enemies.damage(j, run.boomerangDamage, px, pz)) {
+            const dmg = this.rollDamage(run, run.boomerangDamage, run.frostforge && enemies.isFrozen(j));
+            if (enemies.damage(j, dmg, px, pz)) {
               kills++;
               onKill(ex, ez);
             }
           }
         }
         if (any) hitSpark(this.scene, new Vector3(bx, baseY + BOOMERANG_Y, bz));
-        if (!b.bossHit && boss.hitTest(bx, bz, BOOMERANG_HITR, run.boomerangDamage)) b.bossHit = true;
+        if (!b.bossHit && boss.hitTest(bx, bz, BOOMERANG_HITR, this.rollDamage(run, run.boomerangDamage, false))) b.bossHit = true;
       }
     }
 
@@ -475,7 +487,7 @@ export class ExtraWeapons {
       const ez = enemies.getZ(best);
       points.push(new Vector3(ex, fxY, ez));
       hitSpark(this.scene, new Vector3(ex, fxY, ez));
-      if (enemies.damage(best, run.lightningDamage, px, pz)) {
+      if (enemies.damage(best, this.rollDamage(run, run.lightningDamage, run.frostforge && enemies.isFrozen(best)), px, pz)) {
         kills++;
         onKill(ex, ez);
       }
@@ -489,20 +501,27 @@ export class ExtraWeapons {
           if (ndx * ndx + ndz * ndz <= cnR2) {
             const nx = enemies.getX(j);
             const nz = enemies.getZ(j);
-            if (enemies.damage(j, run.novaDamage, px, pz)) {
+            const cnDmg = this.rollDamage(run, run.novaDamage, run.frostforge && enemies.isFrozen(j));
+            if (enemies.damage(j, cnDmg, px, pz)) {
               kills++;
               onKill(nx, nz);
             }
           }
         }
-        boss.hitTest(ex, ez, CHAIN_NOVA_RADIUS, run.novaDamage);
+        boss.hitTest(ex, ez, CHAIN_NOVA_RADIUS, this.rollDamage(run, run.novaDamage, false));
+        /** 視覺：與主新星爆同款擴張環，讓「連鎖節點引爆小範圍新星」看得出來（原本完全沒有特效） */
+        const chainRing = MeshBuilder.CreateTorus('chain-nova', { diameter: 2, thickness: 0.4, tessellation: 32 }, this.scene);
+        chainRing.material = this.novaMat;
+        chainRing.isPickable = false;
+        chainRing.position.set(ex, this.baseY + 0.3, ez);
+        this.novaFx.push({ mesh: chainRing, t: 0, r: CHAIN_NOVA_RADIUS });
       }
       fromX = ex;
       fromZ = ez;
     }
 
     /** 王在近處也吃一發 */
-    boss.hitTest(px, pz, 2, run.lightningDamage);
+    boss.hitTest(px, pz, 2, this.rollDamage(run, run.lightningDamage, false));
 
     if (points.length > 1) {
       const bolt = MeshBuilder.CreateLines('bolt', { points: jaggedPath(points, fxY) }, this.scene);
@@ -547,12 +566,12 @@ export class ExtraWeapons {
       const ez = enemies.getZ(best);
       points.push(new Vector3(ex, fxY, ez));
       hitSpark(this.scene, new Vector3(ex, fxY, ez));
-      if (enemies.damage(best, run.lightningDamage, px, pz)) {
+      if (enemies.damage(best, this.rollDamage(run, run.lightningDamage, run.frostforge && enemies.isFrozen(best)), px, pz)) {
         kills++;
         onKill(ex, ez);
       }
     }
-    boss.hitTest(bx, bz, 2, run.lightningDamage);
+    boss.hitTest(bx, bz, 2, this.rollDamage(run, run.lightningDamage, false));
     if (points.length > 1) {
       const bolt = MeshBuilder.CreateLines('boomerang-bolt', { points: jaggedPath(points, fxY) }, this.scene);
       bolt.color = new Color3(0.75, 0.95, 1);

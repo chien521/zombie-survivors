@@ -12,9 +12,6 @@
         >
           {{ t('landing.title') }}
         </h1>
-        <p class="mt-2 text-xs font-bold tracking-wide text-[#14210f]/70 sm:mt-3 sm:text-lg">
-          {{ t('landing.subtitle') }}
-        </p>
         <!-- 即時在線人數 -->
         <div
           v-if="online !== null"

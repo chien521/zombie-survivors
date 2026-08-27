@@ -46,14 +46,6 @@
       >
         {{ muted ? '🔇' : '🔊' }}
       </button>
-      <select
-        v-model="quality"
-        @change="onQuality"
-        :title="t('gameview.quality')"
-        class="h-9 rounded-full border-0 bg-white/55 px-2 text-xs text-[#14210f] outline-none backdrop-blur-md transition hover:bg-white/75 sm:h-11 sm:px-3 sm:text-sm"
-      >
-        <option v-for="q in qualities" :key="q.id" :value="q.id" class="bg-white text-[#14210f]">🎚 {{ t(q.nameKey) }} {{ t('gameview.qualitySuffix') }}</option>
-      </select>
       <button
         class="flex h-9 w-9 items-center justify-center rounded-full sm:h-11 sm:w-11 bg-white/55 text-base text-[#14210f] backdrop-blur-md sm:text-xl transition hover:bg-white/75 active:scale-95"
         @click="onTogglePause"
@@ -66,13 +58,6 @@
         @click="onToggleStats"
       >
         📊
-      </button>
-      <button
-        class="flex h-9 w-9 items-center justify-center rounded-full sm:h-11 sm:w-11 text-base backdrop-blur-md sm:text-xl transition active:scale-95"
-        :class="showDebug ? 'bg-[#8a2a7a] text-white' : 'bg-white/55 text-[#14210f] hover:bg-white/75'"
-        @click="onToggleDebug"
-      >
-        🛠️
       </button>
     </div>
 
@@ -100,53 +85,6 @@
           Lv {{ u.level }}/{{ u.maxLevel }}
         </span>
       </div>
-    </div>
-
-    <!-- Debug 參數面板 -->
-    <div
-      v-if="showDebug && stats.state === 'running'"
-      class="absolute right-4 top-20 z-20 max-h-[78vh] w-72 overflow-y-auto rounded-md bg-[#d4e8b8]/95 p-3 text-xs text-[#14210f] shadow-2xl ring-2 ring-[#14210f]"
-    >
-      <!-- 召喚王 -->
-      <div class="mb-3 rounded-md bg-white/40 p-2">
-        <div class="mb-1 text-sm font-black text-[#8a2a7a]">召喚王</div>
-        <div class="flex gap-2">
-          <select v-model.number="summonIndex" class="min-w-0 flex-1 rounded bg-white/60 px-2 py-1 text-[#14210f] outline-none">
-            <option v-for="(n, i) in bossNames" :key="i" :value="i" class="text-black">{{ i + 1 }}. {{ n }}</option>
-          </select>
-          <button class="rounded bg-[#8a2a7a] px-3 py-1 font-black text-white active:scale-95" @click="onSummonBoss">召喚</button>
-        </div>
-      </div>
-
-      <template v-for="g in debugGroups" :key="g.group">
-        <div class="mb-1 mt-2 text-sm font-black text-[#8a2a7a]">{{ g.group }}</div>
-        <div v-for="item in g.items" :key="item.index" class="mb-2">
-          <label v-if="item.type === 'bool'" class="flex cursor-pointer items-center justify-between">
-            <span>{{ item.label }}</span>
-            <input
-              type="checkbox"
-              class="h-4 w-4 accent-[#8a2a7a]"
-              :checked="item.value > 0.5"
-              @change="onDebugToggle(item.index, $event)"
-            />
-          </label>
-          <template v-else>
-            <div class="flex justify-between">
-              <span>{{ item.label }}</span>
-              <span class="font-bold text-[#14210f]/70">{{ fmt(item.value) }}</span>
-            </div>
-            <input
-              type="range"
-              class="w-full accent-[#8a2a7a]"
-              :min="item.min"
-              :max="item.max"
-              :step="item.step"
-              :value="item.value"
-              @input="onDebugInput(item.index, $event)"
-            />
-          </template>
-        </div>
-      </template>
     </div>
 
     <joystick
@@ -213,12 +151,10 @@ import {
   type GameHandle,
   type GameStats,
   type RunResult,
-  type DebugParamView,
   type UpgradeStatusView,
   type SynergyStatusView,
   type GameMode,
 } from '../game/game';
-import { QUALITIES, type QualityId } from '../game/quality';
 import { MUTATORS } from '../game/deathmatch';
 import { SYNERGY_TIERS, COMBO_SYNERGIES, type RunState } from '../game/upgrades';
 import type { Difficulty } from '../game/difficulty';
@@ -235,6 +171,7 @@ const { t } = useI18n();
 const props = defineProps<{
   characterColor: [number, number, number];
   characterModel?: string;
+  characterModelScale?: number;
   startRunState?: RunState;
   goldMultiplier: number;
   difficulty?: Difficulty;
@@ -313,26 +250,9 @@ let game: GameHandle | undefined;
 const MUTE_KEY = 'animal-survivors:muted';
 const muted = ref(localStorage.getItem(MUTE_KEY) === '1');
 
-const QUALITY_KEY = 'animal-survivors:quality';
-const qualities = QUALITIES;
-const quality = ref<QualityId>((localStorage.getItem(QUALITY_KEY) as QualityId) || 'high'); // 預設高，不因裝置自動降
-
 const showStats = ref(false);
 const upgradeStatus = ref<UpgradeStatusView[]>([]);
 const activeSynergies = ref<SynergyStatusView[]>([]);
-
-const showDebug = ref(false);
-const debugParams = ref<DebugParamView[]>([]);
-const bossNames = ref<string[]>([]);
-const summonIndex = ref(0);
-const debugGroups = computed(() => {
-  const map = new Map<string, (DebugParamView & { index: number })[]>();
-  debugParams.value.forEach((p, i) => {
-    if (!map.has(p.group)) map.set(p.group, []);
-    map.get(p.group)!.push({ ...p, index: i });
-  });
-  return [...map.entries()].map(([group, items]) => ({ group, items }));
-});
 
 onMounted(() => {
   if (!canvasRef.value) return;
@@ -340,9 +260,9 @@ onMounted(() => {
     startRunState: props.startRunState,
     characterColor: props.characterColor,
     characterModel: props.characterModel,
+    characterModelScale: props.characterModelScale,
     goldMultiplier: props.goldMultiplier,
     difficulty: props.difficulty,
-    quality: quality.value,
     mode: props.mode,
     onStats: (s) => {
       Object.assign(stats, s);
@@ -386,51 +306,12 @@ function onToggleMute() {
   localStorage.setItem(MUTE_KEY, muted.value ? '1' : '0');
   game?.setMuted(muted.value);
 }
-function onQuality() {
-  localStorage.setItem(QUALITY_KEY, quality.value);
-  game?.setQuality(quality.value);
-}
 function onToggleStats() {
   showStats.value = !showStats.value;
   if (showStats.value && game) {
     upgradeStatus.value = game.getUpgradeStatus();
     activeSynergies.value = game.getActiveSynergies();
   }
-}
-function onToggleDebug() {
-  /** 每次開啟參數面板都需通過驗證（答對作者全名）；關閉不需要 */
-  if (!showDebug.value) {
-    const answer = window.prompt('請問作者的全名（三個字）？');
-    if (answer === null) return;
-    if (answer.trim() !== '黃國書') {
-      window.alert('答錯了，無法開啟 Debug');
-      return;
-    }
-    /** 開啟 Debug 即視為作弊，本局不列入排行榜（先讓玩家確認） */
-    if (!window.confirm('開啟 Debug 面板後，本局成績將不列入排行榜。確定開啟？')) return;
-    game?.markCheated();
-  }
-  showDebug.value = !showDebug.value;
-  if (showDebug.value && game) {
-    debugParams.value = game.getDebugParams();
-    bossNames.value = game.getBossNames();
-  }
-}
-function onSummonBoss() {
-  game?.summonBoss(summonIndex.value);
-}
-function onDebugInput(index: number, e: Event) {
-  const v = Number((e.target as HTMLInputElement).value);
-  if (debugParams.value[index]) debugParams.value[index].value = v;
-  game?.setDebugParam(index, v);
-}
-function onDebugToggle(index: number, e: Event) {
-  const v = (e.target as HTMLInputElement).checked ? 1 : 0;
-  if (debugParams.value[index]) debugParams.value[index].value = v;
-  game?.setDebugParam(index, v);
-}
-function fmt(v: number) {
-  return Number.isInteger(v) ? String(v) : v.toFixed(2);
 }
 </script>
 

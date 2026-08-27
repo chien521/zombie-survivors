@@ -17,7 +17,7 @@ import { ZombieHorde } from './zombie-horde';
 import { Boss } from './boss';
 import { RunState } from './upgrades';
 import { sound } from './sound';
-import { hitSpark } from './effects';
+import { hitSpark, explosionBurst } from './effects';
 
 /** 多重彈之間的角度間隔（弧度） */
 const SPREAD_STEP = 0.16;
@@ -143,6 +143,12 @@ export class WeaponSystem {
     }
   }
 
+  /** 暴擊判定：冰鍛羈絆下命中冰凍中敵人必定暴擊，否則依暴擊率骰 */
+  private rollDamage(run: RunState, base: number, forcedCrit: boolean): number {
+    const crit = forcedCrit || (run.critChance > 0 && Math.random() < run.critChance);
+    return crit ? base * run.critMult : base;
+  }
+
   private fire(playerX: number, playerZ: number, enemies: ZombieHorde, run: RunState) {
     const range2 = run.range * run.range;
     let bestIndex = -1;
@@ -218,8 +224,7 @@ export class WeaponSystem {
         const ez = enemies.getZ(hitEnemy);
         hitSpark(this.scene, new Vector3(hx, this.y, hz));
         /** 暴擊：冰鍛羈絆下，命中冰凍中的敵人必定暴擊 */
-        const forcedCrit = run.frostforge && enemies.isFrozen(hitEnemy);
-        let dmg = forcedCrit || (run.critChance > 0 && Math.random() < run.critChance) ? run.damage * run.critMult : run.damage;
+        let dmg = this.rollDamage(run, run.damage, run.frostforge && enemies.isFrozen(hitEnemy));
         /** 狂暴凍域羈絆：對減速光環範圍內的敵人加成傷害 */
         if (run.berserkSlow && run.slowRadius > 0) {
           const sdx = ex - playerX;
@@ -240,7 +245,7 @@ export class WeaponSystem {
         if (this.pierce[i] > 0) this.pierce[i]--;
         else this.active[i] = 0;
       } else {
-        const bdmg = run.critChance > 0 && Math.random() < run.critChance ? run.damage * run.critMult : run.damage;
+        const bdmg = this.rollDamage(run, run.damage, false);
         if (boss.hitTest(this.px[i], this.pz[i], CONFIG.weapon.projectileRadius, bdmg)) {
           if (run.explodeRadius > 0) kills += this.explode(this.px[i], this.pz[i], enemies, boss, run, playerX, playerZ, onKill);
           if (this.pierce[i] > 0) this.pierce[i]--;
@@ -275,14 +280,16 @@ export class WeaponSystem {
       if (dx * dx + dz * dz <= r2) {
         const ex = enemies.getX(j);
         const ez = enemies.getZ(j);
-        if (enemies.damage(j, run.explodeDamage, playerX, playerZ)) {
+        const dmg = this.rollDamage(run, run.explodeDamage, run.frostforge && enemies.isFrozen(j));
+        if (enemies.damage(j, dmg, playerX, playerZ)) {
           k++;
           onKill(ex, ez);
         }
       }
     }
-    boss.hitTest(x, z, run.explodeRadius, run.explodeDamage);
-    hitSpark(this.scene, new Vector3(x, this.y, z));
+    boss.hitTest(x, z, run.explodeRadius, this.rollDamage(run, run.explodeDamage, false));
+    /** 爆裂彈範圍可達 6+ 單位，用比一般命中火花更明顯的爆炸特效才看得出範圍傷害 */
+    explosionBurst(this.scene, new Vector3(x, this.y, z));
     return k;
   }
 
@@ -307,13 +314,16 @@ export class WeaponSystem {
       if (dx * dx + dz * dz <= r2) {
         const ex = enemies.getX(j);
         const ez = enemies.getZ(j);
-        if (enemies.damage(j, run.auraDamage, playerX, playerZ)) {
+        const dmg = this.rollDamage(run, run.auraDamage, run.frostforge && enemies.isFrozen(j));
+        if (enemies.damage(j, dmg, playerX, playerZ)) {
           k++;
           onKill(ex, ez);
         }
       }
     }
-    boss.hitTest(x, z, PIERCE_TRAIL_RADIUS, run.auraDamage);
+    boss.hitTest(x, z, PIERCE_TRAIL_RADIUS, this.rollDamage(run, run.auraDamage, false));
+    /** 灼痕本身完全沒有視覺回饋（其餘傷害來源都至少有 hitSpark），補上才看得出穿透續飛有在灼燒 */
+    hitSpark(this.scene, new Vector3(x, this.y, z));
     return k;
   }
 

@@ -58,7 +58,7 @@ export const CONFIG = {
     fireInterval: 0.45,
     projectileSpeed: 34,
     projectileRadius: 0.6,
-    damage: 1,
+    damage: 2,
     /** 鎖定範圍 */
     range: 45,
     maxProjectiles: 300,

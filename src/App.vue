@@ -23,6 +23,7 @@
     v-else
     :character-color="characterColor"
     :character-model="characterModel"
+    :character-model-scale="characterModelScale"
     :start-run-state="startRun"
     :gold-multiplier="goldMul"
     :difficulty="difficulty"
@@ -67,6 +68,7 @@ function onSelectMode(m: GameMode) {
 const startRun = shallowRef<RunState>();
 const characterColor = ref<[number, number, number]>([1, 1, 1]);
 const characterModel = ref<string>();
+const characterModelScale = ref<number>();
 const goldMul = ref(1);
 let lastCharId = 'matt';
 
@@ -84,6 +86,7 @@ function onStart(charId: string) {
   startRun.value = computeStartRunState(charId, meta.perma, meta.mastery, meta.legacy);
   characterColor.value = ch.bodyColor;
   characterModel.value = ch.model;
+  characterModelScale.value = ch.modelScale;
   goldMul.value = goldMultiplier(meta.perma) * difficulty.value.goldReward;
   screen.value = 'game';
 }

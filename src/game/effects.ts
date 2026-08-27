@@ -73,6 +73,33 @@ export function levelUpBurst(scene: Scene, pos: Vector3) {
   burst(scene, pos, new Color3(1, 0.85, 0.3), 40, 9, 0.7, 0.7);
 }
 
+/** 依實際傷害半徑擴張並淡出的衝擊波環（給範圍傷害用，讓玩家看得出實際波及範圍，而不只是一顆固定大小的爆發特效） */
+export function shockwaveRing(scene: Scene, pos: Vector3, radius: number, color = new Color3(1, 0.85, 0.3)) {
+  const ring = MeshBuilder.CreateTorus('shockwave', { diameter: 2, thickness: 0.4, tessellation: 40 }, scene);
+  const mat = new StandardMaterial('shockwave-mat', scene);
+  mat.diffuseColor = color;
+  mat.emissiveColor = color;
+  mat.specularColor = Color3.Black();
+  mat.disableLighting = true;
+  ring.material = mat;
+  ring.isPickable = false;
+  ring.position.copyFrom(pos);
+  const dur = 0.45;
+  const start = performance.now();
+  const observer = scene.onBeforeRenderObservable.add(() => {
+    const t = (performance.now() - start) / 1000;
+    if (t >= dur) {
+      scene.onBeforeRenderObservable.remove(observer);
+      ring.dispose();
+      mat.dispose();
+      return;
+    }
+    const s = (t / dur) * radius;
+    ring.scaling.set(s, 1, s);
+    ring.visibility = 1 - t / dur;
+  });
+}
+
 /** 王被擊敗的大爆炸 */
 export function bossDeathBurst(scene: Scene, pos: Vector3) {
   burst(scene, pos, new Color3(1, 0.5, 0.2), 80, 16, 1.1, 0.9);
